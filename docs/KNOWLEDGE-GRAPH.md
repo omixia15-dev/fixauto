@@ -1,6 +1,6 @@
 # Knowledge graph plan and guide
 
-Open [Fixauto Knowledge Graph](<Fixauto Knowledge Graph.html>) in a browser. It is a self-contained HTML file with native SVG, inline styles and JavaScript; no network, installation or build step is required.
+Open [Fixauto Knowledge Graph](<Fixauto Knowledge Graph.html>) in a browser. It is a self-contained HTML file with native SVG, inline styles and JavaScript; no network, installation or build step is required. A standalone [SVG snapshot](<Fixauto Knowledge Graph.svg>) of the product view is also available for sharing or importing into design tools.
 
 ## Four linked views
 

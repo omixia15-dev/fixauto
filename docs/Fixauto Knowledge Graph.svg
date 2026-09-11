@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1610" height="700" viewBox="0 0 1610 700" role="img" aria-labelledby="title desc">
+  <title id="title">Fixauto knowledge graph</title>
+  <desc id="desc">Product domain relationships for the Fixauto managed vehicle repair service.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f87a8"/>
+    </marker>
+    <style>
+      .edge path { fill: none; stroke: #6f87a8; stroke-width: 1.6; marker-end: url(#arrow); }
+      .edge text { fill: #c7d4e7; font: 11px system-ui, -apple-system, "Segoe UI", sans-serif; paint-order: stroke; stroke: #0a101b; stroke-width: 5px; stroke-linejoin: round; }
+      .node rect { stroke-width: 1.6; }
+      .node .title { fill: #f3f7ff; font: 650 15px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .node .sub { fill: #c1ccdf; font: 11px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .person rect { fill: #123a38; stroke: #68dec3; }
+      .record rect { fill: #182f50; stroke: #86baff; }
+      .action rect { fill: #30284c; stroke: #bea4ff; }
+      .gate rect { fill: #483820; stroke: #ffcd7d; }
+      .person .dot { fill: #68dec3; }
+      .record .dot { fill: #86baff; }
+      .action .dot { fill: #bea4ff; }
+      .gate .dot { fill: #ffcd7d; }
+    </style>
+  </defs>
+
+  <rect width="1610" height="700" fill="#0a101b"/>
+  <text x="30" y="35" fill="#68dec3" font="700 11px system-ui, sans-serif" letter-spacing="2.3">FIXAUTO · PRODUCT DOMAIN</text>
+  <text x="30" y="67" fill="#edf4ff" font="650 26px system-ui, sans-serif">Fixauto knowledge graph</text>
+  <text x="30" y="91" fill="#a2b4cb" font="14px system-ui, sans-serif">A managed vehicle repair journey connecting customers, custody, approved work and evidence.</text>
+  <text x="1350" y="35" fill="#a2b4cb" font="11px system-ui, sans-serif">Q1–Q87 · CONFIRMED SCOPE SNAPSHOT</text>
+
+  <g class="edge">
+    <path d="M250 121 C305 121 335 331 360 331"/><text x="305" y="218" text-anchor="middle">requests</text>
+    <path d="M250 331 C305 331 335 331 360 331"/><text x="305" y="322" text-anchor="middle">is serviced in</text>
+    <path d="M250 541 C305 541 335 331 360 331"/><text x="305" y="452" text-anchor="middle">manages</text>
+    <path d="M470 290 C470 230 470 210 470 203"/><text x="485" y="247">requires assessment by</text>
+    <path d="M470 372 C470 430 470 452 470 500"/><text x="485" y="438">assigns custody to</text>
+    <path d="M580 331 C650 331 650 121 690 121"/><text x="625" y="217" text-anchor="middle">has versions of</text>
+    <path d="M580 331 C650 331 650 331 690 331"/><text x="635" y="322" text-anchor="middle">routes approved work to</text>
+    <path d="M580 331 C650 331 650 541 690 541"/><text x="625" y="452" text-anchor="middle">hands over at</text>
+    <path d="M910 121 C965 121 965 121 1020 121"/><text x="965" y="112" text-anchor="middle">requires</text>
+    <path d="M250 121 C650 121 760 121 1020 121"/><text x="745" y="112" text-anchor="middle">grants</text>
+    <path d="M910 331 C965 331 965 331 1020 331"/><text x="965" y="322" text-anchor="middle">uses parts from</text>
+    <path d="M910 331 C965 331 965 541 1020 541"/><text x="965" y="438" text-anchor="middle">submits work for</text>
+    <path d="M1130 121 C1200 121 1260 121 1350 121"/><text x="1240" y="112" text-anchor="middle">authorizes costs for</text>
+    <path d="M1130 541 C1200 541 1260 331 1350 331"/><text x="1240" y="448" text-anchor="middle">supports return with</text>
+    <path d="M1460 331 C1510 331 1510 331 580 331" opacity="0"/>
+    <path d="M1460 331 C1510 331 1510 630 470 630 C430 630 430 415 470 372"/><text x="1010" y="646" text-anchor="middle">complaint reopens</text>
+    <path d="M1130 541 C1190 541 1240 541 1350 541"/><text x="1240" y="532" text-anchor="middle">must support custody</text>
+    <path d="M1460 541 C1490 541 1490 400 1460 372"/><text x="1500" y="462" text-anchor="middle">must support promise</text>
+  </g>
+
+  <g class="node person" transform="translate(30 100)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Customer</text><text class="sub" x="17" y="56">Busy owner / representative</text></g>
+  <g class="node record" transform="translate(30 290)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Vehicle</text><text class="sub" x="17" y="56">Card inspected; no copy</text></g>
+  <g class="node person" transform="translate(30 500)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Coordinator</text><text class="sub" x="17" y="56">One accountable contact</text></g>
+
+  <g class="node person" transform="translate(360 100)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Visiting expert</text><text class="sub" x="17" y="56">Initial assessment first</text></g>
+  <g class="node record" transform="translate(360 290)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Service case</text><text class="sub" x="17" y="56">The central record</text></g>
+  <g class="node person" transform="translate(360 500)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Driver / receiver</text><text class="sub" x="17" y="56">Recorded custody</text></g>
+
+  <g class="node record" transform="translate(690 100)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Estimate version</text><text class="sub" x="17" y="56">Scope + parts + cost</text></g>
+  <g class="node person" transform="translate(690 290)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Specialist workshop</text><text class="sub" x="17" y="56">Diagnosis and repair</text></g>
+  <g class="node record" transform="translate(690 500)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Private parking</text><text class="sub" x="17" y="56">Thursday / Friday exception</text></g>
+
+  <g class="node record" transform="translate(1020 100)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Authorization</text><text class="sub" x="17" y="56">Evidence of permission</text></g>
+  <g class="node person" transform="translate(1020 290)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Parts supplier</text><text class="sub" x="17" y="56">Approved parts only</text></g>
+  <g class="node action" transform="translate(1020 500)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Quality check</text><text class="sub" x="17" y="56">Proof before completion</text></g>
+
+  <g class="node record" transform="translate(1350 100)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Payment / invoice</text><text class="sub" x="17" y="56">Demo payments simulated</text></g>
+  <g class="node record" transform="translate(1350 290)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Warranty / complaint</text><text class="sub" x="17" y="56">Terms still to be backed</text></g>
+  <g class="node gate" transform="translate(1350 500)"><rect width="220" height="82" rx="13"/><circle class="dot" cx="18" cy="22" r="3"/><text class="title" x="29" y="27">Launch evidence</text><text class="sub" x="17" y="56">Insurance · terms · prices</text></g>
+
+  <g transform="translate(30 655)" font="11px system-ui, sans-serif">
+    <rect width="14" height="14" rx="3" fill="#123a38" stroke="#68dec3"/><text x="22" y="12" fill="#a2b4cb">People / roles</text>
+    <rect x="125" width="14" height="14" rx="3" fill="#182f50" stroke="#86baff"/><text x="147" y="12" fill="#a2b4cb">Core records</text>
+    <rect x="265" width="14" height="14" rx="3" fill="#30284c" stroke="#bea4ff"/><text x="287" y="12" fill="#a2b4cb">Actions</text>
+    <rect x="365" width="14" height="14" rx="3" fill="#483820" stroke="#ffcd7d"/><text x="387" y="12" fill="#a2b4cb">Unverified launch dependency</text>
+  </g>
+  <text x="1570" y="667" text-anchor="end" fill="#7f92ac" font="11px system-ui, sans-serif">Standalone vector snapshot · See Fixauto Knowledge Graph.html for interactive views</text>
+</svg>
