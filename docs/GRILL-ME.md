@@ -1,16 +1,16 @@
 # Fixauto grilling checkpoint
 
-Saved: 2026-09-11. **Paused at the user's request due to fatigue. Not complete.**
+Originally saved: 2026-09-11. **Q1–Q87 complete; user confirmed grilling finished. This is a chronological archive. Real-launch evidence remains outstanding.**
 
 Resume phrase: **continue fixauto grill me**.
 
 ## Resume instructions
 
 1. Read this checkpoint, [decisions](DECISIONS.md), [product](PRODUCT.md), [MVP](MVP.md), and [roadmap](ROADMAP.md).
-2. Answers through Q52 are incorporated. Q53–Q59 were asked, but the user answered none of them. Resume with those questions, or only unanswered ones if the user supplies answers on return. Give a brief recap, not a repeat of the whole interview.
+2. Answers through Q87 and user confirmation are incorporated. Read `PLAN.md` next. Do not repeat confirmation or settled interview rounds. Resume only new questions or the real-launch branch when evidence arrives or the user requests it. Earlier unresolved notes are historical, not current blockers.
 3. Use the grilling skill: independent answerable questions in rounds, recommendations distinguished from decisions, dependent questions held for later. Adapt pacing if the user requests fewer questions.
 4. Update this checkpoint and the decision register after each round. A accepted recommendation is not proof of external facts or implementation.
-5. Finish remaining branches, present reconciled plan/MVP, and obtain shared-understanding confirmation before implementation. The user's save request authorizes these documents, not finishing the interview by assumption.
+5. Shared-understanding confirmation is complete. The latest request authorizes documentation and the knowledge graph; service-app implementation remains a separate task. Preserve external launch gates until evidence resolves them.
 
 ## Most recent user answers, preserved
 
@@ -22,7 +22,139 @@ Resume phrase: **continue fixauto grill me**.
 - Q51: Fixauto expert helpers check against a checklist and confirm.
 - Q52: accepted reopening original case with coordinator, assessment before determining warranty coverage or charges.
 
-## Pending round — Q53 to Q59
+## Latest answers — Q53 to Q59
+
+- Q53: User identifies the Iranian vehicle card as ownership evidence. Copy retention and verification details still undecided.
+- Q54: No payment gateway yet.
+- Q55: Accepted proposed refund policy: unspent balance refunded, only disclosed/authorized incurred costs deducted, nonreturnable commitments disclosed in advance.
+- Q56: Accepted specialist-validated technical checklist and reassessment when uncertain.
+- Q57: Accepted coordinator-owned failed-check handling and delay communication; additional spending still needs approval.
+- Q58: Accepted role-limited information sharing; separate workshop accounts can wait.
+- Q59: Saturday–Wednesday; workshops operate separately from owner's work. Owner can be on-call for emergency needs. Exact routine hours and emergency scope remain undecided.
+
+## Latest answers — Q60 to Q64
+
+- Q60: Inspect vehicle card only for now; no retained photo/upload required. Exact verification and representative procedure still open.
+- Q61: Routine hours Saturday–Wednesday 09:00–13:00 and 17:00–20:00. On Thursday/Friday, emergency collection may be arranged by tow truck to designated parking, with procedure starting Saturday. Parking location, custody arrangements, charges and eligibility not specified.
+- Q62: Accepted active-case urgent custody/transport emergency support. Reconcile with the separately proposed Thursday/Friday intake exception; do not silently remove either answer or assume all new emergencies are accepted.
+- Q63: Daily useful brief summary accepted. Channel and whether daily includes Thursday/Friday remain open.
+- Q64: Accepted pause of unapproved work, notice and follow-up call; silence is not approval. Waiting limits and any storage charges require advance agreement; no duration or amount selected.
+
+## Latest answers — Q65 to Q69
+
+- Q65: Thursday/Friday collection exception serves new customers.
+- Q66: Own private parking; user, brother-in-law or father receives car and keys. Specific on-duty assignment, custody records and capacity counting not explicitly answered.
+- Q67: Accepted separate disclosure of towing/parking charges before dispatch and separate transport/storage versus diagnosis/repair authorizations. Exact payment point and charges remain open.
+- Q68: Accepted short summary every day in custody, including nonworking days, with situation/next action/timing. Channel not supplied.
+- Q69: Accepted follow-up deadline and discussion of storage/return, with no automatic approval or undisclosed charges. No actual deadline supplied.
+
+## Latest answers — Q70 to Q73
+
+- Q70: SMS accepted; precise private-link design and provider not explicitly selected.
+- Q71: Accepted follow-up call 24 hours after unanswered estimate, with work paused and no automatic charges/authorization.
+- Q72: Accepted parked Thursday/Friday car counting toward one-active-car pilot capacity until return.
+- Q73: Accepted named receiver, recorded condition/keys, approved transport/storage payment before dispatch, separate diagnosis payment before diagnosis, and family handover role without repair/spending authority.
+
+## Latest answers — Q74 to Q77
+
+- Q74: Accepted specialist-recommended, explicitly specified/customer-approved parts; substitutions require reapproval even when cheaper.
+- Q75: Accepted owner or expressly authorized return recipient; record recipient/condition/mileage/keys; receipt distinct from warranty resolution.
+- Q76: Rejected Persian/toman first. User wants universal English/USD app first, then refactor for Persian and Iranian rial or toman. Do not override this preference or silently infer international launch/real USD payments.
+- Q77: Accepted owner-led dispute review and second qualified specialist when needed; assessment charges agreed before incurred.
+
+## Latest answers — Q78 to Q80
+
+- Q78: Accepted English/USD demonstration with simulated payments, then Persian and verified local payments for Kerman real launch.
+- Q79: Accepted reusable software design for later countries, with operations limited to Kerman initially.
+- Q80: Accepted localization-ready text/rules separation, explicit currency per amount, future RTL support, English/USD first and no automatic conversion.
+
+## Latest answers — Q81 to Q83
+
+- Q81: Accepted proposed minimal request form and later ownership inspection, no initial document upload.
+- Q82: Rejected omission of at-location visit. Send expert for initial assessment to select destination and minimize transport. Assistant distinguished initial assessment from deeper workshop diagnosis; pricing, expert competence and transport decision unresolved. Original drop-off option not explicitly removed.
+- Q83: Accepted three screens and successful/failed-flow demonstration criteria.
+
+## Latest answers — Q84 to Q87
+
+- Q84: Accepted fixed disclosed assessment fee even when further service declined; later transport/investigation separately priced and approved. Actual fee pending.
+- Q85: Accepted qualified specialist consultation and criteria; unresolved suitability uncertainty means tow.
+- Q86: Accepted Thursday/Friday direct-to-parking exception, Saturday assessment, advance disclosure.
+- Q87: Accepted persistent interactive shared-case demonstration with sample customers and labeled simulated sign-in/payments/SMS.
+
+## Current review point
+
+Read [PLAN](PLAN.md). User confirmed grilling is finished; the current review point is the completed documentation and graph. No pending numbered round for the demonstration. Actual prices, insurance, partner arrangements and local providers remain real-launch prerequisites in [LAUNCH-CHECKLIST](LAUNCH-CHECKLIST.md). Earlier office drop-off remains a manually scheduled alternative.
+
+## Historical round — Q84 to Q87
+
+Recommendations are proposals until answered.
+
+- Q84: Is initial expert visit a separate paid service when no workshop repair follows? Proposed: disclose fixed assessment fee before visit; separately approve any subsequent specialist investigation and transport. Actual price still awaiting evidence.
+- Q85: Who decides drive versus tow when expert cannot confidently assess suitability? Proposed: qualified partner consulted; uncertainty leads to towing, not an unqualified safety claim. Exact professional criteria to establish with partners.
+- Q86: Does Thursday/Friday emergency tow-to-parking bypass expert visit until Saturday? Proposed yes, as explicit exception; otherwise expert-first during routine service. Existing customer drop-off option remains to confirm if needed.
+- Q87: Should demo customer/staff views share persistent cases with clearly labeled simulated sign-in/payments/SMS, or be visual-only? Proposed persistent interactive demo with sample identities and no real customer data or outgoing messages; label simulations. This is not real authorization testing and must later be replaced/verified before paid launch.
+
+After this round settle remaining demo choices and reconcile final plan for user confirmation; keep provider/insurance/pricing evidence as separate launch gates. Do not create new rounds for implementation details that can be reasonably proposed in final plan.
+
+## Historical round — Q81 to Q83
+
+Recommendations are proposals until answered.
+
+- Q81: Minimum request fields? Proposed contact name/mobile, car make/model/year, symptoms, and preferred service arrangement/time; pickup address only when pickup requested. Ownership check later, not compulsory document upload at first request.
+- Q82: Which initial diagnostic arrangements: customer visits Fixauto, expert visits customer, or collection to workshop? Proposed first and third; at-location diagnosis introduces travel and equipment scope. Preserve original intent for visits until user explicitly narrows it.
+- Q83: Accept three main demo screens (service request, private case detail, staff case workspace) and completion proof covering happy journey plus rejected estimate, failed payment, revised approval and failed quality check? Proposed yes; named demo actors and sample data, no real charges or SMS. Authentication simulation choice still needs explicit decision before implementation.
+
+After this round reconcile remaining demo decisions (auth/persistence, presentation, stack) separately from real-launch evidence gates. Avoid requiring real prices or insurance procurement merely to demonstrate software; keep them as explicit launch prerequisites, never silently resolved. Present complete plan/MVP for shared-understanding confirmation before building.
+
+## Historical round — Q78 to Q80
+
+Recommendations are proposals until answered.
+
+- Q78: Is English/USD first version a demonstration with sample amounts and simulated payments, or real paid launch? Proposed: demo first, then localized/verified real payments before Kerman pilot; preserve user's English-first preference.
+- Q79: Does universal mean reusable design for later countries, or international customer launch now? Proposed: reusable design with Kerman-only operations initially; international operations would require a separate scope decision.
+- Q80: Permit localization-ready structure now while only shipping English/USD initially? Proposed: separate interface strings, explicit currency with every amount and layout supporting later RTL; no multi-currency exchange or live conversion assumed.
+
+## Historical round — Q74 to Q77
+
+Recommendations are proposals until answered.
+
+- Q74: Who chooses parts when genuine and alternative brands differ in cost/warranty? Proposed: specialist recommends; estimate names brand/condition/price/warranty; customer approves; substitutions require reapproval.
+- Q75: Who may receive returned vehicle? Proposed: verified owner or expressly authorized recipient; record condition, mileage, keys and receipt separately from warranty rights. Exact representative verification pending research/design.
+- Q76: Persian-only initial interface, prices displayed in toman? Proposed: yes; Gregorian/Jalali display choice still to determine if needed; provider currency verified separately.
+- Q77: For disputed repair result or invoice, who reviews and handles the complaint? Proposed: owner reviews evidence and coordinates independent technical reassessment when needed, with separately agreed assessment costs. Do not invent automatic payment waiver, vehicle detention, liability or legal terms.
+
+## Historical round — Q70 to Q73
+
+Recommendations are proposals, not decisions.
+
+- Q70: Which channel for daily summaries? Proposed: SMS notification with private case-page link for details; phone for urgent matters. User may prefer another channel. Provider feasibility not researched.
+- Q71: Approve 24 hours after estimate delivery as first follow-up-call deadline? Proposed: 24 hours, while unapproved work stays paused; not an automatic fee/repair trigger. If no answer, escalation policy remains to finalize.
+- Q72: Does the one-active-car limit include a car parked Thursday/Friday? Proposed: yes; manually decline/defer additional custody until slot free.
+- Q73: Will every collection assign one named receiver, record condition/mileage/keys, and require customer-approved towing/parking payment before dispatch? Proposed: yes, with only transport/storage costs due then and diagnosis billed separately before it starts. Family receivers need only handover access, not financial approval authority.
+
+## Historical round — Q65 to Q69
+
+All recommendations remain proposals until answered.
+
+- Q65: Does Thursday/Friday collection include new customers or only existing active cases? Proposed: manually confirmed exception subject to capacity, no advertised 24/7 new-intake promise.
+- Q66: Where is designated parking, and who receives vehicle/keys and records custody? Proposed: named receiving person, condition/mileage/key handover record, suitability and coverage verified before use. Vehicle waiting in parking should count within one-car pilot limit (proposal).
+- Q67: Are towing and parking charges separately disclosed/authorized before dispatch, and is diagnosis charged now or Saturday? Proposed: separate transport/storage authorization and diagnostic authorization; no dispatch until applicable charges and authority are agreed. Exact payment sequence pending.
+- Q68: Which channel delivers daily summaries, and do they include Thursday/Friday when holding a car? Proposed: brief daily message for every day in custody (including no-work days), with progress, next action and revised timing; approval links remain distinct from summaries.
+- Q69: What maximum wait applies when customer is unreachable, and what next step follows? Proposed: a defined follow-up deadline, with return/storage arrangement discussed explicitly; no automatic unapproved repair or newly invented storage fee.
+
+## Historical round — Q60 to Q64
+
+Recommendations below are proposals until answered.
+
+- Q60: Inspect vehicle card only, or retain a photo? Proposed: inspect/record verification, defer mandatory photo retention unless purpose established. Do not assume card possession alone establishes representative authority.
+- Q61: Exact routine response hours Saturday–Wednesday, and routine handling Thursday/Friday? Proposed: publish actual staffed windows and next-response expectation; requests remain open anytime.
+- Q62: What counts as emergency on-call, and is this only for active cases? Proposed: active-case urgent custody/transport incidents; new requests wait for normal confirmation. Availability is not a guaranteed response time.
+- Q63: What routine customer-update rule? Proposed: coordinator update once per working day while case active, plus estimate changes, delays, and readiness for return; channel still to choose.
+- Q64: Customer unreachable when additional work needs approval: what happens and how long can case wait? Proposed: pause unapproved work, send notice, arrange a follow-up call; choose storage/waiting limits and fees explicitly rather than assume them.
+
+## Historical round — Q53 to Q59
+
+The recommendations below were unanswered at the original pause. Refer to the latest answers and decision register for their current status.
 
 ### Q53 — Ownership evidence
 
@@ -86,8 +218,8 @@ Unaccepted recommendation: publish actual Fixauto staffed hours separately from 
 - “Accept recommendation” for insurance/warranty backing did not establish contracts exist.
 - October 2026 is an intended first-customer target. User intended preparations during September; no readiness evidence yet.
 - Five software groups were accepted, but gateway payment was subsequently made essential. Do not revert to a manual-payment-only MVP.
-- Expert checklist use is accepted; specialist validation and failed-check behavior remain proposals.
+- Expert checklist use, specialist validation and coordinator-owned failed-check behavior accepted through Q56–Q57; actual checklists/personnel still pending.
 
 ## Evidence provenance
 
-This is a structured checkpoint of the conversation, not a verbatim transcript. The decision register traces earlier answers Q1–Q52. All business resources and availability are user-reported; no external provider, legal, insurance, or market research has been performed for these documents.
+This is a structured chronological archive, not a verbatim transcript. The decision register traces Q1–Q87 and subsequent confirmation. All business resources and availability are user-reported; no external provider, legal, insurance or market verification is claimed.

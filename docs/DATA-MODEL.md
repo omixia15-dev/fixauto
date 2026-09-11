@@ -33,6 +33,6 @@ One customer can have many cases, so `service_cases.customer_id` is a foreign ke
 
 ## Open design decisions
 
-Authentication provider; document uploads and retention; staff roles; case states and transitions; audit retention; payment/refund reconciliation; money representation and gateway currency conversion. Budget figures are in toman: do not assume a gateway also uses toman. These implementation details must be verified during planning.
+Production identity/provider design, audit retention, payment reconciliation and detailed schema remain to implement. Demo baseline is same-browser sample persistence shared between customer/staff views, simulated sign-in/payments/SMS, and refresh survival (Q87 and confirmed plan). No production database exists. Explicit currency per amount; no automatic conversion. Pilot budget figures stay in toman, not relabeled as sample USD.
 
 See [ownership](OWNERSHIP.md) for authorization boundaries. The product's word “ownership” includes vehicle authority, which is different from database record access.

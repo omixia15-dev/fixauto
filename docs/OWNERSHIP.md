@@ -1,14 +1,16 @@
 # Ownership and permissions
 
-Status: business authorization decisions partly accepted; technical permissions below are proposed. Staff-role recommendations in Q58 remain unanswered.
+Status: business role boundaries accepted through Q87 and final confirmation. Demo identity/role selection is simulated; production enforcement is unimplemented. Family receiver authority is separate from spending approval.
 
 ## Accepted business requirements
 
 - Initial service request requires no account.
 - Verified phone access precedes diagnostic charges or collection authorization.
-- Vehicle ownership evidence matters; acceptable documents and retention are pending Q53.
+- Vehicle card is the user's intended ownership evidence (Q53), inspected only for now with no retained photo (Q60); verification procedure and representative evidence remain open.
 - A representative needs recorded owner authorization and a named spending approver.
 - Each repair approval binds a specific estimate; all increases need fresh approval.
+- A named family receiver may accept vehicle/keys and record handover; this grants no repair or spending approval authority (Q73).
+- Return recipient is owner or someone expressly authorized by owner; record recipient, condition, mileage and keys (Q75). Handover receipt is separate from resolving warranty complaints.
 
 ## Proposed permission matrix
 
@@ -17,9 +19,9 @@ Status: business authorization decisions partly accepted; technical permissions 
 | Visitor | Submit initial request; no private case browsing |
 | Verified customer | Read and authorize own cases within verified vehicle/representative authority |
 | Authorized representative | Only actions expressly granted for relevant vehicle/case |
-| Coordinator | Manage assigned cases; exact role limits pending Q58 |
-| Driver | Minimal transport/handover details; proposal pending Q58 |
-| Workshop | Vehicle details and approved scope needed for work; manual sharing initially proposed, pending Q58 |
+| Coordinator | Necessary case information to manage the case; business boundary accepted Q58 |
+| Driver | Minimal transport/handover details; accepted Q58 |
+| Workshop | Relevant vehicle details and approved work; accepted Q58, separate accounts deferred |
 
 ## Draft permission proofs
 

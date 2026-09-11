@@ -29,7 +29,24 @@ Safe transport and warranty are intended promises; their insurance and partner b
 - Cars under manufacturer warranty should go to authorized workshops. The promise for this separate coordination service remains to be defined.
 - Start with bounded, diagnosable work; defer major engine/transmission rebuilds, collision restoration, and uncertain parts cases. Exact supported repair categories await workshop confirmation.
 - Provisional area: Kerman municipal limits. No verified distance or travel-time assumptions.
-- Workshop/diagnostic windows: 09:00–14:00 and 16:30–21:30, local time. Towing availability is reported as round the clock. Fixauto's five operating days and staffed response hours remain open.
+- Workshop/diagnostic windows: 09:00–14:00 and 16:30–21:30, local time. Towing availability is reported as round the clock. Fixauto routine hours: Saturday–Wednesday 09:00–13:00 and 17:00–20:00, with urgent active-case support on call.
+- Thursday/Friday emergency towing serves new customers, to the user's own private parking, with service procedure starting Saturday. User, brother-in-law or father is assigned to receive car/keys and record condition/key handover. Approved transport/storage charges are paid before dispatch; diagnosis charged separately before it starts. Parked cars count toward the single active-car limit until returned. Readiness, coverage and actual prices remain unverified/undecided.
+- Customers receive a concise useful SMS summary every day the car is in custody, including nonworking days: current situation, next action and expected timing. Provider and exact message/link design remain open.
+- Unanswered estimates trigger a follow-up call after 24 hours; work remains paused without automatic approval or new charges.
+
+## Initial assessment
+
+Expert visits customer first to assess and select destination, minimizing movements. Fixed disclosed assessment fee applies even if further work declined; deeper investigation and transport separately authorized/priced. Qualified specialist informs driving/towing criteria; unresolved uncertainty means tow. Thursday/Friday collection goes directly to parking, with assessment Saturday and customer informed before dispatch (Q84–Q86). Original office drop-off remains a manually scheduled alternative.
+
+## First-version language and currency
+
+English/USD demonstration with simulated payments first; Persian and verified local payments before Kerman paid launch (Q78). Universal means reusable design for future adaptation, not international operations now (Q79). Separate interface text from business rules, retain currency with amounts, and prepare for later RTL layout (Q80). No automatic currency conversion. Real-launch currency choice between rial/toman and provider units remains open.
+
+## Parts, return and dispute rules
+
+- Specialist recommends parts; customer approves specified brand, condition, price and warranty. Substitution requires renewed approval even when cheaper.
+- Return goes to owner or expressly authorized recipient, with recipient/condition/mileage/keys recorded; receipt is distinct from warranty-complaint resolution.
+- Owner reviews disputed results using original symptoms, approved work and quality-check evidence; arrange another qualified assessment when needed, with charges agreed before incurred.
 
 ## Domain relationships
 
