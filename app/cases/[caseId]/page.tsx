@@ -8,4 +8,3 @@ export default async function CustomerCasePage({
   const { caseId } = await params;
   return <CustomerCaseScreen caseId={caseId} />;
 }
-

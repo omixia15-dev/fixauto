@@ -6,4 +6,3 @@ export function formatMoney(amountCents: number, currency: CurrencyCode): string
     currency,
   }).format(amountCents / 100);
 }
-

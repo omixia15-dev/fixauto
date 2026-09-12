@@ -14,4 +14,3 @@ export const en = {
     success: "Fixauto sample data was reset.",
   },
 } as const;
-

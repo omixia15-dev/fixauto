@@ -69,4 +69,3 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
     </div>
   );
 }
-
