@@ -2,7 +2,7 @@
 
 Fixauto is a planned managed car-repair service in Kerman, Iran. It helps busy car owners arrange diagnosis, approve transparent repair costs, and delegate transport, parts sourcing, repair coordination, quality checks, and return to one accountable service.
 
-**Status:** grilling Q1–Q87 is complete and the user confirmed the plan. Documentation and the interactive knowledge graph are available; the service application is not implemented. First application build is an English/USD interactive demonstration; paid-launch prerequisites remain open.
+**Status:** grilling Q1–Q87 is complete and the user confirmed the plan. Documentation and the interactive knowledge graph are available. The D1 browser-only application foundation is being built as an English/USD interactive demonstration; the service workflow in D2–D6 and all paid-launch prerequisites remain open.
 
 **Open [Fixauto Knowledge Graph](<docs/Fixauto Knowledge Graph.html>)** in your browser. Zoom, pan, select nodes, search and download SVG views; it works offline.
 
@@ -26,8 +26,22 @@ The [interview archive](docs/GRILL-ME.md) preserves the answers. “Continue fix
 - [Paid-launch evidence gates](docs/LAUNCH-CHECKLIST.md)
 - [Knowledge graph guide](docs/KNOWLEDGE-GRAPH.md)
 
-The planning follows Vibies sessions 1–10: user/problem/MVP, domain map, issues and acceptance criteria, plan and Skeptic review, branch-based implementation, proof on Preview, and Production verification. Source decks are at `/mnt/c/Users/vr7sk/OneDrive/Desktop/Vibies Sessions` (Windows: `C:\Users\vr7sk\OneDrive\Desktop\Vibies Sessions`). The class stack is Next.js, Vercel, and Supabase; Fixauto's stack and payment provider have not yet been selected or verified.
+The planning follows Vibies sessions 1–10: user/problem/MVP, domain map, issues and acceptance criteria, plan and Skeptic review, branch-based implementation, proof on Preview, and Production verification. Source decks are at `/mnt/c/Users/vr7sk/OneDrive/Desktop/Vibies Sessions` (Windows: `C:\Users\vr7sk\OneDrive\Desktop\Vibies Sessions`). The confirmed demo stack is Next.js, React, and TypeScript with browser-local sample persistence. A production backend, hosting decision, and payment provider remain separate paid-launch work.
 
 ## Development
 
-No service app, dependencies, database, gateway, or deployment has been created. The graph opens directly from disk. App implementation is a later task using the local backlog; paid-launch readiness requires the separately documented evidence.
+The D1 foundation provides the service-request shell, customer case, and staff workspace over one fictional case saved in the same browser. It is not the completed service workflow and makes no real booking, payment, identity, SMS, or authorization claim.
+
+```sh
+npm ci
+npm run dev
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run test:e2e
+```
+
+Playwright requires its Chromium browser and Linux system dependencies. Paid-launch readiness still requires the separately documented evidence.
+
+The recorded D1 runtime is Node 24.19.0 (see `.nvmrc`).
