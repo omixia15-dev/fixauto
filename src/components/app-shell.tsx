@@ -7,23 +7,15 @@ import { en } from "../i18n/en";
 import { useDemoCases } from "../store/demo-case-provider";
 import { ResetSampleButton } from "./reset-sample-button";
 
-const links = [
-  { href: "/", label: en.nav.request, match: (path: string) => path === "/" },
-  {
-    href: "/cases/case-atlas-001",
-    label: en.nav.customer,
-    match: (path: string) => path.startsWith("/cases/"),
-  },
-  {
-    href: "/staff",
-    label: en.nav.staff,
-    match: (path: string) => path === "/staff",
-  },
-];
-
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { notice, ready } = useDemoCases();
+  const { data, notice, ready } = useDemoCases();
+  const latestCaseId = data.cases.at(-1)?.id ?? "case-atlas-001";
+  const links = [
+    { href: "/", label: en.nav.request, active: pathname === "/" },
+    { href: `/cases/${latestCaseId}`, label: en.nav.customer, active: pathname.startsWith("/cases/") },
+    { href: "/staff", label: en.nav.staff, active: pathname === "/staff" },
+  ];
 
   return (
     <>
@@ -42,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     className="nav-link"
                     href={link.href}
-                    aria-current={link.match(pathname) ? "page" : undefined}
+                    aria-current={link.active ? "page" : undefined}
                   >
                     {link.label}
                   </Link>

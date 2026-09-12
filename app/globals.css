@@ -35,7 +35,8 @@ body {
 
 button,
 textarea,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -357,6 +358,136 @@ dd {
   color: var(--ink);
 }
 
+.request-form,
+.assessment-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field label,
+.assessment-form label {
+  font-weight: 800;
+}
+
+.field input,
+.field select,
+.field textarea,
+.assessment-form input,
+.assessment-form textarea {
+  width: 100%;
+  min-height: 2.85rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #9ba9a1;
+  border-radius: 0.75rem;
+  background: white;
+  color: var(--ink);
+}
+
+.field textarea,
+.assessment-form textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.field [aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger);
+}
+
+.full-field {
+  grid-column: 1 / -1;
+}
+
+.success-card,
+.success-message {
+  border-color: #8ac5aa;
+  background: #edf9f3;
+}
+
+.error-banner,
+.blocked-reason {
+  padding: 0.8rem 1rem;
+  border-left: 4px solid var(--danger);
+  border-radius: 0.6rem;
+  background: #fff0f0;
+  color: #762525;
+  font-weight: 700;
+}
+
+.price-line,
+.nested-panel {
+  display: grid;
+  padding: 1rem;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--paper);
+}
+
+.price-line strong {
+  font-size: 1.5rem;
+}
+
+.price-line span,
+.history-line {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.button-danger {
+  border-color: var(--danger);
+  background: white;
+  color: var(--danger);
+}
+
+.button-danger:hover {
+  background: #fff0f0;
+}
+
+.history-list,
+.case-list-stack {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 0.7rem;
+  list-style: none;
+}
+
+.history-list li {
+  display: grid;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--line);
+  gap: 0.2rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.checkbox-row input {
+  width: 1.2rem;
+  min-height: 1.2rem;
+}
+
 .field-hint {
   margin-top: 0.35rem;
 }
@@ -529,7 +660,8 @@ dd {
   .content-grid,
   .workspace-grid,
   .detail-grid,
-  .request-preview {
+  .request-preview,
+  .form-grid {
     grid-template-columns: 1fr;
   }
 
