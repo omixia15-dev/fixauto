@@ -1,8 +1,11 @@
 import { formatMoney } from "../domain/currency";
 import type { SampleCase } from "../domain/sample-case";
+import { getCasePresentation } from "../presentation/case-status";
 import { SimulationBadge } from "./simulation-badge";
 
 export function CaseSummary({ sampleCase }: { sampleCase: SampleCase }) {
+  const presentation = getCasePresentation(sampleCase);
+
   return (
     <section className="card" aria-labelledby="case-summary-title">
       <div className="section-heading">
@@ -10,7 +13,7 @@ export function CaseSummary({ sampleCase }: { sampleCase: SampleCase }) {
           <p className="eyebrow">Case reference</p>
           <h2 id="case-summary-title">{sampleCase.reference}</h2>
         </div>
-        <span className="status-pill">{sampleCase.statusLabel}</span>
+        <span className="status-pill">{presentation.status}</span>
       </div>
       <dl className="detail-grid">
         <div>
@@ -25,11 +28,14 @@ export function CaseSummary({ sampleCase }: { sampleCase: SampleCase }) {
         </div>
         <div>
           <dt>Illustrative assessment fee</dt>
-          <dd>{formatMoney(sampleCase.illustrativeAssessmentFeeCents, sampleCase.currency)} USD</dd>
+          <dd>{formatMoney(sampleCase.assessment.feeCents, sampleCase.assessment.currency)} USD</dd>
         </div>
         <div>
           <dt>Preferred appointment</dt>
-          <dd>{sampleCase.request.preferredAppointment} · pending confirmation</dd>
+          <dd>
+            {sampleCase.request.preferredDate} at {sampleCase.request.preferredTime}
+            {sampleCase.request.confirmedAppointment ? " · confirmed" : " · pending confirmation"}
+          </dd>
         </div>
       </dl>
       <div className="note-panel">

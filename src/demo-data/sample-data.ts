@@ -1,9 +1,9 @@
 import {
+  createPendingAssessment,
   DEMO_SCHEMA_VERSION,
   type DemoData,
 } from "../domain/sample-case.ts";
 
-// Fictional English presentation data. Workflow rules do not depend on this copy.
 export const initialDemoData: DemoData = {
   schemaVersion: DEMO_SCHEMA_VERSION,
   cases: [
@@ -13,26 +13,18 @@ export const initialDemoData: DemoData = {
       customer: { name: "Mina Rahimi", mobile: "+98 900 000 0101" },
       vehicle: { make: "Toyota", model: "Camry", year: 2020 },
       request: {
+        source: "sample",
+        serviceMode: "expert-visit",
         symptoms: "A warning light appears after the engine warms up.",
-        preferredAppointment: "Sunday, 10:00",
+        preferredDate: "2027-01-10",
+        preferredTime: "10:00",
         visitAddress: "Sample address, Kerman",
+        createdAt: "2026-09-12T09:00:00.000Z",
+        confirmedAppointment: null,
       },
-      status: "request-received",
-      statusLabel: "Request received — awaiting staff confirmation",
-      nextAction: "Staff reviews the requested appointment.",
-      expectedTiming: "During the next staffed period",
+      assessment: createPendingAssessment(),
       sharedNote: "Customer prefers a morning expert visit.",
-      illustrativeAssessmentFeeCents: 4500,
-      currency: "USD",
-      payments: [
-        {
-          id: "payment-sample-001",
-          purpose: "Illustrative assessment fee",
-          amountCents: 4500,
-          currency: "USD",
-          outcome: "simulated-pending",
-        },
-      ],
+      payments: [],
       smsLog: [
         {
           id: "sms-sample-001",

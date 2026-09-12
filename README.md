@@ -2,7 +2,7 @@
 
 Fixauto is a planned managed car-repair service in Kerman, Iran. It helps busy car owners arrange diagnosis, approve transparent repair costs, and delegate transport, parts sourcing, repair coordination, quality checks, and return to one accountable service.
 
-**Status:** grilling Q1–Q87 is complete and the user confirmed the plan. Documentation and the interactive knowledge graph are available. The D1 browser-only application foundation is being built as an English/USD interactive demonstration; the service workflow in D2–D6 and all paid-launch prerequisites remain open.
+**Status:** grilling Q1–Q87 is complete and the user confirmed the plan. Documentation and the interactive knowledge graph are available. The browser-only English/USD demonstration now covers the D1 foundation and the D2 request-to-assessment workflow. D3–D6 and all paid-launch prerequisites remain open.
 
 **Open [Fixauto Knowledge Graph](<docs/Fixauto Knowledge Graph.html>)** in your browser. Zoom, pan, select nodes, search and download SVG views; it works offline.
 
@@ -30,7 +30,7 @@ The planning follows Vibies sessions 1–10: user/problem/MVP, domain map, issue
 
 ## Development
 
-The D1 foundation provides the service-request shell, customer case, and staff workspace over one fictional case saved in the same browser. It is not the completed service workflow and makes no real booking, payment, identity, SMS, or authorization claim.
+The D1 foundation provides the service-request shell, customer case, and staff workspace over fictional cases saved in the same browser. D2 adds validated request creation, staff appointment confirmation, simulated customer authorization and payment outcomes, an expert-first assessment record, and separately funded deeper investigation. It is not the completed service workflow and makes no real booking, payment, identity, SMS, or authorization claim.
 
 ```sh
 npm ci
