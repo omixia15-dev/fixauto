@@ -71,7 +71,9 @@ export function StaffWorkspaceScreen() {
             {phase === "pending-staff-confirmation" ? (
               <div className="nested-panel">
                 <p>Requested: {sampleCase.request.preferredDate} at {sampleCase.request.preferredTime}</p>
-                <p>{sampleCase.request.serviceMode === "expert-visit" ? sampleCase.request.visitAddress : "Office drop-off requested"}</p>
+                <p>{sampleCase.request.serviceMode === "office-dropoff"
+                  ? "Office drop-off requested"
+                  : `${sampleCase.request.serviceMode === "collection-request" ? "Collection address review" : "Expert visit"}: ${sampleCase.request.visitAddress}`}</p>
                 <button className="button" type="button" onClick={() => run(() => actions.confirmAppointment(sampleCase.id))}>
                   Confirm requested appointment
                 </button>

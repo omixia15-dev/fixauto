@@ -1,12 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
 async function fillRequest(page: Page, suffix = "2") {
+  const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   await page.getByLabel("Contact name").fill(`Sara Ahmadi ${suffix}`);
   await page.getByLabel("Mobile number").fill(`+98 900 555 010${suffix}`);
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Model", { exact: true }).fill("Sportage");
   await page.getByLabel("Year").fill("2022");
-  await page.getByLabel("Preferred date").fill("2027-01-15");
+  await page.getByLabel("Preferred date").fill(futureDate);
   await page.getByLabel("Preferred time").fill("10:30");
   await page.getByLabel("Describe the symptoms").fill("The steering wheel vibrates above 80 km/h.");
   await page.getByLabel("Expert-visit address").fill("Sample Boulevard, Kerman");
@@ -24,6 +25,8 @@ async function confirmAuthorizeAndPay(page: Page) {
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
   await page.getByRole("link", { name: "Customer case" }).click();
+  await expect(page.getByText("Expert visit to review reported symptoms and recommend the next diagnostic step.")).toBeVisible();
+  await expect(page.getByText("$45.00 USD").first()).toBeVisible();
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
 }
@@ -36,10 +39,13 @@ test.beforeEach(async ({ page }) => {
 
 test("invalid request keeps values and creates no case", async ({ page }) => {
   await page.getByLabel("Vehicle make").fill("Kia");
+  await page.getByLabel("Visit type").selectOption("collection-request");
+  await expect(page.getByLabel("Requested collection address")).toBeVisible();
   await page.getByRole("button", { name: "Create sample request" }).click();
   await expect(page.getByText("Enter the customer name.")).toBeVisible();
-  await expect(page.getByText("Enter the address for the expert visit.")).toBeVisible();
+  await expect(page.getByText("Enter the requested collection address.")).toBeVisible();
   await expect(page.getByLabel("Vehicle make")).toHaveValue("Kia");
+  await expect(page.getByLabel("Visit type")).toHaveValue("collection-request");
   await expect(page.getByText("FXA-1002")).toHaveCount(0);
 });
 

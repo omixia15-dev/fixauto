@@ -22,7 +22,7 @@ export type SimulatedSms = {
   simulated: true;
 };
 
-export type ServiceMode = "expert-visit" | "office-dropoff";
+export type ServiceMode = "expert-visit" | "collection-request" | "office-dropoff";
 
 export type ServiceRequest = {
   source: "web" | "sample";
@@ -116,25 +116,48 @@ export type CasePhase =
 
 const mobilePattern = /^[+\d][\d\s()-]{6,19}$/;
 
+function isValidDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
+}
+
+function isValidTime(value: string): boolean {
+  if (!/^\d{2}:\d{2}$/.test(value)) return false;
+  const [hour, minute] = value.split(":").map(Number);
+  return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
+}
+
 export function validateServiceRequest(input: ServiceRequestInput, today: string): RequestErrors {
   const errors: RequestErrors = {};
   const year = Number(input.year);
   const maximumYear = Number(today.slice(0, 4)) + 1;
 
   if (input.contactName.trim().length < 2) errors.contactName = "Enter the customer name.";
-  if (!mobilePattern.test(input.mobile.trim())) errors.mobile = "Enter a valid sample mobile number.";
+  const mobile = input.mobile.trim();
+  const digitCount = mobile.replace(/\D/g, "").length;
+  if (!mobilePattern.test(mobile) || digitCount < 7 || digitCount > 15) {
+    errors.mobile = "Enter a valid sample mobile number.";
+  }
   if (input.make.trim().length < 2) errors.make = "Enter the vehicle make.";
   if (input.model.trim().length < 1) errors.model = "Enter the vehicle model.";
   if (!Number.isInteger(year) || year < 1980 || year > maximumYear) {
     errors.year = `Enter a model year from 1980 to ${maximumYear}.`;
   }
   if (input.symptoms.trim().length < 10) errors.symptoms = "Describe the symptoms in at least 10 characters.";
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.preferredDate) || input.preferredDate < today) {
+  if (!isValidDate(input.preferredDate) || input.preferredDate < today) {
     errors.preferredDate = "Choose today or a future date.";
   }
-  if (!/^\d{2}:\d{2}$/.test(input.preferredTime)) errors.preferredTime = "Choose a preferred time.";
-  if (input.serviceMode === "expert-visit" && input.visitAddress.trim().length < 5) {
-    errors.visitAddress = "Enter the address for the expert visit.";
+  if (!isValidTime(input.preferredTime)) errors.preferredTime = "Choose a preferred time.";
+  if (input.serviceMode !== "office-dropoff" && input.visitAddress.trim().length < 5) {
+    errors.visitAddress = input.serviceMode === "collection-request"
+      ? "Enter the requested collection address."
+      : "Enter the address for the expert visit.";
   }
   return errors;
 }
@@ -186,7 +209,7 @@ export function submitServiceRequest(
       symptoms: input.symptoms.trim(),
       preferredDate: input.preferredDate,
       preferredTime: input.preferredTime,
-      visitAddress: input.serviceMode === "expert-visit" ? input.visitAddress.trim() : "",
+      visitAddress: input.serviceMode === "office-dropoff" ? "" : input.visitAddress.trim(),
       createdAt: now,
       confirmedAppointment: null,
     },
@@ -206,6 +229,16 @@ export function hasSuccessfulPayment(sampleCase: SampleCase, purpose: PaymentPur
   return sampleCase.payments.some(
     (payment) => payment.purpose === purpose && payment.outcome === "simulated-success",
   );
+}
+
+export function getDisclosedCharge(sampleCase: SampleCase, purpose: PaymentPurpose) {
+  const charge = purpose === "assessment" ? sampleCase.assessment : sampleCase.assessment.investigation;
+  return {
+    label: purpose === "assessment" ? "Illustrative assessment fee" : "Illustrative deeper-investigation fee",
+    scope: charge.scope,
+    amountCents: charge.feeCents,
+    currency: charge.currency,
+  };
 }
 
 export function getCasePhase(sampleCase: SampleCase): CasePhase {
@@ -269,13 +302,16 @@ export function authorizeAssessment(data: DemoData, caseId: string, authorizer: 
 
 export function recordPaymentAttempt(data: DemoData, caseId: string, payment: SimulatedPayment): DemoData {
   return updateCase(data, caseId, (item) => {
+    if (item.assessment.furtherServiceDeclinedAt) {
+      throw new Error("Further service was declined; no new payment attempt can be recorded.");
+    }
     const isAssessment = payment.purpose === "assessment";
     const authorization = isAssessment
       ? item.assessment.authorizedAt
       : item.assessment.investigation.authorizedAt;
-    const expectedCharge = isAssessment ? item.assessment : item.assessment.investigation;
+    const expectedCharge = getDisclosedCharge(item, payment.purpose);
     if (!authorization) throw new Error(`${isAssessment ? "Assessment" : "Investigation"} authorization is required first.`);
-    if (payment.amountCents !== expectedCharge.feeCents || payment.currency !== expectedCharge.currency) {
+    if (payment.amountCents !== expectedCharge.amountCents || payment.currency !== expectedCharge.currency) {
       throw new Error("The sample charge must match the disclosed scope and fee.");
     }
     if (hasSuccessfulPayment(item, payment.purpose)) throw new Error("This sample charge is already paid.");
@@ -317,6 +353,9 @@ export function authorizeDeeperInvestigation(
   now: string,
 ): DemoData {
   return updateCase(data, caseId, (item) => {
+    if (item.assessment.furtherServiceDeclinedAt) {
+      throw new Error("Further service was declined; investigation cannot be authorized.");
+    }
     if (!item.assessment.performedAt || item.assessment.needsInvestigation !== true) {
       throw new Error("The completed assessment must recommend deeper investigation first.");
     }

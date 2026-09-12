@@ -8,6 +8,7 @@ import {
   confirmRequestedAppointment,
   declineFurtherService,
   findCase,
+  getDisclosedCharge,
   recordInitialAssessment,
   recordPaymentAttempt,
   submitServiceRequest,
@@ -73,12 +74,7 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
     function paymentDetails(caseId: string, purpose: PaymentPurpose) {
       const sampleCase = findCase(data, caseId);
       if (!sampleCase) throw new Error("The sample case could not be found.");
-      const charge = purpose === "assessment" ? sampleCase.assessment : sampleCase.assessment.investigation;
-      return {
-        label: purpose === "assessment" ? "Illustrative assessment fee" : "Illustrative deeper-investigation fee",
-        amountCents: charge.feeCents,
-        currency: charge.currency,
-      };
+      return getDisclosedCharge(sampleCase, purpose);
     }
 
     return {

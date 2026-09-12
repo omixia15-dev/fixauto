@@ -60,6 +60,19 @@ test("request validation returns field-specific errors without changing input", 
   assert.equal(invalidInput.make, validInput.make);
 });
 
+test("request validation rejects impossible dates, times, mobiles, and a collection without an address", () => {
+  const errors = validateServiceRequest({
+    ...validInput,
+    mobile: "+-------",
+    preferredDate: "2026-99-99",
+    preferredTime: "99:99",
+    serviceMode: "collection-request",
+    visitAddress: "",
+  }, today);
+  assert.deepEqual(Object.keys(errors).sort(), ["mobile", "preferredDate", "preferredTime", "visitAddress"]);
+  assert.match(errors.visitAddress ?? "", /collection address/);
+});
+
 test("valid submission creates a new pending case and staff confirmation does not authorize it", () => {
   const result = newCase();
   assert.equal(result.sampleCase.reference, "FXA-1002");
@@ -127,6 +140,32 @@ test("declining after assessment preserves earned fee and payment history", () =
   data = declineFurtherService(data, result.sampleCase.id, now);
   assert.equal(getCasePhase(data.cases[1]), "further-service-declined");
   assert.equal(data.cases[1].assessment.feeEarned, true);
+  assert.equal(data.cases[1].assessment.authorizer, "Simulated customer");
+  assert.equal(data.cases[1].assessment.authorizedAt, now);
   assert.equal(data.cases[1].payments[0].outcome, "simulated-success");
   assert.match(data.cases[1].assessment.findings ?? "", /No deeper/);
+});
+
+test("declining a recommended investigation blocks later authorization and payments", () => {
+  const result = newCase();
+  let data = confirmRequestedAppointment(result.data, result.sampleCase.id, "Leila Moradi", now);
+  data = authorizeAssessment(data, result.sampleCase.id, "Simulated customer", now);
+  data = recordPaymentAttempt(data, result.sampleCase.id, payment("assessment", "simulated-success", "pay-1"));
+  data = recordInitialAssessment(data, result.sampleCase.id, {
+    expertName: "Arman Karimi",
+    findings: "Workshop investigation is recommended.",
+    needsInvestigation: true,
+  }, now);
+  data = declineFurtherService(data, result.sampleCase.id, now);
+
+  assert.throws(
+    () => authorizeDeeperInvestigation(data, result.sampleCase.id, "Simulated customer", now),
+    /Further service was declined/,
+  );
+  const forcedAuthorization = structuredClone(data);
+  forcedAuthorization.cases[1].assessment.investigation.authorizedAt = now;
+  assert.throws(
+    () => recordPaymentAttempt(forcedAuthorization, result.sampleCase.id, payment("investigation", "simulated-success", "pay-2")),
+    /Further service was declined/,
+  );
 });

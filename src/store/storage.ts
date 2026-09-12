@@ -64,7 +64,7 @@ function isSampleCase(value: unknown): value is SampleCase {
     typeof value.vehicle.model === "string" &&
     typeof value.vehicle.year === "number" &&
     (value.request.source === "web" || value.request.source === "sample") &&
-    (value.request.serviceMode === "expert-visit" || value.request.serviceMode === "office-dropoff") &&
+    (value.request.serviceMode === "expert-visit" || value.request.serviceMode === "collection-request" || value.request.serviceMode === "office-dropoff") &&
     typeof value.request.preferredDate === "string" &&
     typeof value.request.preferredTime === "string" &&
     typeof value.request.symptoms === "string" &&

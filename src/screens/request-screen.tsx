@@ -28,6 +28,7 @@ export function RequestScreen() {
   const { data, ready, submitRequest } = useDemoCases();
   const [values, setValues] = useState(emptyRequest);
   const [errors, setErrors] = useState<RequestErrors>({});
+  const [formError, setFormError] = useState("");
   const [receipt, setReceipt] = useState<{ caseId: string; reference: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -40,11 +41,15 @@ export function RequestScreen() {
     try {
       const result = submitRequest(values);
       setErrors({});
+      setFormError("");
       setReceipt(result);
     } catch (caught) {
       if (caught instanceof RequestValidationError) {
         setErrors(caught.errors);
+        setFormError("");
         queueMicrotask(() => formRef.current?.querySelector<HTMLElement>("[aria-invalid='true']")?.focus());
+      } else {
+        setFormError(caught instanceof Error ? caught.message : "The sample request could not be created.");
       }
     }
   }
@@ -84,6 +89,7 @@ export function RequestScreen() {
           <span className="status-pill">Staff confirmation required</span>
         </div>
         <p className="helper-text">Every value is fictional. Submitting this form does not create a real booking.</p>
+        {formError ? <p className="error-banner" role="alert">{formError}</p> : null}
         <div className="form-grid">
           <Field label="Contact name" name="contactName" error={error("contactName")}>
             <input id="contactName" value={values.contactName} onChange={(event) => setValue("contactName", event.target.value)} {...inputProps("contactName")} />
@@ -109,6 +115,7 @@ export function RequestScreen() {
           <Field label="Visit type" name="serviceMode">
             <select id="serviceMode" value={values.serviceMode} onChange={(event) => setValue("serviceMode", event.target.value as ServiceRequestInput["serviceMode"])}>
               <option value="expert-visit">Expert visits my address</option>
+              <option value="collection-request">Request collection address review (transport begins in D3)</option>
               <option value="office-dropoff">I will arrange an office drop-off</option>
             </select>
           </Field>
@@ -117,9 +124,9 @@ export function RequestScreen() {
               <textarea id="symptoms" value={values.symptoms} onChange={(event) => setValue("symptoms", event.target.value)} {...inputProps("symptoms")} />
             </Field>
           </div>
-          {values.serviceMode === "expert-visit" ? (
+          {values.serviceMode !== "office-dropoff" ? (
             <div className="full-field">
-              <Field label="Expert-visit address" name="visitAddress" error={error("visitAddress")}>
+              <Field label={values.serviceMode === "collection-request" ? "Requested collection address" : "Expert-visit address"} name="visitAddress" error={error("visitAddress")}>
                 <textarea id="visitAddress" value={values.visitAddress} onChange={(event) => setValue("visitAddress", event.target.value)} {...inputProps("visitAddress")} />
               </Field>
             </div>
