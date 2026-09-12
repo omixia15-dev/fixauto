@@ -1,8 +1,5 @@
-import {
-  cloneInitialDemoData,
-  DEMO_SCHEMA_VERSION,
-  type DemoData,
-} from "../domain/sample-case.ts";
+import { cloneInitialDemoData } from "../demo-data/sample-data.ts";
+import { DEMO_SCHEMA_VERSION, type DemoData } from "../domain/sample-case.ts";
 
 export const DEMO_STORAGE_KEY = "fixauto.demo.sample-cases.v1";
 
@@ -12,10 +9,25 @@ function isDemoData(value: unknown): value is DemoData {
   if (!value || typeof value !== "object") return false;
 
   const candidate = value as Partial<DemoData>;
-  return (
+  if (!(
     candidate.schemaVersion === DEMO_SCHEMA_VERSION &&
     Array.isArray(candidate.cases) &&
     candidate.cases.length > 0
+  )) return false;
+
+  return candidate.cases.every((sampleCase) =>
+    Boolean(
+      sampleCase &&
+      typeof sampleCase.id === "string" &&
+      typeof sampleCase.reference === "string" &&
+      typeof sampleCase.customer?.name === "string" &&
+      typeof sampleCase.vehicle?.make === "string" &&
+      typeof sampleCase.request?.symptoms === "string" &&
+      typeof sampleCase.sharedNote === "string" &&
+      sampleCase.currency === "USD" &&
+      Array.isArray(sampleCase.payments) &&
+      Array.isArray(sampleCase.smsLog),
+    ),
   );
 }
 

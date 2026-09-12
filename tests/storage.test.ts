@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cloneInitialDemoData, updateSharedNote } from "../src/domain/sample-case.ts";
+import { cloneInitialDemoData } from "../src/demo-data/sample-data.ts";
+import { updateSharedNote } from "../src/domain/sample-case.ts";
 import {
   DEMO_STORAGE_KEY,
   loadDemoData,
@@ -51,5 +52,7 @@ test("missing or unreadable data falls back to the sample seed", () => {
 
   storage.setItem(DEMO_STORAGE_KEY, "not json");
   assert.equal(loadDemoData(storage).cases[0].reference, "FXA-1001");
-});
 
+  storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({ schemaVersion: 1, cases: [{}] }));
+  assert.equal(loadDemoData(storage).cases[0].reference, "FXA-1001");
+});

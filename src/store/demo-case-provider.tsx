@@ -9,10 +9,10 @@ import {
   type ReactNode,
 } from "react";
 import {
-  cloneInitialDemoData,
   updateSharedNote,
   type DemoData,
 } from "../domain/sample-case";
+import { cloneInitialDemoData } from "../demo-data/sample-data";
 import { loadDemoData, resetDemoData, saveDemoData } from "./storage";
 
 type DemoCaseContextValue = {

@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  cloneInitialDemoData,
-  initialDemoData,
   updateSharedNote,
 } from "../src/domain/sample-case.ts";
+import {
+  cloneInitialDemoData,
+  initialDemoData,
+} from "../src/demo-data/sample-data.ts";
 import { formatMoney } from "../src/domain/currency.ts";
 
 test("the seed is explicit sample data with a stable case and USD amount", () => {
@@ -35,4 +37,3 @@ test("shared note validation rejects empty, oversized, and unknown-case updates"
   assert.throws(() => updateSharedNote(data, "case-atlas-001", "x".repeat(161)), /1 to 160/);
   assert.throws(() => updateSharedNote(data, "missing", "Valid note"), /could not be found/);
 });
-

@@ -43,3 +43,5 @@ npm run test:e2e
 ```
 
 Playwright requires its Chromium browser and Linux system dependencies. Paid-launch readiness still requires the separately documented evidence.
+
+The recorded D1 runtime is Node 24.19.0 (see `.nvmrc`).
