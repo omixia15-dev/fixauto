@@ -167,7 +167,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
             </div>
           ) : null}
           {phase === "investigation-funded" ? <p className="success-message">Separate investigation is authorized and funded. Transport remains D3.</p> : null}
-          {phase !== "further-service-declined" && phase !== "investigation-funded" ? (
+          {phase !== "further-service-declined" && (phase === "assessment-complete" || phase === "investigation-authorization-required" || phase === "investigation-payment-required") ? (
             <button className="button button-danger" type="button" onClick={() => run(() => actions.declineService(caseId))}>
               Decline further service
             </button>

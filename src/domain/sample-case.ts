@@ -26,7 +26,7 @@ export type ServiceMode = "expert-visit" | "collection-request" | "office-dropof
 
 export type TransportPlanKind = "not-required" | "standard-collection" | "private-parking-exception";
 export type TransportPath = "drive" | "tow";
-export type VehicleActivity = "idle" | "custody" | "service";
+export type VehicleActivity = "idle" | "custody";
 
 export type QualifiedTransportDecision = {
   qualifiedInputName: string;
@@ -139,6 +139,8 @@ export type ServiceRequestInput = {
   visitAddress: string;
 };
 
+export type TransportPlanningInput = Pick<ServiceRequestInput, "mobile" | "preferredDate" | "serviceMode">;
+
 export type RequestField = keyof ServiceRequestInput;
 export type RequestErrors = Partial<Record<RequestField, string>>;
 
@@ -214,7 +216,7 @@ function isNewCustomer(data: DemoData, mobile: string): boolean {
   return !data.cases.some((item) => item.customer.mobile === mobile.trim());
 }
 
-function isPrivateParkingException(data: DemoData, input: ServiceRequestInput): boolean {
+function isPrivateParkingException(data: DemoData, input: TransportPlanningInput): boolean {
   if (input.serviceMode !== "collection-request" || !isNewCustomer(data, input.mobile)) return false;
   const day = dateDayOfWeek(input.preferredDate);
   return day === 4 || day === 5;
@@ -222,7 +224,7 @@ function isPrivateParkingException(data: DemoData, input: ServiceRequestInput): 
 
 export function createPendingTransport(
   data: DemoData,
-  input: ServiceRequestInput,
+  input: TransportPlanningInput,
 ): TransportPlan {
   if (input.serviceMode === "office-dropoff" || input.serviceMode === "expert-visit") {
     return {
@@ -366,22 +368,38 @@ export function hasSuccessfulPayment(sampleCase: SampleCase, purpose: PaymentPur
   );
 }
 
-export function getDisclosedCharge(sampleCase: SampleCase, purpose: PaymentPurpose) {
-  if (purpose === "transport-storage") {
-    return {
-      label: "Illustrative transport and storage fees",
-      scope: sampleCase.transport.scope,
-      amountCents: sampleCase.transport.transportFeeCents + sampleCase.transport.storageFeeCents,
-      currency: sampleCase.transport.currency,
-    };
+function getPaymentRequirement(sampleCase: SampleCase, purpose: PaymentPurpose) {
+  switch (purpose) {
+    case "transport-storage":
+      return {
+        label: "Illustrative transport and storage fees",
+        scope: sampleCase.transport.scope,
+        amountCents: sampleCase.transport.transportFeeCents + sampleCase.transport.storageFeeCents,
+        currency: sampleCase.transport.currency,
+        authorizedAt: sampleCase.transport.authorizedAt,
+      };
+    case "assessment":
+      return {
+        label: "Illustrative assessment fee",
+        scope: sampleCase.assessment.scope,
+        amountCents: sampleCase.assessment.feeCents,
+        currency: sampleCase.assessment.currency,
+        authorizedAt: sampleCase.assessment.authorizedAt,
+      };
+    case "investigation":
+      return {
+        label: "Illustrative deeper-investigation fee",
+        scope: sampleCase.assessment.investigation.scope,
+        amountCents: sampleCase.assessment.investigation.feeCents,
+        currency: sampleCase.assessment.investigation.currency,
+        authorizedAt: sampleCase.assessment.investigation.authorizedAt,
+      };
   }
-  const charge = purpose === "assessment" ? sampleCase.assessment : sampleCase.assessment.investigation;
-  return {
-    label: purpose === "assessment" ? "Illustrative assessment fee" : "Illustrative deeper-investigation fee",
-    scope: charge.scope,
-    amountCents: charge.feeCents,
-    currency: charge.currency,
-  };
+}
+
+export function getDisclosedCharge(sampleCase: SampleCase, purpose: PaymentPurpose) {
+  const charge = getPaymentRequirement(sampleCase, purpose);
+  return { label: charge.label, scope: charge.scope, amountCents: charge.amountCents, currency: charge.currency };
 }
 
 export function occupiesActiveSlot(sampleCase: SampleCase): boolean {
@@ -471,14 +489,10 @@ export function recordPaymentAttempt(data: DemoData, caseId: string, payment: Si
     if (item.assessment.furtherServiceDeclinedAt) {
       throw new Error("Further service was declined; no new payment attempt can be recorded.");
     }
-    const isTransport = payment.purpose === "transport-storage";
-    const isAssessment = payment.purpose === "assessment";
-    const authorization = isTransport
-      ? item.transport.authorizedAt
-      : isAssessment ? item.assessment.authorizedAt : item.assessment.investigation.authorizedAt;
-    const expectedCharge = getDisclosedCharge(item, payment.purpose);
-    if (!authorization) throw new Error(`${isTransport ? "Transport and storage" : isAssessment ? "Assessment" : "Investigation"} authorization is required first.`);
-    if (payment.amountCents !== expectedCharge.amountCents || payment.currency !== expectedCharge.currency) {
+    const requirement = getPaymentRequirement(item, payment.purpose);
+    const paymentName = payment.purpose === "transport-storage" ? "Transport and storage" : payment.purpose === "assessment" ? "Assessment" : "Investigation";
+    if (!requirement.authorizedAt) throw new Error(`${paymentName} authorization is required first.`);
+    if (payment.amountCents !== requirement.amountCents || payment.currency !== requirement.currency) {
       throw new Error("The sample charge must match the disclosed scope and fee.");
     }
     if (hasSuccessfulPayment(item, payment.purpose)) throw new Error("This sample charge is already paid.");
@@ -565,6 +579,9 @@ export function recordCustodyHandover(
   return updateCase(data, caseId, (item) => {
     if (!item.transport.dispatchedAt) throw new Error("Dispatch the sample vehicle before recording custody handover.");
     if (item.transport.handover) throw new Error("Custody handover is already recorded.");
+    if (!item.transport.receiver || input.receiverName.trim() !== item.transport.receiver.name) {
+      throw new Error("Custody handover receiver must match the assigned receiver.");
+    }
     if (input.receiverName.trim().length < 2 || input.condition.trim().length < 5 || input.keys.trim().length < 2) throw new Error("Record receiver, condition, and keys before handover.");
     if (!Number.isFinite(input.mileage) || input.mileage < 0) throw new Error("Enter a non-negative sample mileage.");
     return { ...item, transport: { ...item.transport, handover: { ...input, receiverName: input.receiverName.trim(), condition: input.condition.trim(), keys: input.keys.trim(), destination: input.destination.trim(), receivedAt: now } } };
@@ -638,6 +655,9 @@ export function declineFurtherService(data: DemoData, caseId: string, now: strin
       throw new Error("The initial assessment must be recorded before further service can be declined.");
     }
     if (item.assessment.furtherServiceDeclinedAt) throw new Error("Further service is already declined.");
+    if (item.transport.activity === "custody" && !item.transport.returnedAt) {
+      throw new Error("Record the simulated vehicle return before declining further service.");
+    }
     if (hasSuccessfulPayment(item, "investigation")) {
       throw new Error("A funded investigation cannot be closed in the D2 sample workflow.");
     }

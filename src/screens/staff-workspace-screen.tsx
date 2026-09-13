@@ -50,7 +50,7 @@ export function StaffWorkspaceScreen() {
           <h1>Request and assessment queue</h1>
           <p className="lede">Confirm requests and record an assessment only after separate consent and payment.</p>
         </div>
-        <div className="capacity-card"><span>Active car capacity</span><strong>{getActiveCarCount(actions.data)} / 1</strong><small>{getActiveOccupant(actions.data, sampleCase.id)?.reference ? `Occupied by ${getActiveOccupant(actions.data, sampleCase.id)?.reference}.` : "Parked and dispatched sample vehicles count."}</small></div>
+        <div className="capacity-card"><span>Active car capacity</span><strong>{getActiveCarCount(actions.data)} / 1</strong><small>{getActiveOccupant(actions.data)?.reference ? `Occupied by ${getActiveOccupant(actions.data)?.reference}.` : "Parked and dispatched sample vehicles count."}</small></div>
       </section>
       {actionError ? <p className="error-banner" role="alert">{actionError}</p> : null}
       <div className="workspace-grid">

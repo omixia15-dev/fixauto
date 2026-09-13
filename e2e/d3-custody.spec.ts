@@ -1,20 +1,24 @@
 import { expect, test, type Page } from "@playwright/test";
 
 function nextMonday(): string {
+  return nextWeekday(1);
+}
+
+function nextWeekday(targetDay: number): string {
   const date = new Date();
-  const daysUntilMonday = (8 - date.getDay()) % 7 || 7;
-  date.setDate(date.getDate() + daysUntilMonday);
+  const daysAhead = (targetDay - date.getDay() + 7) % 7 || 7;
+  date.setDate(date.getDate() + daysAhead);
   return date.toISOString().slice(0, 10);
 }
 
-async function createCollection(page: Page, suffix = "2") {
+async function createCollection(page: Page, suffix = "2", preferredDate = nextMonday()) {
   await page.goto("/");
   await page.getByLabel("Contact name").fill(`Niloofar Karimi ${suffix}`);
   await page.getByLabel("Mobile number").fill(`+98 900 777 010${suffix}`);
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Model", { exact: true }).fill("Sportage");
   await page.getByLabel("Year").fill("2022");
-  await page.getByLabel("Preferred date").fill(nextMonday());
+  await page.getByLabel("Preferred date").fill(preferredDate);
   await page.getByLabel("Preferred time").fill("10:30");
   await page.getByLabel("Visit type").selectOption("collection-request");
   await page.getByLabel("Requested collection address").fill("Sample Boulevard, Kerman");
@@ -81,4 +85,11 @@ test("collection custody uses separate payment, records handover, blocks capacit
   await expect(page.getByRole("button", { name: "Record simulated vehicle return" })).toBeVisible();
   await page.getByRole("button", { name: "Record simulated vehicle return" }).click();
   await expect(page.getByText("0 / 1")).toBeVisible();
+});
+
+test("new Thursday collection discloses private parking and Saturday assessment timing", async ({ page }) => {
+  const thursday = nextWeekday(4);
+  await createCollection(page, "4", thursday);
+  await expect(page.getByText("Destination: Designated Fixauto private parking", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Private-parking exception: assessment cannot begin before/)).toBeVisible();
 });

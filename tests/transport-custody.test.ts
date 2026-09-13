@@ -76,6 +76,13 @@ test("collection transport has an independent payment gate and custody handover"
   data = assignCustodyReceiver(data, created.sampleCase.id, { name: "Reza Ahmadi", relation: "brother-in-law" }, "Leila Moradi", "2026-09-13T08:00:00.000Z");
   assert.equal(data.cases[1].transport.receiver?.authority, "custody-only");
   data = dispatchVehicle(data, created.sampleCase.id, "2026-09-13T08:00:00.000Z");
+  assert.throws(() => recordCustodyHandover(data, created.sampleCase.id, {
+    receiverName: "Different person",
+    condition: "Front bumper intact; warning light noted.",
+    mileage: 81234,
+    keys: "One ignition key and one remote.",
+    destination: "Simulated Fixauto destination",
+  }, "2026-09-13T08:00:00.000Z"), /must match the assigned receiver/);
   assert.equal(getActiveCarCount(data), 1);
   data = recordCustodyHandover(data, created.sampleCase.id, {
     receiverName: "Reza Ahmadi",
@@ -100,6 +107,10 @@ test("collection transport has an independent payment gate and custody handover"
 
   data = recordVehicleReturned(data, created.sampleCase.id, "2026-09-14T08:00:00.000Z");
   assert.equal(getActiveCarCount(data), 0);
+  const releasedSecondData = secondData.cases.map((item) => item.id === created.sampleCase.id ? data.cases[1] : item);
+  secondData = { ...secondData, cases: releasedSecondData };
+  secondData = dispatchVehicle(secondData, second.sampleCase.id, "2026-09-14T09:00:00.000Z");
+  assert.equal(getActiveCarCount(secondData), 1);
 });
 
 test("Thursday-Friday new-customer collection is tow-only and Saturday-gated", () => {
