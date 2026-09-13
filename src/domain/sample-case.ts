@@ -1,4 +1,4 @@
-export const DEMO_SCHEMA_VERSION = 5 as const;
+export const DEMO_SCHEMA_VERSION = 6 as const;
 
 export type CurrencyCode = "USD";
 export type PaymentPurpose = "assessment" | "investigation" | "transport-storage" | "repair-advance";
@@ -94,6 +94,8 @@ export type SimulatedSms = {
   nextAction: string;
   expectedTiming: string;
   simulated: true;
+  summaryDate?: string;
+  nonWorkingDay?: boolean;
 };
 
 export type ServiceMode = "expert-visit" | "collection-request" | "office-dropoff";
@@ -1086,4 +1088,11 @@ export function updateSharedNote(data: DemoData, caseId: string, sharedNote: str
     throw new Error("The sample note must contain 1 to 160 characters.");
   }
   return updateCase(data, caseId, (item) => ({ ...item, sharedNote: normalizedNote }));
+}
+
+export function recordDailySummary(data: DemoData, caseId: string, input: { situation: string; nextAction: string; expectedTiming: string; summaryDate: string; nonWorkingDay: boolean }): DemoData {
+  return updateCase(data, caseId, (item) => {
+    if (input.situation.trim().length < 5 || input.nextAction.trim().length < 5 || input.expectedTiming.trim().length < 2 || !isValidDate(input.summaryDate)) throw new Error("Record the daily situation, next action, expected timing, and date.");
+    return { ...item, smsLog: [...item.smsLog, { id: `sms-${crypto.randomUUID()}`, situation: input.situation.trim(), nextAction: input.nextAction.trim(), expectedTiming: input.expectedTiming.trim(), summaryDate: input.summaryDate, nonWorkingDay: input.nonWorkingDay, simulated: true }] };
+  });
 }

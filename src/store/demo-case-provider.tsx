@@ -24,6 +24,7 @@ import {
   recordReturn,
   openComplaint,
   authorizeComplaintSecondAssessment,
+  recordDailySummary,
   getCurrentEstimate,
   getOutstandingAdvance,
   dispatchVehicle,
@@ -83,6 +84,7 @@ type DemoCaseContextValue = {
   returnVehicle: (caseId: string, input: Omit<ReturnRecord, "id" | "estimateVersionId" | "returnedAt">) => void;
   openComplaint: (caseId: string, summary: string) => void;
   authorizeSecondAssessment: (caseId: string) => void;
+  addDailySummary: (caseId: string, input: { situation: string; nextAction: string; expectedTiming: string; summaryDate: string; nonWorkingDay: boolean }) => void;
   saveSharedNote: (caseId: string, note: string) => void;
   reset: () => void;
 };
@@ -288,6 +290,9 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
       },
       authorizeSecondAssessment(caseId) {
         commit(authorizeComplaintSecondAssessment(data, caseId, new Date().toISOString()), "A separate no-charge second-assessment review was explicitly authorized.");
+      },
+      addDailySummary(caseId, input) {
+        commit(recordDailySummary(data, caseId, input), "Simulated daily summary recorded; workflow consent and payment state did not change.");
       },
       saveSharedNote(caseId, note) {
         commit(updateSharedNote(data, caseId, note), "Sample note saved across all demo screens.");

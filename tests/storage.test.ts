@@ -53,7 +53,7 @@ test("schema-one D1 data migrates without losing its case identity or shared not
   }));
 
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.equal(migrated.cases[0].reference, "FXA-1001");
   assert.equal(migrated.cases[0].sharedNote, "Keep my D1 note");
   assert.equal(migrated.cases[0].assessment.authorizedAt, null);
@@ -69,7 +69,7 @@ test("schema-two D2 data migrates while preserving payment history", () => {
     cases: [{ ...d2.cases[0], payments: [{ id: "pay-1", purpose: "assessment", label: "Assessment", amountCents: 4500, currency: "USD", outcome: "simulated-success", attemptedAt: "2026-09-13T08:00:00.000Z", estimateVersionId: null }] }],
   }));
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.equal(migrated.cases[0].payments[0].id, "pay-1");
   assert.equal(migrated.cases[0].transport.kind, "not-required");
 });
@@ -84,7 +84,7 @@ test("schema-three D3 data migrates transport history into the D4 estimate schem
     cases: [{ ...d3.cases[0], payments: [legacyPayment] }],
   }));
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.equal(migrated.cases[0].payments[0].estimateVersionId, null);
   assert.deepEqual(migrated.cases[0].estimates, []);
   assert.equal(migrated.cases[0].transport.kind, d3.cases[0].transport.kind);
@@ -96,9 +96,19 @@ test("schema-four D4 data migrates while preserving estimate history", () => {
   const estimate = { id: "estimate-1", version: 1, expectedTiming: "3 days", lines: [], totalCents: 0, currency: "USD", publishedAt: "2026-09-13T08:00:00.000Z", publishedBy: "Staff" };
   storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({ ...d4, schemaVersion: 4, cases: [{ ...d4.cases[0], estimates: [estimate], estimateDecisions: [], estimateReminders: [], advanceCreditAllocations: [], authorizedIncurredCosts: [], estimateRefunds: [] }] }));
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.equal(migrated.cases[0].estimates[0].id, "estimate-1");
   assert.deepEqual(migrated.cases[0].qualityChecks, []);
+});
+
+test("schema-five D5 data migrates while preserving summaries", () => {
+  const storage = new MemoryStorage();
+  const d5 = cloneInitialDemoData();
+  storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({ ...d5, schemaVersion: 5 }));
+  const migrated = loadDemoData(storage);
+  assert.equal(migrated.schemaVersion, 6);
+  assert.equal(migrated.cases[0].smsLog[0].nonWorkingDay, false);
+  assert.equal(migrated.cases[0].smsLog[0].summaryDate, undefined);
 });
 
 test("reset replaces only the Fixauto key and preserves unrelated browser data", () => {

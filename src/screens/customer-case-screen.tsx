@@ -61,6 +61,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
       </section>
       {actionError ? <p className="error-banner" role="alert">{actionError}</p> : null}
       <CaseSummary sampleCase={sampleCase} />
+      <section className="card" aria-labelledby="sms-log-title"><div className="section-heading"><h2 id="sms-log-title">Daily simulated updates</h2><SimulationBadge>SMS log</SimulationBadge></div>{sampleCase.smsLog.length === 0 ? <p className="helper-text">No daily summaries recorded.</p> : <ol className="history-list">{sampleCase.smsLog.map((sms) => <li key={sms.id}><strong>{sms.summaryDate ?? "Recorded update"}{sms.nonWorkingDay ? " · non-working day" : ""}</strong><span>{sms.situation}</span><span>Next: {sms.nextAction} · {sms.expectedTiming}</span></li>)}</ol>}<p className="helper-text">These updates never authorize work, charges, consent, or custody changes.</p></section>
 
       {sampleCase.transport.kind !== "not-required" ? (
         <section className="card" aria-labelledby="transport-title">
