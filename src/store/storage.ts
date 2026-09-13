@@ -68,6 +68,10 @@ function isEstimateRefund(value: unknown): boolean {
   return isRecord(value) && typeof value.id === "string" && typeof value.estimateVersionId === "string" && typeof value.fundedCents === "number" && typeof value.authorizedIncurredCents === "number" && typeof value.unspentCents === "number" && value.currency === "USD" && typeof value.processedAt === "string" && value.simulated === true;
 }
 
+function isD5Record(value: unknown): boolean {
+  return isRecord(value) && typeof value.id === "string" && typeof value.estimateVersionId === "string";
+}
+
 function isTransport(value: unknown): boolean {
   if (!isRecord(value) || !isRecord(value.qualifiedDecision) && value.qualifiedDecision !== null || !isRecord(value.receiver) && value.receiver !== null || !isRecord(value.handover) && value.handover !== null) return false;
   const decision = value.qualifiedDecision;
@@ -179,6 +183,14 @@ function isSampleCase(value: unknown): value is SampleCase {
     && Array.isArray(value.advanceCreditAllocations) && value.advanceCreditAllocations.every(isAdvanceCreditAllocation)
     && Array.isArray(value.authorizedIncurredCosts) && value.authorizedIncurredCosts.every(isAuthorizedIncurredCost)
     && Array.isArray(value.estimateRefunds) && value.estimateRefunds.every(isEstimateRefund)
+    && Array.isArray(value.performedWork) && value.performedWork.every(isD5Record)
+    && Array.isArray(value.qualityChecks) && value.qualityChecks.every(isD5Record)
+    && Array.isArray(value.settlements) && value.settlements.every(isD5Record)
+    && Array.isArray(value.finalPayments) && value.finalPayments.every(isD5Record)
+    && Array.isArray(value.invoices) && value.invoices.every(isD5Record)
+    && Array.isArray(value.warranties) && value.warranties.every(isD5Record)
+    && Array.isArray(value.returns) && value.returns.every(isD5Record)
+    && Array.isArray(value.complaints) && value.complaints.every(isD5Record)
   );
 }
 
@@ -273,10 +285,19 @@ function migrateVersionThree(value: unknown): DemoData | null {
   return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
 }
 
+function migrateVersionFour(value: unknown): DemoData | null {
+  if (!isRecord(value) || value.schemaVersion !== 4 || !Array.isArray(value.cases)) return null;
+  const migratedCases = value.cases.flatMap((legacy): SampleCase[] => {
+    if (!isRecord(legacy) || !isSampleCase({ ...legacy, performedWork: [], qualityChecks: [], settlements: [], finalPayments: [], invoices: [], warranties: [], returns: [], complaints: [] })) return [];
+    return [{ ...(legacy as Record<string, unknown>), performedWork: [], qualityChecks: [], settlements: [], finalPayments: [], invoices: [], warranties: [], returns: [], complaints: [] } as unknown as SampleCase];
+  });
+  return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
+}
+
 function parseStored(stored: string): DemoData | null {
   try {
     const parsed: unknown = JSON.parse(stored);
-    return isDemoData(parsed) ? parsed : migrateVersionThree(parsed) ?? migrateVersionTwo(parsed) ?? migrateVersionOne(parsed);
+    return isDemoData(parsed) ? parsed : migrateVersionFour(parsed) ?? migrateVersionThree(parsed) ?? migrateVersionTwo(parsed) ?? migrateVersionOne(parsed);
   } catch {
     return null;
   }

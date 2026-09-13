@@ -16,6 +16,14 @@ import {
   applyAdvanceCredit,
   recordAuthorizedIncurredCost,
   refundUnspentAdvance,
+  recordPerformedWork,
+  recordQualityCheck,
+  recordSettlement,
+  recordFinalPayment,
+  issueRecords,
+  recordReturn,
+  openComplaint,
+  authorizeComplaintSecondAssessment,
   getCurrentEstimate,
   getOutstandingAdvance,
   dispatchVehicle,
@@ -33,6 +41,7 @@ import {
   type PaymentPurpose,
   type ServiceRequestInput,
   type EstimateLineInput,
+  type ReturnRecord,
 } from "../domain/sample-case";
 import { loadDemoData, resetDemoData, saveDemoData } from "./storage";
 
@@ -66,6 +75,14 @@ type DemoCaseContextValue = {
   applyAdvanceCredit: (caseId: string, amountCents: number) => void;
   recordIncurredCost: (caseId: string, input: IncurredCostInput) => void;
   refundEstimate: (caseId: string, estimateVersionId: string) => void;
+  recordWork: (caseId: string, summary: string, specialist: string) => void;
+  recordQuality: (caseId: string, input: { specialist: string; result: "passed" | "failed"; findings: string }) => void;
+  settle: (caseId: string) => void;
+  attemptFinalPayment: (caseId: string, outcome: PaymentOutcome) => void;
+  issueRecords: (caseId: string) => void;
+  returnVehicle: (caseId: string, input: Omit<ReturnRecord, "id" | "estimateVersionId" | "returnedAt">) => void;
+  openComplaint: (caseId: string, summary: string) => void;
+  authorizeSecondAssessment: (caseId: string) => void;
   saveSharedNote: (caseId: string, note: string) => void;
   reset: () => void;
 };
@@ -237,6 +254,40 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
       },
       refundEstimate(caseId, estimateVersionId) {
         commit(refundUnspentAdvance(data, caseId, estimateVersionId, new Date().toISOString()), "Simulated refund recorded for unspent advance after authorized costs.");
+      },
+      recordWork(caseId, summary, specialist) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(recordPerformedWork(data, caseId, estimate.id, summary, specialist, new Date().toISOString()), "Performed work recorded; quality check is still required.");
+      },
+      recordQuality(caseId, input) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(recordQualityCheck(data, caseId, estimate.id, input, new Date().toISOString()), input.result === "passed" ? "Current quality check passed." : "Quality check failed; repair remains open for reassessment.");
+      },
+      settle(caseId) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(recordSettlement(data, caseId, estimate.id, "Fixauto coordinator", new Date().toISOString()), "Illustrative settlement recorded.");
+      },
+      attemptFinalPayment(caseId, outcome) {
+        const sampleCase = findCase(data, caseId);
+        const estimate = sampleCase && getCurrentEstimate(sampleCase);
+        const settlement = estimate && sampleCase?.settlements.findLast((entry) => entry.estimateVersionId === estimate.id);
+        if (!estimate || !settlement) throw new Error("Settlement is required before final payment.");
+        commit(recordFinalPayment(data, caseId, { id: `final-${crypto.randomUUID()}`, estimateVersionId: estimate.id, amountCents: settlement.outstandingCents, currency: "USD", outcome, attemptedAt: new Date().toISOString() }), outcome === "simulated-success" ? "Simulated final payment succeeded." : "Simulated final payment did not clear the balance.");
+      },
+      issueRecords(caseId) {
+        commit(issueRecords(data, caseId, new Date().toISOString()), "Illustrative invoice and warranty records issued.");
+      },
+      returnVehicle(caseId, input) {
+        commit(recordReturn(data, caseId, input, new Date().toISOString()), "Vehicle return recorded; warranty and complaint rights remain open.");
+      },
+      openComplaint(caseId, summary) {
+        commit(openComplaint(data, caseId, summary, "Fixauto coordinator", new Date().toISOString()), "Complaint review opened without authorizing new work or charges.");
+      },
+      authorizeSecondAssessment(caseId) {
+        commit(authorizeComplaintSecondAssessment(data, caseId, new Date().toISOString()), "A separate no-charge second-assessment review was explicitly authorized.");
       },
       saveSharedNote(caseId, note) {
         commit(updateSharedNote(data, caseId, note), "Sample note saved across all demo screens.");

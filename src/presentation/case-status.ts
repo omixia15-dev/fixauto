@@ -111,6 +111,13 @@ const phasePresentation = {
     nextAction: "Staff preserves the estimate and payment history.",
     timing: "No repair is authorized",
   },
+  "quality-check-required": { status: "Repair recorded — quality check required", nextAction: "Staff records the specialist quality check.", timing: "Before settlement or return" },
+  "quality-recheck-required": { status: "Quality check failed — reassessment required", nextAction: "Staff records a new current quality check.", timing: "Return remains blocked" },
+  "settlement-required": { status: "Quality passed — settlement required", nextAction: "Staff records the illustrative settlement.", timing: "Before return" },
+  "settlement-payment-required": { status: "Settlement balance due", nextAction: "Customer completes the matching final payment.", timing: "Before return" },
+  "return-required": { status: "Settled — return details required", nextAction: "Staff records the owner or expressly authorized recipient and vehicle condition.", timing: "Return remains separate from warranty" },
+  "completed": { status: "Repair completed and returned", nextAction: "Complaint review remains available if needed.", timing: "Warranty rights remain open" },
+  "complaint-review": { status: "Complaint review open", nextAction: "Coordinator records review history; no work or charge is authorized automatically.", timing: "Separate assessment consent remains required" },
 } as const;
 
 export function getCasePresentation(sampleCase: SampleCase) {
