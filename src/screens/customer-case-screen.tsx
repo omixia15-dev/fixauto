@@ -61,6 +61,46 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
       {actionError ? <p className="error-banner" role="alert">{actionError}</p> : null}
       <CaseSummary sampleCase={sampleCase} />
 
+      {sampleCase.transport.kind !== "not-required" ? (
+        <section className="card" aria-labelledby="transport-title">
+          <div className="section-heading">
+            <div><p className="eyebrow">Separate custody scope</p><h2 id="transport-title">Transport and storage</h2></div>
+            <SimulationBadge>transport and payment</SimulationBadge>
+          </div>
+          <p>{sampleCase.transport.scope}</p>
+          <p><strong>Destination:</strong> {sampleCase.transport.destination}</p>
+          {sampleCase.transport.assessmentEarliestDate ? (
+            <p className="blocked-reason">Private-parking exception: assessment cannot begin before {sampleCase.transport.assessmentEarliestDate}.</p>
+          ) : null}
+          <p className="price-line">
+            <strong>{formatMoney(sampleCase.transport.transportFeeCents, sampleCase.transport.currency)} USD transport</strong>
+            <span>{formatMoney(sampleCase.transport.storageFeeCents, sampleCase.transport.currency)} USD illustrative storage · separate from assessment</span>
+          </p>
+          {phase === "transport-authorization-required" ? (
+            <button className="button" type="button" onClick={() => run(() => actions.authorizeTransport(caseId))}>
+              Authorize transport and storage
+            </button>
+          ) : null}
+          {phase === "transport-payment-required" ? paymentButtons("transport-storage") : null}
+          {phase === "transport-decision-required" ? <p className="blocked-reason">Staff must record qualified drive-or-tow input before dispatch.</p> : null}
+          {phase === "transport-receiver-required" ? <p className="blocked-reason">Staff must assign one custody-only receiver before dispatch.</p> : null}
+          {phase === "transport-ready" ? <p className="success-message">Transport and storage are authorized and paid; staff may record simulated dispatch.</p> : null}
+          {phase === "custody-handover-required" ? <p className="blocked-reason">Dispatch is recorded. Staff must record the simulated custody handover.</p> : null}
+          {sampleCase.transport.qualifiedDecision ? <p className="history-line">Qualified route: {sampleCase.transport.qualifiedDecision.path} ({sampleCase.transport.qualifiedDecision.suitability}).</p> : null}
+          {sampleCase.transport.receiver ? <p className="history-line">Custody receiver: {sampleCase.transport.receiver.name} ({sampleCase.transport.receiver.relation}); custody-only authority.</p> : null}
+          {sampleCase.transport.handover ? (
+            <div className="nested-panel">
+              <strong>Custody handover recorded</strong>
+              <p>{sampleCase.transport.handover.condition} · {sampleCase.transport.handover.mileage} km · {sampleCase.transport.handover.keys}</p>
+              <p>Destination: {sampleCase.transport.handover.destination}</p>
+              <p>Receiving the vehicle does not authorize repairs or spending.</p>
+            </div>
+          ) : null}
+          {phase === "custody-return-required" ? <p className="blocked-reason">The assessment is complete; staff must record simulated return to release active capacity.</p> : null}
+          {sampleCase.transport.returnedAt ? <p className="success-message">Simulated return recorded; this case no longer occupies active-car capacity.</p> : null}
+        </section>
+      ) : null}
+
       <div className="content-grid">
         <section className="card" aria-labelledby="assessment-title">
           <div className="section-heading">
@@ -127,7 +167,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
             </div>
           ) : null}
           {phase === "investigation-funded" ? <p className="success-message">Separate investigation is authorized and funded. Transport remains D3.</p> : null}
-          {phase !== "further-service-declined" && phase !== "investigation-funded" ? (
+          {phase !== "further-service-declined" && (phase === "assessment-complete" || phase === "investigation-authorization-required" || phase === "investigation-payment-required") ? (
             <button className="button button-danger" type="button" onClick={() => run(() => actions.declineService(caseId))}>
               Decline further service
             </button>

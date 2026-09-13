@@ -12,11 +12,12 @@ import { formatMoney } from "../src/domain/currency.ts";
 test("the seed is explicit sample data with a stable case and USD amount", () => {
   const sampleCase = initialDemoData.cases[0];
 
-  assert.equal(initialDemoData.schemaVersion, 2);
+  assert.equal(initialDemoData.schemaVersion, 3);
   assert.equal(sampleCase.id, "case-atlas-001");
   assert.equal(sampleCase.reference, "FXA-1001");
   assert.equal(sampleCase.assessment.currency, "USD");
   assert.equal(sampleCase.payments.length, 0);
+  assert.equal(sampleCase.transport.kind, "not-required");
   assert.equal(sampleCase.smsLog[0].simulated, true);
   assert.equal(formatMoney(sampleCase.assessment.feeCents, "USD"), "$45.00");
 });
