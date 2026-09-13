@@ -73,7 +73,7 @@ function isTransport(value: unknown): boolean {
     isNullableString(value.dispatchedAt) &&
     isNullableString(value.returnedAt) &&
     isNullableString(value.assessmentEarliestDate) &&
-    (value.activity === "idle" || value.activity === "custody" || value.activity === "service")
+    (value.activity === "idle" || value.activity === "custody")
   );
 }
 
@@ -187,16 +187,9 @@ function migrateVersionOne(value: unknown): DemoData | null {
       },
       assessment: createPendingAssessment(),
       transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, {
-        contactName: legacy.customer.name,
         mobile: legacy.customer.mobile,
-        make: legacy.vehicle.make,
-        model: legacy.vehicle.model,
-        year: String(legacy.vehicle.year),
-        symptoms: legacy.request.symptoms,
         preferredDate: "2027-01-10",
-        preferredTime: "10:00",
         serviceMode: "expert-visit",
-        visitAddress: typeof legacy.request.visitAddress === "string" ? legacy.request.visitAddress : "Sample address, Kerman",
       }),
       sharedNote: typeof legacy.sharedNote === "string" ? legacy.sharedNote : "Migrated D1 sample case.",
       payments: [],
@@ -219,16 +212,9 @@ function migrateVersionTwo(value: unknown): DemoData | null {
     if (!Array.isArray(legacy.payments) || !legacy.payments.every(isPayment) || !Array.isArray(legacy.smsLog) || !legacy.smsLog.every(isSms)) return [];
     const mode = legacy.request.serviceMode === "collection-request" || legacy.request.serviceMode === "office-dropoff" ? legacy.request.serviceMode : "expert-visit";
     const input = {
-      contactName: legacy.customer.name,
       mobile: legacy.customer.mobile,
-      make: legacy.vehicle.make,
-      model: legacy.vehicle.model,
-      year: String(legacy.vehicle.year),
-      symptoms: typeof legacy.request.symptoms === "string" ? legacy.request.symptoms : "Migrated D2 sample request.",
       preferredDate: typeof legacy.request.preferredDate === "string" ? legacy.request.preferredDate : "2027-01-10",
-      preferredTime: typeof legacy.request.preferredTime === "string" ? legacy.request.preferredTime : "10:00",
       serviceMode: mode,
-      visitAddress: typeof legacy.request.visitAddress === "string" ? legacy.request.visitAddress : "Sample address, Kerman",
     } as const;
     return [{ ...legacy, request: { ...legacy.request, serviceMode: mode }, transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, input) } as SampleCase];
   });
