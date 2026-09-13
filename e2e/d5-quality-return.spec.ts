@@ -32,10 +32,11 @@ test("quality failure blocks return until reassessment passes", async ({ page })
   await page.getByRole("button", { name: "Record performed work" }).click();
   await page.getByLabel("Result").selectOption("failed");
   await page.getByRole("button", { name: "Record quality check" }).click();
-  await expect(page.getByText(/quality check failed/i)).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("Quality check failed");
+  await page.getByRole("button", { name: "Record performed work" }).click();
   await page.getByLabel("Result").selectOption("passed");
   await page.getByRole("button", { name: "Record quality check" }).click();
   await page.getByRole("button", { name: "Record illustrative settlement" }).click();
   await page.getByRole("button", { name: "Record vehicle return" }).click();
-  await expect(page.getByText(/Returned to D5 Browser Customer/)).toBeVisible();
+  await expect(page.locator("span.status-pill").filter({ hasText: "Repair completed and returned" })).toBeVisible();
 });

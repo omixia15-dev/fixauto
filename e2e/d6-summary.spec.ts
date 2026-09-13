@@ -11,12 +11,13 @@ test("daily summaries are shared, simulated, and non-authorizing", async ({ page
   await page.getByLabel("Non-working day while vehicle is held").check();
   await page.getByRole("button", { name: "Add simulated summary" }).click();
   await page.getByRole("link", { name: "Customer case" }).click();
-  await expect(page.getByText("Vehicle remains safely held on a non-working day.")).toBeVisible();
-  await expect(page.getByText("non-working day")).toBeVisible();
+  await expect(page.locator("ol.history-list").getByText("Vehicle remains safely held on a non-working day.")).toBeVisible();
+  await expect(page.locator("ol.history-list li").filter({ hasText: "non-working day" })).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Vehicle remains safely held on a non-working day.")).toBeVisible();
+  await expect(page.locator("ol.history-list").getByText("Vehicle remains safely held on a non-working day.")).toBeVisible();
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Reset sample data" }).click();
+  await page.goto("/");
   await page.getByRole("link", { name: "Customer case" }).click();
-  await expect(page.getByText("Vehicle remains safely held on a non-working day.")).toHaveCount(0);
+  await expect(page.locator("ol.history-list").getByText("Vehicle remains safely held on a non-working day.")).toHaveCount(0);
 });

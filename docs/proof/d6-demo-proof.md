@@ -1,6 +1,6 @@
 # D6 reproducible demo proof
 
-This document describes the checked-in, same-browser simulation. It is evidence for the demo workflow, not a production or Preview deployment claim.
+This document describes the checked-in, same-browser simulation. Observed local validation is recorded in `docs/DEMO-PROOF.md`; this remains evidence for the demo workflow, not a production or Preview deployment claim.
 
 ## Reproduce
 
