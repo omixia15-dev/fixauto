@@ -81,6 +81,36 @@ const phasePresentation = {
     nextAction: "Staff records the simulated return to release capacity.",
     timing: "No real vehicle will be released",
   },
+  "estimate-required": {
+    status: "Assessment complete — estimate pending",
+    nextAction: "Staff publishes an itemized repair estimate.",
+    timing: "Before any repair commitment",
+  },
+  "estimate-approval-required": {
+    status: "Estimate ready — customer approval required",
+    nextAction: "Customer reviews the exact current estimate version.",
+    timing: "Before advance funding",
+  },
+  "estimate-unanswered": {
+    status: "Estimate unanswered — reminder recorded",
+    nextAction: "Customer must respond; the reminder does not authorize work.",
+    timing: "Repair remains paused",
+  },
+  "estimate-payment-required": {
+    status: "Estimate approved — advance funding required",
+    nextAction: "Customer funds the approved current estimate version.",
+    timing: "Before repair coordination",
+  },
+  "repair-ready": {
+    status: "Repair scope approved and funded",
+    nextAction: "Staff may coordinate the approved repair scope.",
+    timing: "No repair execution occurs in D4",
+  },
+  "estimate-declined": {
+    status: "Estimate declined — repair paused",
+    nextAction: "Staff preserves the estimate and payment history.",
+    timing: "No repair is authorized",
+  },
 } as const;
 
 export function getCasePresentation(sampleCase: SampleCase) {

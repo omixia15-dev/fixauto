@@ -9,6 +9,15 @@ import {
   assignCustodyReceiver,
   confirmRequestedAppointment,
   declineFurtherService,
+  publishEstimate,
+  approveEstimate,
+  declineEstimate,
+  recordEstimateReminder,
+  applyAdvanceCredit,
+  recordAuthorizedIncurredCost,
+  refundUnspentAdvance,
+  getCurrentEstimate,
+  getOutstandingAdvance,
   dispatchVehicle,
   findCase,
   getDisclosedCharge,
@@ -23,6 +32,7 @@ import {
   type PaymentOutcome,
   type PaymentPurpose,
   type ServiceRequestInput,
+  type EstimateLineInput,
 } from "../domain/sample-case";
 import { loadDemoData, resetDemoData, saveDemoData } from "./storage";
 
@@ -30,6 +40,7 @@ type AssessmentInput = { expertName: string; findings: string; needsInvestigatio
 type TransportDecisionInput = { qualifiedInputName: string; suitability: "drive-suitable" | "tow-required" | "uncertain"; rationale: string };
 type ReceiverInput = { name: string; relation: "customer" | "brother-in-law" | "father" };
 type HandoverInput = { receiverName: string; condition: string; mileage: number; keys: string; destination: string };
+type IncurredCostInput = { description: string; amountCents: number; authorizedBy: string };
 
 type DemoCaseContextValue = {
   data: DemoData;
@@ -48,6 +59,13 @@ type DemoCaseContextValue = {
   completeInitialAssessment: (caseId: string, input: AssessmentInput) => void;
   authorizeInvestigation: (caseId: string) => void;
   declineService: (caseId: string) => void;
+  publishEstimate: (caseId: string, input: { expectedTiming: string; lines: EstimateLineInput[] }) => void;
+  approveEstimate: (caseId: string) => void;
+  declineEstimate: (caseId: string, reason: string) => void;
+  remindEstimate: (caseId: string) => void;
+  applyAdvanceCredit: (caseId: string, amountCents: number) => void;
+  recordIncurredCost: (caseId: string, input: IncurredCostInput) => void;
+  refundEstimate: (caseId: string, estimateVersionId: string) => void;
   saveSharedNote: (caseId: string, note: string) => void;
   reset: () => void;
 };
@@ -128,7 +146,12 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
         );
       },
       attemptPayment(caseId, purpose, outcome) {
-        const details = paymentDetails(caseId, purpose);
+        const sampleCase = findCase(data, caseId);
+        if (!sampleCase) throw new Error("The sample case could not be found.");
+        const currentEstimate = purpose === "repair-advance" ? getCurrentEstimate(sampleCase) : null;
+        const details = currentEstimate
+          ? { label: `Repair advance — estimate v${currentEstimate.version}`, amountCents: getOutstandingAdvance(sampleCase, currentEstimate.id), currency: currentEstimate.currency }
+          : paymentDetails(caseId, purpose);
         commit(
           recordPaymentAttempt(data, caseId, {
             id: `payment-${crypto.randomUUID()}`,
@@ -138,6 +161,7 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
             currency: details.currency,
             outcome,
             attemptedAt: new Date().toISOString(),
+            estimateVersionId: currentEstimate?.id ?? null,
           }),
           outcome === "simulated-success"
             ? "Simulated payment succeeded."
@@ -182,6 +206,37 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
           declineFurtherService(data, caseId, new Date().toISOString()),
           "Further service declined; assessment and payment history were preserved.",
         );
+      },
+      publishEstimate(caseId, input) {
+        commit(publishEstimate(data, caseId, input, "Fixauto staff", new Date().toISOString()), "A new immutable repair estimate version was published.");
+      },
+      approveEstimate(caseId) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(approveEstimate(data, caseId, estimate.id, "Simulated customer", new Date().toISOString()), "Current estimate version approved by the simulated customer.");
+      },
+      declineEstimate(caseId, reason) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(declineEstimate(data, caseId, estimate.id, reason, "Simulated customer", new Date().toISOString()), "Current estimate declined; repair remains paused.");
+      },
+      remindEstimate(caseId) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(recordEstimateReminder(data, caseId, estimate.id, new Date(new Date(estimate.publishedAt).getTime() + 24 * 60 * 60 * 1000).toISOString()), "Simulated 24-hour reminder recorded; silence is not consent.");
+      },
+      applyAdvanceCredit(caseId, amountCents) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(applyAdvanceCredit(data, caseId, estimate.id, amountCents, "Simulated customer", new Date().toISOString()), "Prior unspent advance credit was explicitly allocated to the newly approved estimate.");
+      },
+      recordIncurredCost(caseId, input) {
+        const estimate = getCurrentEstimate(findCase(data, caseId)!);
+        if (!estimate) throw new Error("No current estimate is available.");
+        commit(recordAuthorizedIncurredCost(data, caseId, estimate.id, input, new Date().toISOString()), "Authorized incurred cost recorded against the funded estimate.");
+      },
+      refundEstimate(caseId, estimateVersionId) {
+        commit(refundUnspentAdvance(data, caseId, estimateVersionId, new Date().toISOString()), "Simulated refund recorded for unspent advance after authorized costs.");
       },
       saveSharedNote(caseId, note) {
         commit(updateSharedNote(data, caseId, note), "Sample note saved across all demo screens.");

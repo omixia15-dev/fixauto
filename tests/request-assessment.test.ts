@@ -50,6 +50,7 @@ function payment(purpose: PaymentPurpose, outcome: PaymentOutcome, id: string) {
     currency: "USD" as const,
     outcome,
     attemptedAt: now,
+    estimateVersionId: null,
   };
 }
 

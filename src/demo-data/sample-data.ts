@@ -1,6 +1,7 @@
 import {
   createPendingAssessment,
   createPendingTransport,
+  createEmptyEstimateState,
   DEMO_SCHEMA_VERSION,
   type DemoData,
 } from "../domain/sample-case.ts";
@@ -29,6 +30,7 @@ export const initialDemoData: DemoData = {
         preferredDate: "2027-01-10",
         serviceMode: "expert-visit",
       }),
+      ...createEmptyEstimateState(),
       sharedNote: "Customer prefers a morning expert visit.",
       payments: [],
       smsLog: [
