@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CaseSummary } from "../components/case-summary";
 import { SimulationBadge } from "../components/simulation-badge";
-import { findCase, getCasePhase } from "../domain/sample-case";
+import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase } from "../domain/sample-case";
 import { getCasePresentation } from "../presentation/case-status";
 import { useDemoCases } from "../store/demo-case-provider";
 
@@ -13,6 +13,15 @@ export function StaffWorkspaceScreen() {
   const [expertName, setExpertName] = useState("Arman Karimi");
   const [findings, setFindings] = useState("Initial expert visit indicates that workshop investigation is needed.");
   const [needsInvestigation, setNeedsInvestigation] = useState(true);
+  const [qualifiedInputName, setQualifiedInputName] = useState("Dr. Nima Farhadi");
+  const [suitability, setSuitability] = useState<"drive-suitable" | "tow-required" | "uncertain">("uncertain");
+  const [transportRationale, setTransportRationale] = useState("Suitability is unresolved, so the safe sample path is towing.");
+  const [receiverName, setReceiverName] = useState("Mina Rahimi");
+  const [receiverRelation, setReceiverRelation] = useState<"customer" | "brother-in-law" | "father">("customer");
+  const [condition, setCondition] = useState("No new visible damage in this simulated handover.");
+  const [mileage, setMileage] = useState("50000");
+  const [keys, setKeys] = useState("One ignition key and one remote.");
+  const [destination, setDestination] = useState("Designated Fixauto private parking");
   const [actionError, setActionError] = useState("");
   const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
   const phase = getCasePhase(sampleCase);
@@ -41,7 +50,7 @@ export function StaffWorkspaceScreen() {
           <h1>Request and assessment queue</h1>
           <p className="lede">Confirm requests and record an assessment only after separate consent and payment.</p>
         </div>
-        <div className="capacity-card"><span>Active car capacity</span><strong>0 / 1</strong><small>Custody capacity begins in D3.</small></div>
+        <div className="capacity-card"><span>Active car capacity</span><strong>{getActiveCarCount(actions.data)} / 1</strong><small>{getActiveOccupant(actions.data, sampleCase.id)?.reference ? `Occupied by ${getActiveOccupant(actions.data, sampleCase.id)?.reference}.` : "Parked and dispatched sample vehicles count."}</small></div>
       </section>
       {actionError ? <p className="error-banner" role="alert">{actionError}</p> : null}
       <div className="workspace-grid">
@@ -83,6 +92,57 @@ export function StaffWorkspaceScreen() {
             {phase === "assessment-authorization-required" ? <p className="blocked-reason">Blocked: the sample customer must authorize the disclosed assessment scope and fee.</p> : null}
             {phase === "assessment-payment-required" ? <p className="blocked-reason">Blocked: assessment payment has not succeeded.</p> : null}
 
+            {sampleCase.transport.kind !== "not-required" && phase === "transport-authorization-required" ? <p className="blocked-reason">Blocked: the sample customer must authorize the separate transport and storage scope.</p> : null}
+            {sampleCase.transport.kind !== "not-required" && phase === "transport-payment-required" ? <p className="blocked-reason">Blocked: transport and storage payment has not succeeded.</p> : null}
+
+            {phase === "transport-decision-required" ? (
+              <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.recordTransportDecision(sampleCase.id, { qualifiedInputName, suitability, rationale: transportRationale })); }}>
+                <h3>Qualified drive-or-tow input</h3>
+                <label htmlFor="qualifiedInputName">Qualified sample input name</label>
+                <input id="qualifiedInputName" value={qualifiedInputName} onChange={(event) => setQualifiedInputName(event.target.value)} />
+                <label htmlFor="suitability">Suitability</label>
+                <select id="suitability" value={suitability} onChange={(event) => setSuitability(event.target.value as typeof suitability)}>
+                  <option value="drive-suitable">Drive is suitable</option>
+                  <option value="tow-required">Tow is required</option>
+                  <option value="uncertain">Suitability is unresolved</option>
+                </select>
+                <label htmlFor="transportRationale">Decision rationale</label>
+                <textarea id="transportRationale" value={transportRationale} onChange={(event) => setTransportRationale(event.target.value)} />
+                <button className="button" type="submit">Record transport decision</button>
+              </form>
+            ) : null}
+
+            {phase === "transport-receiver-required" ? (
+              <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.assignReceiver(sampleCase.id, { name: receiverName, relation: receiverRelation })); }}>
+                <h3>Assign custody-only receiver</h3>
+                <label htmlFor="receiverName">Receiver name</label>
+                <input id="receiverName" value={receiverName} onChange={(event) => setReceiverName(event.target.value)} />
+                <label htmlFor="receiverRelation">Relationship</label>
+                <select id="receiverRelation" value={receiverRelation} onChange={(event) => setReceiverRelation(event.target.value as typeof receiverRelation)}>
+                  <option value="customer">Customer</option><option value="brother-in-law">Brother-in-law</option><option value="father">Father</option>
+                </select>
+                <p className="helper-text">Receiving the vehicle gives custody authority only, never repair-spending authority.</p>
+                <button className="button" type="submit">Assign receiver</button>
+              </form>
+            ) : null}
+
+            {phase === "transport-ready" ? (
+              <div className="nested-panel"><p>Capacity check occurs at dispatch; a vehicle already in custody blocks this action.</p><button className="button" type="button" onClick={() => run(() => actions.dispatch(sampleCase.id))}>Record simulated dispatch</button></div>
+            ) : null}
+
+            {phase === "custody-handover-required" ? (
+              <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.recordHandover(sampleCase.id, { receiverName: sampleCase.transport.receiver?.name ?? receiverName, condition, mileage: Number(mileage), keys, destination: destination || sampleCase.transport.destination })); }}>
+                <h3>Record custody handover</h3>
+                <label htmlFor="condition">Vehicle condition</label><textarea id="condition" value={condition} onChange={(event) => setCondition(event.target.value)} />
+                <label htmlFor="mileage">Mileage</label><input id="mileage" inputMode="numeric" value={mileage} onChange={(event) => setMileage(event.target.value)} />
+                <label htmlFor="keys">Keys received</label><input id="keys" value={keys} onChange={(event) => setKeys(event.target.value)} />
+                <label htmlFor="destination">Destination</label><input id="destination" value={destination} onChange={(event) => setDestination(event.target.value)} />
+                <button className="button" type="submit">Record custody handover</button>
+              </form>
+            ) : null}
+
+            {phase === "custody-return-required" ? <div className="nested-panel"><p>Return is a simulated custody release only; settlement and warranty remain D5.</p><button className="button" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
+
             {phase === "assessment-ready" ? (
               <form className="assessment-form" onSubmit={handleAssessment}>
                 <label htmlFor="expertName">Sample expert name</label>
@@ -96,6 +156,8 @@ export function StaffWorkspaceScreen() {
                 <button className="button" type="submit">Record completed assessment</button>
               </form>
             ) : null}
+
+            {phase === "assessment-ready" && sampleCase.transport.assessmentEarliestDate ? <p className="blocked-reason">This private-parking assessment is not eligible before {sampleCase.transport.assessmentEarliestDate}.</p> : null}
 
             {sampleCase.assessment.performedAt ? (
               <div className="nested-panel">

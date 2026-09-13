@@ -1,5 +1,6 @@
 import {
   createPendingAssessment,
+  createPendingTransport,
   DEMO_SCHEMA_VERSION,
   type DemoData,
 } from "../domain/sample-case.ts";
@@ -23,6 +24,18 @@ export const initialDemoData: DemoData = {
         confirmedAppointment: null,
       },
       assessment: createPendingAssessment(),
+      transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, {
+        contactName: "Mina Rahimi",
+        mobile: "+98 900 000 0101",
+        make: "Toyota",
+        model: "Camry",
+        year: "2020",
+        symptoms: "A warning light appears after the engine warms up.",
+        preferredDate: "2027-01-10",
+        preferredTime: "10:00",
+        serviceMode: "expert-visit",
+        visitAddress: "Sample address, Kerman",
+      }),
       sharedNote: "Customer prefers a morning expert visit.",
       payments: [],
       smsLog: [

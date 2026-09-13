@@ -88,7 +88,7 @@ export function RequestScreen() {
           <div><p className="eyebrow">Sample data only</p><h2>Request an expert visit</h2></div>
           <span className="status-pill">Staff confirmation required</span>
         </div>
-        <p className="helper-text">Every value is fictional. Submitting this form does not create a real booking.</p>
+        <p className="helper-text">Every value is fictional. Collection requests need staff confirmation, separate simulated transport/storage authorization and payment, and no real vehicle is collected.</p>
         {formError ? <p className="error-banner" role="alert">{formError}</p> : null}
         <div className="form-grid">
           <Field label="Contact name" name="contactName" error={error("contactName")}>
@@ -115,7 +115,7 @@ export function RequestScreen() {
           <Field label="Visit type" name="serviceMode">
             <select id="serviceMode" value={values.serviceMode} onChange={(event) => setValue("serviceMode", event.target.value as ServiceRequestInput["serviceMode"])}>
               <option value="expert-visit">Expert visits my address</option>
-              <option value="collection-request">Request collection address review (transport begins in D3)</option>
+              <option value="collection-request">Request a collection (staff plans simulated transport)</option>
               <option value="office-dropoff">I will arrange an office drop-off</option>
             </select>
           </Field>

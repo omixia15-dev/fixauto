@@ -1,6 +1,7 @@
 import { cloneInitialDemoData } from "../demo-data/sample-data.ts";
 import {
   createPendingAssessment,
+  createPendingTransport,
   DEMO_SCHEMA_VERSION,
   type DemoData,
   type SampleCase,
@@ -23,12 +24,56 @@ function isPayment(value: unknown): boolean {
   if (!isRecord(value)) return false;
   return (
     typeof value.id === "string" &&
-    (value.purpose === "assessment" || value.purpose === "investigation") &&
+    (value.purpose === "assessment" || value.purpose === "investigation" || value.purpose === "transport-storage") &&
     typeof value.label === "string" &&
     typeof value.amountCents === "number" &&
     value.currency === "USD" &&
     (value.outcome === "simulated-success" || value.outcome === "simulated-failed" || value.outcome === "simulated-canceled") &&
     typeof value.attemptedAt === "string"
+  );
+}
+
+function isTransport(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.qualifiedDecision) && value.qualifiedDecision !== null || !isRecord(value.receiver) && value.receiver !== null || !isRecord(value.handover) && value.handover !== null) return false;
+  const decision = value.qualifiedDecision;
+  const receiver = value.receiver;
+  const handover = value.handover;
+  const validDecision = decision === null || (
+    typeof decision.qualifiedInputName === "string" &&
+    (decision.suitability === "drive-suitable" || decision.suitability === "tow-required" || decision.suitability === "uncertain") &&
+    (decision.path === "drive" || decision.path === "tow") &&
+    typeof decision.rationale === "string" &&
+    typeof decision.recordedAt === "string"
+  );
+  const validReceiver = receiver === null || (
+    typeof receiver.name === "string" &&
+    (receiver.relation === "customer" || receiver.relation === "brother-in-law" || receiver.relation === "father") &&
+    receiver.authority === "custody-only" &&
+    typeof receiver.assignedAt === "string" &&
+    typeof receiver.assignedBy === "string"
+  );
+  const validHandover = handover === null || (
+    typeof handover.receiverName === "string" &&
+    typeof handover.condition === "string" &&
+    typeof handover.mileage === "number" &&
+    typeof handover.keys === "string" &&
+    typeof handover.destination === "string" &&
+    typeof handover.receivedAt === "string"
+  );
+  return (
+    (value.kind === "not-required" || value.kind === "standard-collection" || value.kind === "private-parking-exception") &&
+    typeof value.scope === "string" &&
+    typeof value.destination === "string" &&
+    typeof value.transportFeeCents === "number" &&
+    typeof value.storageFeeCents === "number" &&
+    value.currency === "USD" &&
+    isNullableString(value.authorizedAt) &&
+    isNullableString(value.authorizer) &&
+    validDecision && validReceiver && validHandover &&
+    isNullableString(value.dispatchedAt) &&
+    isNullableString(value.returnedAt) &&
+    isNullableString(value.assessmentEarliestDate) &&
+    (value.activity === "idle" || value.activity === "custody" || value.activity === "service")
   );
 }
 
@@ -47,6 +92,7 @@ function isSampleCase(value: unknown): value is SampleCase {
   if (!isRecord(value) || !isRecord(value.customer) || !isRecord(value.vehicle)) return false;
   if (!isRecord(value.request) || !isRecord(value.assessment)) return false;
   if (!isRecord(value.assessment.investigation)) return false;
+  if (!isTransport(value.transport)) return false;
   const confirmation = value.request.confirmedAppointment;
   const validConfirmation = confirmation === null || (
     isRecord(confirmation) &&
@@ -140,6 +186,18 @@ function migrateVersionOne(value: unknown): DemoData | null {
         confirmedAppointment: null,
       },
       assessment: createPendingAssessment(),
+      transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, {
+        contactName: legacy.customer.name,
+        mobile: legacy.customer.mobile,
+        make: legacy.vehicle.make,
+        model: legacy.vehicle.model,
+        year: String(legacy.vehicle.year),
+        symptoms: legacy.request.symptoms,
+        preferredDate: "2027-01-10",
+        preferredTime: "10:00",
+        serviceMode: "expert-visit",
+        visitAddress: typeof legacy.request.visitAddress === "string" ? legacy.request.visitAddress : "Sample address, Kerman",
+      }),
       sharedNote: typeof legacy.sharedNote === "string" ? legacy.sharedNote : "Migrated D1 sample case.",
       payments: [],
       smsLog: Array.isArray(legacy.smsLog) ? legacy.smsLog as SampleCase["smsLog"] : [],
@@ -151,10 +209,36 @@ function migrateVersionOne(value: unknown): DemoData | null {
     : null;
 }
 
+function migrateVersionTwo(value: unknown): DemoData | null {
+  if (!isRecord(value) || value.schemaVersion !== 2 || !Array.isArray(value.cases)) return null;
+  const migratedCases = value.cases.flatMap((legacy): SampleCase[] => {
+    if (!isRecord(legacy) || !isRecord(legacy.request)) return [];
+    if (!isRecord(legacy.customer) || !isRecord(legacy.vehicle) || !isRecord(legacy.assessment)) return [];
+    if (!isRecord(legacy.assessment.investigation)) return [];
+    if (typeof legacy.id !== "string" || typeof legacy.reference !== "string" || typeof legacy.customer.name !== "string" || typeof legacy.customer.mobile !== "string" || typeof legacy.vehicle.make !== "string" || typeof legacy.vehicle.model !== "string" || typeof legacy.vehicle.year !== "number") return [];
+    if (!Array.isArray(legacy.payments) || !legacy.payments.every(isPayment) || !Array.isArray(legacy.smsLog) || !legacy.smsLog.every(isSms)) return [];
+    const mode = legacy.request.serviceMode === "collection-request" || legacy.request.serviceMode === "office-dropoff" ? legacy.request.serviceMode : "expert-visit";
+    const input = {
+      contactName: legacy.customer.name,
+      mobile: legacy.customer.mobile,
+      make: legacy.vehicle.make,
+      model: legacy.vehicle.model,
+      year: String(legacy.vehicle.year),
+      symptoms: typeof legacy.request.symptoms === "string" ? legacy.request.symptoms : "Migrated D2 sample request.",
+      preferredDate: typeof legacy.request.preferredDate === "string" ? legacy.request.preferredDate : "2027-01-10",
+      preferredTime: typeof legacy.request.preferredTime === "string" ? legacy.request.preferredTime : "10:00",
+      serviceMode: mode,
+      visitAddress: typeof legacy.request.visitAddress === "string" ? legacy.request.visitAddress : "Sample address, Kerman",
+    } as const;
+    return [{ ...legacy, request: { ...legacy.request, serviceMode: mode }, transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, input) } as SampleCase];
+  });
+  return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
+}
+
 function parseStored(stored: string): DemoData | null {
   try {
     const parsed: unknown = JSON.parse(stored);
-    return isDemoData(parsed) ? parsed : migrateVersionOne(parsed);
+    return isDemoData(parsed) ? parsed : migrateVersionTwo(parsed) ?? migrateVersionOne(parsed);
   } catch {
     return null;
   }
