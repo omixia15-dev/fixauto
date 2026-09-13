@@ -39,6 +39,7 @@ const transportPayment = (id: string, outcome: "simulated-success" | "simulated-
   currency: "USD" as const,
   outcome,
   attemptedAt: "2026-09-13T08:00:00.000Z",
+  estimateVersionId: null,
 });
 
 function createCollection(data = cloneInitialDemoData(), input = standardInput, id = "case-collection-002", reference = "FXA-1002") {
@@ -145,6 +146,7 @@ test("Thursday-Friday new-customer collection is tow-only and Saturday-gated", (
     currency: "USD",
     outcome: "simulated-success",
     attemptedAt: "2026-09-13T08:00:00.000Z",
+    estimateVersionId: null,
   });
   assert.throws(() => recordInitialAssessment(data, created.sampleCase.id, { expertName: "Arman Karimi", findings: "Saturday assessment is not yet available.", needsInvestigation: false }, "2026-09-17T10:00:00.000Z"), /cannot begin before 2026-09-19/);
   data = recordInitialAssessment(data, created.sampleCase.id, { expertName: "Arman Karimi", findings: "Saturday assessment was completed after the private-parking wait.", needsInvestigation: false }, "2026-09-19T10:00:00.000Z");

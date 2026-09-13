@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CaseSummary } from "../components/case-summary";
 import { SimulationBadge } from "../components/simulation-badge";
-import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase } from "../domain/sample-case";
+import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase, getCurrentEstimate, getAvailableAdvanceCredit } from "../domain/sample-case";
 import { getCasePresentation } from "../presentation/case-status";
 import { useDemoCases } from "../store/demo-case-provider";
 
@@ -22,10 +22,26 @@ export function StaffWorkspaceScreen() {
   const [mileage, setMileage] = useState("50000");
   const [keys, setKeys] = useState("One ignition key and one remote.");
   const [destination, setDestination] = useState("Designated Fixauto private parking");
+  const [estimateTiming, setEstimateTiming] = useState("3 business days after approval");
+  const [partDescription, setPartDescription] = useState("Front brake pad set");
+  const [partBrand, setPartBrand] = useState("Bosch");
+  const [partCondition, setPartCondition] = useState<"new" | "used" | "remanufactured">("new");
+  const [partWarranty, setPartWarranty] = useState("12 months");
+  const [partPrice, setPartPrice] = useState("240");
+  const [laborPrice, setLaborPrice] = useState("180");
+  const [managementPrice, setManagementPrice] = useState("35");
+  const [costDescription, setCostDescription] = useState("Authorized diagnostic parts reservation");
+  const [costAmount, setCostAmount] = useState("0");
   const [actionError, setActionError] = useState("");
   const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
   const phase = getCasePhase(sampleCase);
   const presentation = getCasePresentation(sampleCase);
+  const currentEstimate = getCurrentEstimate(sampleCase);
+  const fundedCurrentEstimateCents = currentEstimate
+    ? sampleCase.payments.filter((payment) => payment.purpose === "repair-advance" && payment.estimateVersionId === currentEstimate.id && payment.outcome === "simulated-success").reduce((sum, payment) => sum + payment.amountCents, 0)
+      + sampleCase.advanceCreditAllocations.filter((allocation) => allocation.estimateVersionId === currentEstimate.id).reduce((sum, allocation) => sum + allocation.amountCents, 0)
+    : 0;
+  const estimatePreviewCents = Math.round(Number(partPrice || 0) * 100) + Math.round(Number(laborPrice || 0) * 100) + Math.round(Number(managementPrice || 0) * 100);
 
   function run(action: () => void) {
     try {
@@ -165,6 +181,44 @@ export function StaffWorkspaceScreen() {
                 <p>{sampleCase.assessment.findings}</p>
                 <p>Assessment fee: earned under the authorized scope.</p>
                 {sampleCase.assessment.needsInvestigation ? <p>Deeper investigation is separate; customer authorization/payment status: {phase.replaceAll("-", " ")}.</p> : null}
+              </div>
+            ) : null}
+
+            {(phase === "estimate-required" || phase === "estimate-declined" || phase === "estimate-unanswered" || phase === "estimate-approval-required" || phase === "estimate-payment-required" || phase === "repair-ready") && sampleCase.assessment.needsInvestigation === false ? (
+              <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.publishEstimate(sampleCase.id, {
+                expectedTiming: estimateTiming,
+                lines: [
+                  { id: "part-brake-pad", category: "part", description: partDescription, quantity: 1, unitPriceCents: Math.round(Number(partPrice) * 100), part: { brand: partBrand, condition: partCondition, warranty: partWarranty } },
+                  { id: "labor-brake", category: "labor", description: "Repair labor", quantity: 1, unitPriceCents: Math.round(Number(laborPrice) * 100) },
+                  { id: "management-fee", category: "management-fee", description: "Repair coordination fee", quantity: 1, unitPriceCents: Math.round(Number(managementPrice) * 100) },
+                ],
+              })); }}>
+                <h3>Publish a new immutable estimate version</h3>
+                <label htmlFor="estimateTiming">Expected timing</label>
+                <input id="estimateTiming" value={estimateTiming} onChange={(event) => setEstimateTiming(event.target.value)} />
+                <label htmlFor="partDescription">Part description</label><input id="partDescription" value={partDescription} onChange={(event) => setPartDescription(event.target.value)} />
+                <label htmlFor="partBrand">Part brand</label><input id="partBrand" value={partBrand} onChange={(event) => setPartBrand(event.target.value)} />
+                <label htmlFor="partCondition">Part condition</label><select id="partCondition" value={partCondition} onChange={(event) => setPartCondition(event.target.value as typeof partCondition)}><option value="new">New</option><option value="used">Used</option><option value="remanufactured">Remanufactured</option></select>
+                <label htmlFor="partWarranty">Part warranty</label><input id="partWarranty" value={partWarranty} onChange={(event) => setPartWarranty(event.target.value)} />
+                <label htmlFor="partPrice">Part price (USD)</label><input id="partPrice" inputMode="decimal" value={partPrice} onChange={(event) => setPartPrice(event.target.value)} />
+                <label htmlFor="laborPrice">Labor amount (USD)</label><input id="laborPrice" inputMode="decimal" value={laborPrice} onChange={(event) => setLaborPrice(event.target.value)} />
+                <label htmlFor="managementPrice">Management fee (USD)</label><input id="managementPrice" inputMode="decimal" value={managementPrice} onChange={(event) => setManagementPrice(event.target.value)} />
+                <p className="price-line"><strong>Calculated total: {(estimatePreviewCents / 100).toFixed(2)} USD</strong><span>All amounts are illustrative sample USD.</span></p>
+                <p className="helper-text">Publishing creates a new version; it never edits an earlier estimate or carries approval forward.</p>
+                <button className="button" type="submit">Publish estimate v{(sampleCase.estimates.length || 0) + 1}</button>
+              </form>
+            ) : null}
+
+            {currentEstimate && (phase === "repair-ready" || phase === "estimate-declined") ? (
+              <div className="nested-panel">
+                <h3>Estimate v{currentEstimate.version} settlement simulation</h3>
+                <p>Funded: {(fundedCurrentEstimateCents / 100).toFixed(2)} USD · prior unallocated credit: {(getAvailableAdvanceCredit(sampleCase) / 100).toFixed(2)} USD</p>
+                <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.recordIncurredCost(sampleCase.id, { description: costDescription, amountCents: Math.round(Number(costAmount) * 100), authorizedBy: "Simulated customer" })); }}>
+                  <label htmlFor="costDescription">Authorized incurred cost</label><input id="costDescription" value={costDescription} onChange={(event) => setCostDescription(event.target.value)} />
+                  <label htmlFor="costAmount">Amount (USD)</label><input id="costAmount" inputMode="decimal" value={costAmount} onChange={(event) => setCostAmount(event.target.value)} />
+                  <button className="button button-secondary" type="submit">Record authorized cost</button>
+                </form>
+                {phase === "estimate-declined" ? <button className="button" type="button" onClick={() => run(() => actions.refundEstimate(sampleCase.id, currentEstimate.id))}>Record simulated refund of unspent advance</button> : null}
               </div>
             ) : null}
 

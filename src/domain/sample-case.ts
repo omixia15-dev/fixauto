@@ -1,7 +1,7 @@
-export const DEMO_SCHEMA_VERSION = 3 as const;
+export const DEMO_SCHEMA_VERSION = 4 as const;
 
 export type CurrencyCode = "USD";
-export type PaymentPurpose = "assessment" | "investigation" | "transport-storage";
+export type PaymentPurpose = "assessment" | "investigation" | "transport-storage" | "repair-advance";
 export type PaymentOutcome = "simulated-success" | "simulated-failed" | "simulated-canceled";
 
 export type SimulatedPayment = {
@@ -12,6 +12,71 @@ export type SimulatedPayment = {
   currency: CurrencyCode;
   outcome: PaymentOutcome;
   attemptedAt: string;
+  estimateVersionId: string | null;
+};
+
+export type EstimateLineCategory = "part" | "labor" | "management-fee";
+export type PartCondition = "new" | "used" | "remanufactured";
+
+export type EstimateLine = {
+  id: string;
+  category: EstimateLineCategory;
+  description: string;
+  quantity: number;
+  unitPriceCents: number;
+  totalCents: number;
+  currency: CurrencyCode;
+  part?: { brand: string; condition: PartCondition; warranty: string };
+};
+
+export type RepairEstimateVersion = {
+  id: string;
+  version: number;
+  expectedTiming: string;
+  lines: EstimateLine[];
+  totalCents: number;
+  currency: CurrencyCode;
+  publishedAt: string;
+  publishedBy: string;
+};
+
+export type EstimateDecision = {
+  id: string;
+  estimateVersionId: string;
+  outcome: "approved" | "declined";
+  authorizer: string;
+  reason: string | null;
+  decidedAt: string;
+};
+
+export type EstimateReminder = { id: string; estimateVersionId: string; reminderAt: string; simulated: true };
+export type AdvanceCreditAllocation = {
+  id: string;
+  sourcePaymentId: string;
+  estimateVersionId: string;
+  amountCents: number;
+  currency: CurrencyCode;
+  allocatedAt: string;
+  allocatedBy: string;
+};
+export type AuthorizedIncurredCost = {
+  id: string;
+  estimateVersionId: string;
+  description: string;
+  amountCents: number;
+  currency: CurrencyCode;
+  authorizedBy: string;
+  recordedAt: string;
+};
+export type EstimateRefund = {
+  id: string;
+  estimateVersionId: string;
+  fundedCents: number;
+  authorizedIncurredCents: number;
+  unspentCents: number;
+  currency: CurrencyCode;
+  processedAt: string;
+  simulated: true;
 };
 
 export type SimulatedSms = {
@@ -116,6 +181,12 @@ export type SampleCase = {
   request: ServiceRequest;
   assessment: Assessment;
   transport: TransportPlan;
+  estimates: RepairEstimateVersion[];
+  estimateDecisions: EstimateDecision[];
+  estimateReminders: EstimateReminder[];
+  advanceCreditAllocations: AdvanceCreditAllocation[];
+  authorizedIncurredCosts: AuthorizedIncurredCost[];
+  estimateRefunds: EstimateRefund[];
   sharedNote: string;
   payments: SimulatedPayment[];
   smsLog: SimulatedSms[];
@@ -169,7 +240,13 @@ export type CasePhase =
   | "transport-receiver-required"
   | "transport-ready"
   | "custody-handover-required"
-  | "custody-return-required";
+  | "custody-return-required"
+  | "estimate-required"
+  | "estimate-approval-required"
+  | "estimate-unanswered"
+  | "estimate-payment-required"
+  | "repair-ready"
+  | "estimate-declined";
 
 const mobilePattern = /^[+\d][\d\s()-]{6,19}$/;
 
@@ -269,6 +346,17 @@ export function createPendingTransport(
   };
 }
 
+export function createEmptyEstimateState() {
+  return {
+    estimates: [] as RepairEstimateVersion[],
+    estimateDecisions: [] as EstimateDecision[],
+    estimateReminders: [] as EstimateReminder[],
+    advanceCreditAllocations: [] as AdvanceCreditAllocation[],
+    authorizedIncurredCosts: [] as AuthorizedIncurredCost[],
+    estimateRefunds: [] as EstimateRefund[],
+  };
+}
+
 export function validateServiceRequest(input: ServiceRequestInput, today: string): RequestErrors {
   const errors: RequestErrors = {};
   const year = Number(input.year);
@@ -351,6 +439,7 @@ export function submitServiceRequest(
     },
     assessment: createPendingAssessment(),
     transport: createPendingTransport(data, input),
+    ...createEmptyEstimateState(),
     sharedNote: "New web request awaiting staff review.",
     payments: [],
     smsLog: [],
@@ -394,6 +483,8 @@ function getPaymentRequirement(sampleCase: SampleCase, purpose: PaymentPurpose) 
         currency: sampleCase.assessment.investigation.currency,
         authorizedAt: sampleCase.assessment.investigation.authorizedAt,
       };
+    case "repair-advance":
+      throw new Error("Repair advance uses the current estimate version instead of a fixed charge.");
   }
 }
 
@@ -412,6 +503,43 @@ export function getActiveCarCount(data: DemoData): number {
 
 export function getActiveOccupant(data: DemoData, excludingCaseId?: string): SampleCase | undefined {
   return data.cases.find((item) => item.id !== excludingCaseId && occupiesActiveSlot(item));
+}
+
+export function getCurrentEstimate(sampleCase: SampleCase): RepairEstimateVersion | undefined {
+  return sampleCase.estimates.at(-1);
+}
+
+export function getEstimateDecision(sampleCase: SampleCase, estimateVersionId: string): EstimateDecision | undefined {
+  return sampleCase.estimateDecisions.findLast((decision) => decision.estimateVersionId === estimateVersionId);
+}
+
+export function getSuccessfulAdvanceTotal(sampleCase: SampleCase, estimateVersionId: string): number {
+  return sampleCase.payments
+    .filter((payment) => payment.purpose === "repair-advance" && payment.estimateVersionId === estimateVersionId && payment.outcome === "simulated-success")
+    .reduce((total, payment) => total + payment.amountCents, 0);
+}
+
+export function getAvailableAdvanceCredit(sampleCase: SampleCase): number {
+  const funded = sampleCase.payments
+    .filter((payment) => payment.purpose === "repair-advance" && payment.outcome === "simulated-success")
+    .reduce((total, payment) => total + payment.amountCents, 0);
+  const allocated = sampleCase.advanceCreditAllocations.reduce((total, allocation) => total + allocation.amountCents, 0);
+  const refunded = sampleCase.estimateRefunds.reduce((total, refund) => total + refund.unspentCents, 0);
+  return Math.max(0, funded - allocated - refunded);
+}
+
+export function getOutstandingAdvance(sampleCase: SampleCase, estimateVersionId: string): number {
+  const estimate = sampleCase.estimates.find((item) => item.id === estimateVersionId);
+  if (!estimate) return 0;
+  const allocated = sampleCase.advanceCreditAllocations
+    .filter((allocation) => allocation.estimateVersionId === estimateVersionId)
+    .reduce((total, allocation) => total + allocation.amountCents, 0);
+  return Math.max(0, estimate.totalCents - getSuccessfulAdvanceTotal(sampleCase, estimateVersionId) - allocated);
+}
+
+export function isCurrentEstimateFunded(sampleCase: SampleCase): boolean {
+  const estimate = getCurrentEstimate(sampleCase);
+  return Boolean(estimate && getOutstandingAdvance(sampleCase, estimate.id) === 0);
 }
 
 export function getCasePhase(sampleCase: SampleCase): CasePhase {
@@ -435,13 +563,151 @@ export function getCasePhase(sampleCase: SampleCase): CasePhase {
         ? "custody-return-required"
         : "investigation-funded";
     }
-    return transport.kind !== "not-required" && !transport.returnedAt ? "custody-return-required" : "assessment-complete";
+    if (transport.kind !== "not-required" && !transport.returnedAt) return "custody-return-required";
   }
   if (!sampleCase.request.confirmedAppointment) return "pending-staff-confirmation";
   if (!assessment.authorizedAt) return "assessment-authorization-required";
-  return hasSuccessfulPayment(sampleCase, "assessment")
-    ? "assessment-ready"
-    : "assessment-payment-required";
+  if (!hasSuccessfulPayment(sampleCase, "assessment")) return "assessment-payment-required";
+  if (!assessment.performedAt) return "assessment-ready";
+  const currentEstimate = getCurrentEstimate(sampleCase);
+  if (!currentEstimate) return "estimate-required";
+  const decision = getEstimateDecision(sampleCase, currentEstimate.id);
+  if (decision?.outcome === "declined") return "estimate-declined";
+  if (decision?.outcome === "approved") return isCurrentEstimateFunded(sampleCase) ? "repair-ready" : "estimate-payment-required";
+  if (sampleCase.estimateReminders.some((reminder) => reminder.estimateVersionId === currentEstimate.id)) return "estimate-unanswered";
+  return "estimate-approval-required";
+}
+
+export type EstimateLineInput = Omit<EstimateLine, "totalCents" | "currency">;
+
+function estimateById(sampleCase: SampleCase, estimateVersionId: string): RepairEstimateVersion {
+  const estimate = sampleCase.estimates.find((item) => item.id === estimateVersionId);
+  if (!estimate) throw new Error("The estimate version could not be found.");
+  return estimate;
+}
+
+function requireCurrentEstimate(sampleCase: SampleCase, estimateVersionId: string): RepairEstimateVersion {
+  const estimate = getCurrentEstimate(sampleCase);
+  if (!estimate || estimate.id !== estimateVersionId) throw new Error("Only the current estimate version can be changed or approved.");
+  return estimate;
+}
+
+function normalizeEstimateLines(lines: EstimateLineInput[]): EstimateLine[] {
+  if (lines.length < 3) throw new Error("An estimate needs parts, labor, and management-fee lines.");
+  const categories = new Set(lines.map((line) => line.category));
+  if (!["part", "labor", "management-fee"].every((category) => categories.has(category as EstimateLineCategory))) {
+    throw new Error("An estimate needs separate parts, labor, and management-fee lines.");
+  }
+  return lines.map((line) => {
+    if (!line.id.trim() || !line.description.trim() || !Number.isInteger(line.quantity) || line.quantity <= 0 || !Number.isInteger(line.unitPriceCents) || line.unitPriceCents < 0) {
+      throw new Error("Estimate lines need a description, positive quantity, and non-negative integer price.");
+    }
+    if (line.category === "part" && (!line.part || line.part.brand.trim().length < 2 || !line.part.warranty.trim())) {
+      throw new Error("Each part needs a brand, condition, and warranty.");
+    }
+    if (line.category !== "part" && line.part) throw new Error("Only part lines may contain part details.");
+    const totalCents = line.quantity * line.unitPriceCents;
+    if (!Number.isSafeInteger(totalCents)) throw new Error("Estimate line total is out of range.");
+    return {
+      ...line,
+      id: line.id.trim(),
+      description: line.description.trim(),
+      unitPriceCents: line.unitPriceCents,
+      totalCents,
+      currency: "USD" as const,
+      part: line.part ? { ...line.part, brand: line.part.brand.trim(), warranty: line.part.warranty.trim() } : undefined,
+    };
+  });
+}
+
+export function publishEstimate(
+  data: DemoData,
+  caseId: string,
+  input: { expectedTiming: string; lines: EstimateLineInput[] },
+  publisher: string,
+  now: string,
+): DemoData {
+  return updateCase(data, caseId, (item) => {
+    if (!item.assessment.performedAt || item.assessment.needsInvestigation !== false) throw new Error("A completed expert-first assessment without pending investigation is required before publishing an estimate.");
+    if (item.transport.kind !== "not-required" && !item.transport.returnedAt) throw new Error("The vehicle must be returned from custody before publishing an estimate.");
+    if (publisher.trim().length < 2 || input.expectedTiming.trim().length < 2) throw new Error("Enter an estimate publisher and expected timing.");
+    const lines = normalizeEstimateLines(input.lines);
+    return {
+      ...item,
+      estimates: [...item.estimates, {
+        id: `estimate-${item.estimates.length + 1}-${caseId}`,
+        version: item.estimates.length + 1,
+        expectedTiming: input.expectedTiming.trim(),
+        lines,
+        totalCents: lines.reduce((total, line) => total + line.totalCents, 0),
+        currency: "USD",
+        publishedAt: now,
+        publishedBy: publisher.trim(),
+      }],
+    };
+  });
+}
+
+export function approveEstimate(data: DemoData, caseId: string, estimateVersionId: string, authorizer: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    requireCurrentEstimate(item, estimateVersionId);
+    if (authorizer.trim().length < 2) throw new Error("Enter the simulated estimate authorizer.");
+    if (getEstimateDecision(item, estimateVersionId)) throw new Error("This estimate already has an approval or decline decision.");
+    return { ...item, estimateDecisions: [...item.estimateDecisions, { id: `estimate-decision-${crypto.randomUUID()}`, estimateVersionId, outcome: "approved", authorizer: authorizer.trim(), reason: null, decidedAt: now }] };
+  });
+}
+
+export function declineEstimate(data: DemoData, caseId: string, estimateVersionId: string, reason: string, authorizer: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    requireCurrentEstimate(item, estimateVersionId);
+    if (authorizer.trim().length < 2 || reason.trim().length < 2) throw new Error("Enter the simulated authorizer and decline reason.");
+    if (getEstimateDecision(item, estimateVersionId)?.outcome === "declined") throw new Error("This estimate is already declined.");
+    return { ...item, estimateDecisions: [...item.estimateDecisions, { id: `estimate-decision-${crypto.randomUUID()}`, estimateVersionId, outcome: "declined", authorizer: authorizer.trim(), reason: reason.trim(), decidedAt: now }] };
+  });
+}
+
+export function recordEstimateReminder(data: DemoData, caseId: string, estimateVersionId: string, reminderAt: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    requireCurrentEstimate(item, estimateVersionId);
+    if (getEstimateDecision(item, estimateVersionId)) throw new Error("A decided estimate does not need an unanswered reminder.");
+    if (item.estimateReminders.some((reminder) => reminder.estimateVersionId === estimateVersionId)) throw new Error("The simulated 24-hour reminder is already recorded.");
+    const estimate = getCurrentEstimate(item)!;
+    if (new Date(reminderAt).getTime() < new Date(estimate.publishedAt).getTime() + 24 * 60 * 60 * 1000) throw new Error("The simulated reminder must be at least 24 hours after publication.");
+    return { ...item, estimateReminders: [...item.estimateReminders, { id: `estimate-reminder-${crypto.randomUUID()}`, estimateVersionId, reminderAt, simulated: true }] };
+  });
+}
+
+export function applyAdvanceCredit(data: DemoData, caseId: string, estimateVersionId: string, amountCents: number, authorizer: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = requireCurrentEstimate(item, estimateVersionId);
+    if (getEstimateDecision(item, estimateVersionId)?.outcome !== "approved") throw new Error("Fresh approval is required before applying prior advance credit.");
+    if (!Number.isInteger(amountCents) || amountCents <= 0 || amountCents > getAvailableAdvanceCredit(item) || amountCents > getOutstandingAdvance(item, estimate.id)) throw new Error("Credit allocation exceeds available unallocated funds or the current outstanding advance.");
+    const sourcePayment = item.payments.find((payment) => payment.purpose === "repair-advance" && payment.outcome === "simulated-success" && payment.estimateVersionId !== estimate.id);
+    if (!sourcePayment) throw new Error("No prior unallocated advance credit is available.");
+    return { ...item, advanceCreditAllocations: [...item.advanceCreditAllocations, { id: `credit-${crypto.randomUUID()}`, sourcePaymentId: sourcePayment.id, estimateVersionId, amountCents, currency: "USD", allocatedAt: now, allocatedBy: authorizer.trim() }] };
+  });
+}
+
+export function recordAuthorizedIncurredCost(data: DemoData, caseId: string, estimateVersionId: string, input: { description: string; amountCents: number; authorizedBy: string }, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = estimateById(item, estimateVersionId);
+    if (getCurrentEstimate(item)?.id !== estimate.id || !isCurrentEstimateFunded(item) || !["approved", "declined"].includes(getEstimateDecision(item, estimateVersionId)?.outcome ?? "")) throw new Error("A funded current estimate is required before recording incurred cost.");
+    const funded = estimate.totalCents;
+    const incurred = item.authorizedIncurredCosts.filter((cost) => cost.estimateVersionId === estimateVersionId).reduce((total, cost) => total + cost.amountCents, 0);
+    if (input.description.trim().length < 2 || input.authorizedBy.trim().length < 2 || !Number.isInteger(input.amountCents) || input.amountCents < 0 || incurred + input.amountCents > funded) throw new Error("Authorized incurred cost exceeds the funded estimate or is invalid.");
+    return { ...item, authorizedIncurredCosts: [...item.authorizedIncurredCosts, { id: `cost-${crypto.randomUUID()}`, estimateVersionId, description: input.description.trim(), amountCents: input.amountCents, currency: "USD", authorizedBy: input.authorizedBy.trim(), recordedAt: now }] };
+  });
+}
+
+export function refundUnspentAdvance(data: DemoData, caseId: string, estimateVersionId: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    estimateById(item, estimateVersionId);
+    if (getEstimateDecision(item, estimateVersionId)?.outcome !== "declined") throw new Error("A declined estimate is required before refunding unspent advance.");
+    if (item.estimateRefunds.some((refund) => refund.estimateVersionId === estimateVersionId)) throw new Error("The simulated refund is already recorded.");
+    const fundedCents = getSuccessfulAdvanceTotal(item, estimateVersionId) + item.advanceCreditAllocations.filter((allocation) => allocation.estimateVersionId === estimateVersionId).reduce((total, allocation) => total + allocation.amountCents, 0);
+    const authorizedIncurredCents = item.authorizedIncurredCosts.filter((cost) => cost.estimateVersionId === estimateVersionId).reduce((total, cost) => total + cost.amountCents, 0);
+    return { ...item, estimateRefunds: [...item.estimateRefunds, { id: `refund-${crypto.randomUUID()}`, estimateVersionId, fundedCents, authorizedIncurredCents, unspentCents: Math.max(0, fundedCents - authorizedIncurredCents), currency: "USD", processedAt: now, simulated: true }] };
+  });
 }
 
 function updateCase(data: DemoData, caseId: string, update: (item: SampleCase) => SampleCase): DemoData {
@@ -488,6 +754,15 @@ export function recordPaymentAttempt(data: DemoData, caseId: string, payment: Si
   return updateCase(data, caseId, (item) => {
     if (item.assessment.furtherServiceDeclinedAt) {
       throw new Error("Further service was declined; no new payment attempt can be recorded.");
+    }
+    if (payment.purpose === "repair-advance") {
+      const estimate = getCurrentEstimate(item);
+      if (!estimate || payment.estimateVersionId !== estimate.id) throw new Error("Repair advance must name the current estimate version.");
+      if (getEstimateDecision(item, estimate.id)?.outcome !== "approved") throw new Error("Current estimate approval is required before repair funding.");
+      const expectedAmount = getOutstandingAdvance(item, estimate.id);
+      if (expectedAmount <= 0 || payment.amountCents !== expectedAmount || payment.currency !== estimate.currency) throw new Error("Repair advance must match the current estimate amount still due.");
+      if (item.payments.some((attempt) => attempt.id === payment.id)) throw new Error("That payment attempt already exists.");
+      return { ...item, payments: [...item.payments, payment] };
     }
     const requirement = getPaymentRequirement(item, payment.purpose);
     const paymentName = payment.purpose === "transport-storage" ? "Transport and storage" : payment.purpose === "assessment" ? "Assessment" : "Investigation";

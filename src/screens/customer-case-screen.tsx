@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CaseSummary } from "../components/case-summary";
 import { SimulationBadge } from "../components/simulation-badge";
 import { formatMoney } from "../domain/currency";
-import { findCase, getCasePhase, type PaymentOutcome, type PaymentPurpose } from "../domain/sample-case";
+import { findCase, getCasePhase, getCurrentEstimate, getEstimateDecision, getOutstandingAdvance, getAvailableAdvanceCredit, type PaymentOutcome, type PaymentPurpose } from "../domain/sample-case";
 import { getCasePresentation } from "../presentation/case-status";
 import { useDemoCases } from "../store/demo-case-provider";
 
@@ -27,6 +27,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
 
   const phase = getCasePhase(sampleCase);
   const presentation = getCasePresentation(sampleCase);
+  const currentEstimate = getCurrentEstimate(sampleCase);
 
   function run(action: () => void) {
     try {
@@ -167,12 +168,29 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
             </div>
           ) : null}
           {phase === "investigation-funded" ? <p className="success-message">Separate investigation is authorized and funded. Transport remains D3.</p> : null}
-          {phase !== "further-service-declined" && (phase === "assessment-complete" || phase === "investigation-authorization-required" || phase === "investigation-payment-required") ? (
+          {phase !== "further-service-declined" && (phase === "assessment-complete" || phase === "estimate-required" || phase === "investigation-authorization-required" || phase === "investigation-payment-required") ? (
             <button className="button button-danger" type="button" onClick={() => run(() => actions.declineService(caseId))}>
               Decline further service
             </button>
           ) : null}
           {phase === "further-service-declined" ? <p className="blocked-reason">Further service declined. The completed assessment and all payment attempts remain recorded.</p> : null}
+        </section>
+      ) : null}
+
+      {currentEstimate ? (
+        <section className="card" aria-labelledby="estimate-title">
+          <div className="section-heading"><div><p className="eyebrow">Exact repair scope</p><h2 id="estimate-title">Estimate v{currentEstimate.version}</h2></div><SimulationBadge>immutable estimate</SimulationBadge></div>
+          <p><strong>Expected timing:</strong> {currentEstimate.expectedTiming}</p>
+          <ol className="history-list">
+            {currentEstimate.lines.map((line) => <li key={line.id}><strong>{line.description}</strong><span>{line.category}{line.part ? ` · ${line.part.brand} · ${line.part.condition} · warranty ${line.part.warranty}` : ""}</span><span>{line.quantity} × {formatMoney(line.unitPriceCents, line.currency)} USD = {formatMoney(line.totalCents, line.currency)} USD</span></li>)}
+          </ol>
+          <p className="price-line"><strong>Total: {formatMoney(currentEstimate.totalCents, currentEstimate.currency)} USD</strong><span>Version published by {currentEstimate.publishedBy}; earlier versions remain historical only.</span></p>
+          {phase === "estimate-approval-required" || phase === "estimate-unanswered" ? <div className="button-row"><button className="button" type="button" onClick={() => run(() => actions.approveEstimate(caseId))}>Approve exact estimate</button><button className="button button-danger" type="button" onClick={() => run(() => actions.declineEstimate(caseId, "Simulated customer declined this repair scope."))}>Decline estimate</button>{phase === "estimate-approval-required" ? <button className="button button-secondary" type="button" onClick={() => run(() => actions.remindEstimate(caseId))}>Record 24-hour call reminder</button> : null}</div> : null}
+          {phase === "estimate-payment-required" ? <div className="nested-panel"><p>Approved amount still due: {formatMoney(getOutstandingAdvance(sampleCase, currentEstimate.id), currentEstimate.currency)} USD.</p><p>Available prior unallocated credit: {formatMoney(getAvailableAdvanceCredit(sampleCase), currentEstimate.currency)} USD. Credit requires explicit allocation and fresh approval.</p><div className="button-row"><button className="button" type="button" onClick={() => run(() => actions.attemptPayment(caseId, "repair-advance", "simulated-success"))}>Simulate successful repair advance</button><button className="button button-secondary" type="button" onClick={() => run(() => actions.attemptPayment(caseId, "repair-advance", "simulated-failed"))}>Simulate failed advance</button><button className="button button-secondary" type="button" onClick={() => run(() => actions.attemptPayment(caseId, "repair-advance", "simulated-canceled"))}>Simulate canceled advance</button></div></div> : null}
+          {phase === "repair-ready" ? <p className="success-message">Current estimate is approved and fully funded. No repair execution occurs in this D4 simulation.</p> : null}
+          {phase === "repair-ready" ? <button className="button button-danger" type="button" onClick={() => run(() => actions.declineEstimate(caseId, "Simulated customer rejected the funded scope before repair started."))}>Decline before repair starts</button> : null}
+          {phase === "estimate-declined" ? <p className="blocked-reason">Declined estimate cannot authorize repair. Any refund is simulated only after authorized incurred costs are disclosed.</p> : null}
+          {getEstimateDecision(sampleCase, currentEstimate.id) ? <p className="history-line">Decision: {getEstimateDecision(sampleCase, currentEstimate.id)?.outcome} by {getEstimateDecision(sampleCase, currentEstimate.id)?.authorizer}.</p> : null}
         </section>
       ) : null}
 

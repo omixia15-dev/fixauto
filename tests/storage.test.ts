@@ -53,7 +53,7 @@ test("schema-one D1 data migrates without losing its case identity or shared not
   }));
 
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 3);
+  assert.equal(migrated.schemaVersion, 4);
   assert.equal(migrated.cases[0].reference, "FXA-1001");
   assert.equal(migrated.cases[0].sharedNote, "Keep my D1 note");
   assert.equal(migrated.cases[0].assessment.authorizedAt, null);
@@ -66,12 +66,28 @@ test("schema-two D2 data migrates while preserving payment history", () => {
   storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({
     ...d2,
     schemaVersion: 2,
-    cases: [{ ...d2.cases[0], payments: [{ id: "pay-1", purpose: "assessment", label: "Assessment", amountCents: 4500, currency: "USD", outcome: "simulated-success", attemptedAt: "2026-09-13T08:00:00.000Z" }] }],
+    cases: [{ ...d2.cases[0], payments: [{ id: "pay-1", purpose: "assessment", label: "Assessment", amountCents: 4500, currency: "USD", outcome: "simulated-success", attemptedAt: "2026-09-13T08:00:00.000Z", estimateVersionId: null }] }],
   }));
   const migrated = loadDemoData(storage);
-  assert.equal(migrated.schemaVersion, 3);
+  assert.equal(migrated.schemaVersion, 4);
   assert.equal(migrated.cases[0].payments[0].id, "pay-1");
   assert.equal(migrated.cases[0].transport.kind, "not-required");
+});
+
+test("schema-three D3 data migrates transport history into the D4 estimate schema", () => {
+  const storage = new MemoryStorage();
+  const d3 = cloneInitialDemoData();
+  const legacyPayment = { id: "transport", purpose: "transport-storage", label: "Transport", amountCents: 15500, currency: "USD", outcome: "simulated-success", attemptedAt: "2026-09-13T08:00:00.000Z" };
+  storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({
+    ...d3,
+    schemaVersion: 3,
+    cases: [{ ...d3.cases[0], payments: [legacyPayment] }],
+  }));
+  const migrated = loadDemoData(storage);
+  assert.equal(migrated.schemaVersion, 4);
+  assert.equal(migrated.cases[0].payments[0].estimateVersionId, null);
+  assert.deepEqual(migrated.cases[0].estimates, []);
+  assert.equal(migrated.cases[0].transport.kind, d3.cases[0].transport.kind);
 });
 
 test("reset replaces only the Fixauto key and preserves unrelated browser data", () => {
