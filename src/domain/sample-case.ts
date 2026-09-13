@@ -1,4 +1,4 @@
-export const DEMO_SCHEMA_VERSION = 4 as const;
+export const DEMO_SCHEMA_VERSION = 5 as const;
 
 export type CurrencyCode = "USD";
 export type PaymentPurpose = "assessment" | "investigation" | "transport-storage" | "repair-advance";
@@ -78,6 +78,15 @@ export type EstimateRefund = {
   processedAt: string;
   simulated: true;
 };
+
+export type PerformedWork = { id: string; estimateVersionId: string; summary: string; performedBy: string; performedAt: string };
+export type QualityCheck = { id: string; estimateVersionId: string; specialist: string; result: "passed" | "failed"; findings: string; checkedAt: string };
+export type SettlementRecord = { id: string; estimateVersionId: string; approvedWorkCents: number; incurredCents: number; outstandingCents: number; settledAt: string; settledBy: string };
+export type FinalPayment = { id: string; estimateVersionId: string; amountCents: number; currency: CurrencyCode; outcome: PaymentOutcome; attemptedAt: string };
+export type InvoiceRecord = { id: string; estimateVersionId: string; performedWorkId: string; summary: string; totalCents: number; currency: CurrencyCode; issuedAt: string; illustrative: true };
+export type WarrantyRecord = { id: string; estimateVersionId: string; performedWorkId: string; terms: string; issuedAt: string; illustrative: true };
+export type ReturnRecord = { id: string; estimateVersionId: string; recipientName: string; recipientAuthority: "owner" | "authorized-representative"; authorizationEvidence: string | null; condition: string; mileage: number; keys: string; returnedAt: string; coordinator: string };
+export type ComplaintRecord = { id: string; estimateVersionId: string; summary: string; coordinator: string; openedAt: string; secondAssessmentAuthorizedAt: string | null };
 
 export type SimulatedSms = {
   id: string;
@@ -187,6 +196,14 @@ export type SampleCase = {
   advanceCreditAllocations: AdvanceCreditAllocation[];
   authorizedIncurredCosts: AuthorizedIncurredCost[];
   estimateRefunds: EstimateRefund[];
+  performedWork: PerformedWork[];
+  qualityChecks: QualityCheck[];
+  settlements: SettlementRecord[];
+  finalPayments: FinalPayment[];
+  invoices: InvoiceRecord[];
+  warranties: WarrantyRecord[];
+  returns: ReturnRecord[];
+  complaints: ComplaintRecord[];
   sharedNote: string;
   payments: SimulatedPayment[];
   smsLog: SimulatedSms[];
@@ -246,7 +263,14 @@ export type CasePhase =
   | "estimate-unanswered"
   | "estimate-payment-required"
   | "repair-ready"
-  | "estimate-declined";
+  | "estimate-declined"
+  | "quality-check-required"
+  | "quality-recheck-required"
+  | "settlement-required"
+  | "settlement-payment-required"
+  | "return-required"
+  | "completed"
+  | "complaint-review";
 
 const mobilePattern = /^[+\d][\d\s()-]{6,19}$/;
 
@@ -354,6 +378,14 @@ export function createEmptyEstimateState() {
     advanceCreditAllocations: [] as AdvanceCreditAllocation[],
     authorizedIncurredCosts: [] as AuthorizedIncurredCost[],
     estimateRefunds: [] as EstimateRefund[],
+    performedWork: [] as PerformedWork[],
+    qualityChecks: [] as QualityCheck[],
+    settlements: [] as SettlementRecord[],
+    finalPayments: [] as FinalPayment[],
+    invoices: [] as InvoiceRecord[],
+    warranties: [] as WarrantyRecord[],
+    returns: [] as ReturnRecord[],
+    complaints: [] as ComplaintRecord[],
   };
 }
 
@@ -543,6 +575,7 @@ export function isCurrentEstimateFunded(sampleCase: SampleCase): boolean {
 }
 
 export function getCasePhase(sampleCase: SampleCase): CasePhase {
+  if (sampleCase.complaints.length > 0) return "complaint-review";
   const assessment = sampleCase.assessment;
   if (assessment.furtherServiceDeclinedAt) return "further-service-declined";
   const transport = sampleCase.transport;
@@ -573,7 +606,19 @@ export function getCasePhase(sampleCase: SampleCase): CasePhase {
   if (!currentEstimate) return "estimate-required";
   const decision = getEstimateDecision(sampleCase, currentEstimate.id);
   if (decision?.outcome === "declined") return "estimate-declined";
-  if (decision?.outcome === "approved") return isCurrentEstimateFunded(sampleCase) ? "repair-ready" : "estimate-payment-required";
+  if (decision?.outcome === "approved") {
+    if (!isCurrentEstimateFunded(sampleCase)) return "estimate-payment-required";
+    const work = sampleCase.performedWork.findLast((item) => item.estimateVersionId === currentEstimate.id);
+    if (!work) return "repair-ready";
+    const check = sampleCase.qualityChecks.findLast((item) => item.estimateVersionId === currentEstimate.id);
+    if (!check) return "quality-check-required";
+    if (check.result === "failed") return "quality-recheck-required";
+    const settlement = sampleCase.settlements.findLast((item) => item.estimateVersionId === currentEstimate.id);
+    if (!settlement) return "settlement-required";
+    if (settlement.outstandingCents > 0 && !sampleCase.finalPayments.some((payment) => payment.estimateVersionId === currentEstimate.id && payment.outcome === "simulated-success")) return "settlement-payment-required";
+    if (!sampleCase.returns.some((item) => item.estimateVersionId === currentEstimate.id)) return "return-required";
+    return "completed";
+  }
   if (sampleCase.estimateReminders.some((reminder) => reminder.estimateVersionId === currentEstimate.id)) return "estimate-unanswered";
   return "estimate-approval-required";
 }
@@ -707,6 +752,101 @@ export function refundUnspentAdvance(data: DemoData, caseId: string, estimateVer
     const fundedCents = getSuccessfulAdvanceTotal(item, estimateVersionId) + item.advanceCreditAllocations.filter((allocation) => allocation.estimateVersionId === estimateVersionId).reduce((total, allocation) => total + allocation.amountCents, 0);
     const authorizedIncurredCents = item.authorizedIncurredCosts.filter((cost) => cost.estimateVersionId === estimateVersionId).reduce((total, cost) => total + cost.amountCents, 0);
     return { ...item, estimateRefunds: [...item.estimateRefunds, { id: `refund-${crypto.randomUUID()}`, estimateVersionId, fundedCents, authorizedIncurredCents, unspentCents: Math.max(0, fundedCents - authorizedIncurredCents), currency: "USD", processedAt: now, simulated: true }] };
+  });
+}
+
+function requireFundedCurrentEstimate(item: SampleCase, estimateVersionId: string): RepairEstimateVersion {
+  const estimate = requireCurrentEstimate(item, estimateVersionId);
+  if (getEstimateDecision(item, estimateVersionId)?.outcome !== "approved" || !isCurrentEstimateFunded(item)) throw new Error("A funded approved current estimate is required.");
+  return estimate;
+}
+
+export function recordPerformedWork(data: DemoData, caseId: string, estimateVersionId: string, summary: string, performedBy: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    requireFundedCurrentEstimate(item, estimateVersionId);
+    if (!summary.trim() || performedBy.trim().length < 2) throw new Error("Record performed work and the responsible specialist.");
+    const latestCheck = item.qualityChecks.findLast((check) => check.estimateVersionId === estimateVersionId);
+    if (item.performedWork.some((work) => work.estimateVersionId === estimateVersionId) && latestCheck?.result !== "failed") throw new Error("Performed work is already recorded for this estimate.");
+    return { ...item, performedWork: [...item.performedWork, { id: `work-${crypto.randomUUID()}`, estimateVersionId, summary: summary.trim(), performedBy: performedBy.trim(), performedAt: now }] };
+  });
+}
+
+export function recordQualityCheck(data: DemoData, caseId: string, estimateVersionId: string, input: { specialist: string; result: "passed" | "failed"; findings: string }, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    requireFundedCurrentEstimate(item, estimateVersionId);
+    if (!item.performedWork.some((work) => work.estimateVersionId === estimateVersionId)) throw new Error("Record performed work before quality check.");
+    const latestCheck = item.qualityChecks.findLast((check) => check.estimateVersionId === estimateVersionId);
+    const latestWork = item.performedWork.findLast((work) => work.estimateVersionId === estimateVersionId);
+    if (latestCheck?.result === "failed" && (!latestWork || latestWork.performedAt <= latestCheck.checkedAt)) throw new Error("A failed quality check requires new corrective work before reassessment.");
+    if (input.specialist.trim().length < 2 || input.findings.trim().length < 5) throw new Error("Record the quality specialist and findings.");
+    return { ...item, qualityChecks: [...item.qualityChecks, { id: `quality-${crypto.randomUUID()}`, estimateVersionId, specialist: input.specialist.trim(), result: input.result, findings: input.findings.trim(), checkedAt: now }] };
+  });
+}
+
+export function recordSettlement(data: DemoData, caseId: string, estimateVersionId: string, settledBy: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = requireFundedCurrentEstimate(item, estimateVersionId);
+    const check = item.qualityChecks.findLast((entry) => entry.estimateVersionId === estimateVersionId);
+    if (!check || check.result !== "passed") throw new Error("A current passing quality check is required before settlement.");
+    if (item.settlements.some((entry) => entry.estimateVersionId === estimateVersionId)) throw new Error("Settlement is already recorded.");
+    const funded = getSuccessfulAdvanceTotal(item, estimateVersionId) + item.advanceCreditAllocations.filter((entry) => entry.estimateVersionId === estimateVersionId).reduce((sum, entry) => sum + entry.amountCents, 0);
+    const incurred = item.authorizedIncurredCosts.filter((entry) => entry.estimateVersionId === estimateVersionId).reduce((sum, entry) => sum + entry.amountCents, 0);
+    if (settledBy.trim().length < 2) throw new Error("Record the settlement coordinator.");
+    return { ...item, settlements: [...item.settlements, { id: `settlement-${crypto.randomUUID()}`, estimateVersionId, approvedWorkCents: estimate.totalCents, incurredCents: incurred, outstandingCents: Math.max(0, estimate.totalCents - funded), settledAt: now, settledBy: settledBy.trim() }] };
+  });
+}
+
+export function recordFinalPayment(data: DemoData, caseId: string, payment: FinalPayment): DemoData {
+  return updateCase(data, caseId, (item) => {
+    if (getCurrentEstimate(item)?.id !== payment.estimateVersionId) throw new Error("Final payment must match the current estimate version.");
+    const settlement = item.settlements.findLast((entry) => entry.estimateVersionId === payment.estimateVersionId);
+    if (!settlement) throw new Error("Settlement is required before final payment.");
+    if (settlement.outstandingCents === 0) throw new Error("No final payment is due for this zero-balance settlement.");
+    if (payment.amountCents !== settlement.outstandingCents || payment.currency !== "USD") throw new Error("Final payment must match the disclosed outstanding balance.");
+    if (item.finalPayments.some((entry) => entry.id === payment.id)) throw new Error("That final payment attempt already exists.");
+    return { ...item, finalPayments: [...item.finalPayments, payment] };
+  });
+}
+
+export function issueRecords(data: DemoData, caseId: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = getCurrentEstimate(item);
+    const work = item.performedWork.findLast((entry) => entry.estimateVersionId === estimate?.id);
+    const settlement = item.settlements.findLast((entry) => entry.estimateVersionId === estimate?.id);
+    const check = item.qualityChecks.findLast((entry) => entry.estimateVersionId === estimate?.id);
+    if (!estimate || !work || !settlement || !check || check.result !== "passed" || (settlement.outstandingCents > 0 && !item.finalPayments.some((entry) => entry.estimateVersionId === estimate.id && entry.outcome === "simulated-success"))) throw new Error("Passed quality and completed settlement are required before issuing records.");
+    return { ...item, invoices: item.invoices.some((entry) => entry.estimateVersionId === estimate.id) ? item.invoices : [...item.invoices, { id: `invoice-${crypto.randomUUID()}`, estimateVersionId: estimate.id, performedWorkId: work.id, summary: `Illustrative invoice for ${work.summary}`, totalCents: estimate.totalCents, currency: "USD", issuedAt: now, illustrative: true }], warranties: item.warranties.some((entry) => entry.estimateVersionId === estimate.id) ? item.warranties : [...item.warranties, { id: `warranty-${crypto.randomUUID()}`, estimateVersionId: estimate.id, performedWorkId: work.id, terms: "Illustrative sample warranty; no legal promise or production coverage.", issuedAt: now, illustrative: true }] };
+  });
+}
+
+export function recordReturn(data: DemoData, caseId: string, input: Omit<ReturnRecord, "id" | "estimateVersionId" | "returnedAt">, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = getCurrentEstimate(item);
+    const settlement = estimate && item.settlements.findLast((entry) => entry.estimateVersionId === estimate.id);
+    const check = estimate && item.qualityChecks.findLast((entry) => entry.estimateVersionId === estimate.id);
+    if (!estimate || !settlement || !check || check.result !== "passed" || (settlement.outstandingCents > 0 && !item.finalPayments.some((entry) => entry.estimateVersionId === estimate.id && entry.outcome === "simulated-success"))) throw new Error("A current passing quality check and settled balance are required before return.");
+    if (item.returns.some((record) => record.estimateVersionId === estimate.id)) throw new Error("This vehicle has already been returned for the current repair.");
+    if (input.recipientName.trim().length < 2 || input.condition.trim().length < 5 || input.keys.trim().length < 2 || input.coordinator.trim().length < 2 || !Number.isFinite(input.mileage) || input.mileage < 0) throw new Error("Record recipient, authority, condition, mileage, keys, and coordinator.");
+    if (input.recipientAuthority === "authorized-representative" && !input.authorizationEvidence?.trim()) throw new Error("Authorized representative return needs authority evidence.");
+    return { ...item, returns: [...item.returns, { ...input, id: `return-${crypto.randomUUID()}`, estimateVersionId: estimate.id, recipientName: input.recipientName.trim(), condition: input.condition.trim(), keys: input.keys.trim(), coordinator: input.coordinator.trim(), returnedAt: now }] };
+  });
+}
+
+export function openComplaint(data: DemoData, caseId: string, summary: string, coordinator: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const estimate = getCurrentEstimate(item);
+    if (!estimate || !item.returns.some((entry) => entry.estimateVersionId === estimate.id)) throw new Error("A completed returned case is required before opening a complaint review.");
+    if (summary.trim().length < 5 || coordinator.trim().length < 2) throw new Error("Record the complaint and coordinator.");
+    return { ...item, complaints: [...item.complaints, { id: `complaint-${crypto.randomUUID()}`, estimateVersionId: estimate.id, summary: summary.trim(), coordinator: coordinator.trim(), openedAt: now, secondAssessmentAuthorizedAt: null }] };
+  });
+}
+
+export function authorizeComplaintSecondAssessment(data: DemoData, caseId: string, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    const complaint = item.complaints.findLast((entry) => entry.estimateVersionId === getCurrentEstimate(item)?.id);
+    if (!complaint) throw new Error("Open a complaint review first.");
+    if (complaint.secondAssessmentAuthorizedAt) throw new Error("Second assessment review is already authorized.");
+    return { ...item, complaints: item.complaints.map((entry) => entry.id === complaint.id ? { ...entry, secondAssessmentAuthorizedAt: now } : entry) };
   });
 }
 

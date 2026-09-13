@@ -12,7 +12,7 @@ import { formatMoney } from "../src/domain/currency.ts";
 test("the seed is explicit sample data with a stable case and USD amount", () => {
   const sampleCase = initialDemoData.cases[0];
 
-  assert.equal(initialDemoData.schemaVersion, 4);
+  assert.equal(initialDemoData.schemaVersion, 5);
   assert.equal(sampleCase.id, "case-atlas-001");
   assert.equal(sampleCase.reference, "FXA-1001");
   assert.equal(sampleCase.assessment.currency, "USD");

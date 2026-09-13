@@ -32,6 +32,16 @@ export function StaffWorkspaceScreen() {
   const [managementPrice, setManagementPrice] = useState("35");
   const [costDescription, setCostDescription] = useState("Authorized diagnostic parts reservation");
   const [costAmount, setCostAmount] = useState("0");
+  const [workSummary, setWorkSummary] = useState("Approved brake replacement completed; no substitutions.");
+  const [qualityFindings, setQualityFindings] = useState("Brake operation verified against the approved scope.");
+  const [qualityResult, setQualityResult] = useState<"passed" | "failed">("passed");
+  const [returnName, setReturnName] = useState("D4 Customer");
+  const [returnAuthority, setReturnAuthority] = useState<"owner" | "authorized-representative">("owner");
+  const [returnEvidence, setReturnEvidence] = useState("");
+  const [returnCondition, setReturnCondition] = useState("No new visible damage in the simulated return.");
+  const [returnMileage, setReturnMileage] = useState("81234");
+  const [returnKeys, setReturnKeys] = useState("One ignition key and one remote.");
+  const [complaintSummary, setComplaintSummary] = useState("Customer reports a concern for coordinator review.");
   const [actionError, setActionError] = useState("");
   const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
   const phase = getCasePhase(sampleCase);
@@ -221,6 +231,14 @@ export function StaffWorkspaceScreen() {
                 {phase === "estimate-declined" ? <button className="button" type="button" onClick={() => run(() => actions.refundEstimate(sampleCase.id, currentEstimate.id))}>Record simulated refund of unspent advance</button> : null}
               </div>
             ) : null}
+
+            {phase === "repair-ready" ? <div className="nested-panel"><h3>Record performed work</h3><textarea aria-label="Performed work summary" value={workSummary} onChange={(event) => setWorkSummary(event.target.value)} /><button className="button" type="button" onClick={() => run(() => actions.recordWork(sampleCase.id, workSummary, "Specialist workshop"))}>Record performed work</button></div> : null}
+            {phase === "quality-check-required" || phase === "quality-recheck-required" ? <div className="nested-panel"><h3>Specialist quality check</h3><label htmlFor="qualityResult">Result</label><select id="qualityResult" value={qualityResult} onChange={(event) => setQualityResult(event.target.value as typeof qualityResult)}><option value="passed">Passed</option><option value="failed">Failed</option></select><textarea aria-label="Quality findings" value={qualityFindings} onChange={(event) => setQualityFindings(event.target.value)} /><button className="button" type="button" onClick={() => run(() => actions.recordQuality(sampleCase.id, { specialist: "Specialist workshop", result: qualityResult, findings: qualityFindings }))}>Record quality check</button></div> : null}
+            {phase === "settlement-required" ? <div className="nested-panel"><p>Quality passed. The D4 advance normally leaves a zero final balance.</p><button className="button" type="button" onClick={() => run(() => actions.settle(sampleCase.id))}>Record illustrative settlement</button></div> : null}
+            {phase === "settlement-payment-required" ? <div className="nested-panel"><button className="button" type="button" onClick={() => run(() => actions.attemptFinalPayment(sampleCase.id, "simulated-success"))}>Simulate final payment</button><button className="button button-secondary" type="button" onClick={() => run(() => actions.attemptFinalPayment(sampleCase.id, "simulated-failed"))}>Simulate failed final payment</button></div> : null}
+            {phase === "return-required" ? <div className="nested-panel"><h3>Return to owner or authorized representative</h3><input aria-label="Return recipient" value={returnName} onChange={(event) => setReturnName(event.target.value)} /><select aria-label="Return authority" value={returnAuthority} onChange={(event) => setReturnAuthority(event.target.value as typeof returnAuthority)}><option value="owner">Owner</option><option value="authorized-representative">Authorized representative</option></select>{returnAuthority === "authorized-representative" ? <input aria-label="Return authorization evidence" value={returnEvidence} onChange={(event) => setReturnEvidence(event.target.value)} /> : null}<textarea aria-label="Return condition" value={returnCondition} onChange={(event) => setReturnCondition(event.target.value)} /><input aria-label="Return mileage" value={returnMileage} onChange={(event) => setReturnMileage(event.target.value)} /><input aria-label="Return keys" value={returnKeys} onChange={(event) => setReturnKeys(event.target.value)} /><button className="button" type="button" onClick={() => run(() => actions.returnVehicle(sampleCase.id, { recipientName: returnName, recipientAuthority: returnAuthority, authorizationEvidence: returnAuthority === "owner" ? null : returnEvidence, condition: returnCondition, mileage: Number(returnMileage), keys: returnKeys, coordinator: "Fixauto coordinator" }))}>Record vehicle return</button></div> : null}
+            {phase === "completed" ? <div className="nested-panel"><button className="button" type="button" onClick={() => run(() => actions.issueRecords(sampleCase.id))}>Issue illustrative invoice and warranty</button><textarea aria-label="Complaint summary" value={complaintSummary} onChange={(event) => setComplaintSummary(event.target.value)} /><button className="button button-secondary" type="button" onClick={() => run(() => actions.openComplaint(sampleCase.id, complaintSummary))}>Open complaint review</button></div> : null}
+            {phase === "complaint-review" ? <div className="nested-panel"><p>Complaint review is recorded under the coordinator; no charge or repair is authorized automatically.</p><button className="button" type="button" onClick={() => run(() => actions.authorizeSecondAssessment(sampleCase.id))}>Authorize separate no-charge second assessment review</button></div> : null}
 
             <div className="placeholder-grid" aria-label="Future workflow sections">
               <span>Transport · D3</span><span>Estimate · D4</span><span>Quality and return · D5</span>
