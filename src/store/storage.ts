@@ -294,10 +294,19 @@ function migrateVersionFour(value: unknown): DemoData | null {
   return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
 }
 
+function migrateVersionFive(value: unknown): DemoData | null {
+  if (!isRecord(value) || value.schemaVersion !== 5 || !Array.isArray(value.cases)) return null;
+  const migratedCases = value.cases.flatMap((legacy): SampleCase[] => {
+    if (!isSampleCase(legacy)) return [];
+    return [{ ...legacy, smsLog: legacy.smsLog.map((sms) => ({ ...sms, nonWorkingDay: sms.nonWorkingDay ?? false })) }];
+  });
+  return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
+}
+
 function parseStored(stored: string): DemoData | null {
   try {
     const parsed: unknown = JSON.parse(stored);
-    return isDemoData(parsed) ? parsed : migrateVersionFour(parsed) ?? migrateVersionThree(parsed) ?? migrateVersionTwo(parsed) ?? migrateVersionOne(parsed);
+    return isDemoData(parsed) ? parsed : migrateVersionFive(parsed) ?? migrateVersionFour(parsed) ?? migrateVersionThree(parsed) ?? migrateVersionTwo(parsed) ?? migrateVersionOne(parsed);
   } catch {
     return null;
   }

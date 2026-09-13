@@ -42,6 +42,11 @@ export function StaffWorkspaceScreen() {
   const [returnMileage, setReturnMileage] = useState("81234");
   const [returnKeys, setReturnKeys] = useState("One ignition key and one remote.");
   const [complaintSummary, setComplaintSummary] = useState("Customer reports a concern for coordinator review.");
+  const [summarySituation, setSummarySituation] = useState("Vehicle remains safely held while the next approved step is reviewed.");
+  const [summaryNextAction, setSummaryNextAction] = useState("Coordinator will update the customer after the next check.");
+  const [summaryTiming, setSummaryTiming] = useState("Next staffed period");
+  const [summaryDate, setSummaryDate] = useState(new Date().toISOString().slice(0, 10));
+  const [summaryNonWorking, setSummaryNonWorking] = useState(false);
   const [actionError, setActionError] = useState("");
   const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
   const phase = getCasePhase(sampleCase);
@@ -98,6 +103,7 @@ export function StaffWorkspaceScreen() {
         </aside>
         <div className="page-stack">
           <CaseSummary sampleCase={sampleCase} />
+          <section className="card" aria-labelledby="daily-summary-title"><div className="section-heading"><h2 id="daily-summary-title">Simulated daily summary</h2><SimulationBadge>SMS log</SimulationBadge></div><p className="helper-text">A summary is informational only; it never grants consent, approval, payment, custody, or repair authority.</p>{sampleCase.smsLog.length > 0 ? <ol className="history-list">{sampleCase.smsLog.map((sms) => <li key={sms.id}><strong>{sms.summaryDate ?? "Historical update"}</strong><span>{sms.situation}</span><span>Next: {sms.nextAction} · {sms.expectedTiming}</span></li>)}</ol> : null}<input aria-label="Summary date" value={summaryDate} onChange={(event) => setSummaryDate(event.target.value)} /><textarea aria-label="Summary situation" value={summarySituation} onChange={(event) => setSummarySituation(event.target.value)} /><input aria-label="Summary next action" value={summaryNextAction} onChange={(event) => setSummaryNextAction(event.target.value)} /><input aria-label="Summary timing" value={summaryTiming} onChange={(event) => setSummaryTiming(event.target.value)} /><label className="checkbox-row"><input type="checkbox" checked={summaryNonWorking} onChange={(event) => setSummaryNonWorking(event.target.checked)} /> Non-working day while vehicle is held</label><button className="button button-secondary" type="button" onClick={() => run(() => actions.addDailySummary(sampleCase.id, { situation: summarySituation, nextAction: summaryNextAction, expectedTiming: summaryTiming, summaryDate, nonWorkingDay: summaryNonWorking }))}>Add simulated summary</button></section>
           <section className="card" aria-labelledby="staff-next-title">
             <p className="eyebrow">Next required action</p>
             <h2 id="staff-next-title">{presentation.nextAction}</h2>
