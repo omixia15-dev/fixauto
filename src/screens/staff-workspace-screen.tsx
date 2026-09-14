@@ -174,7 +174,7 @@ export function StaffWorkspaceScreen() {
             ) : null}
 
             {phase === "custody-return-required" ? <div className="nested-panel"><p>Return is a simulated custody release only; settlement and warranty remain D5.</p><button className="button" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
-            {phase === "estimate-required" && sampleCase.transport.kind !== "not-required" && !sampleCase.estimates.length ? <div className="nested-panel"><p>Assessment-only or canceled service may release custody here; this is optional and is not required to continue into repair.</p><button className="button button-secondary" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
+            {sampleCase.transport.kind !== "not-required" && sampleCase.transport.handover && !sampleCase.transport.returnedAt && !sampleCase.estimates.length && ["estimate-required", "estimate-approval-required", "estimate-unanswered", "estimate-declined"].includes(phase) ? <div className="nested-panel"><p>Assessment-only or canceled service may release custody here; this is optional and is not required to continue into repair.</p><button className="button button-secondary" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
 
             {phase === "assessment-ready" ? (
               <form className="assessment-form" onSubmit={handleAssessment}>

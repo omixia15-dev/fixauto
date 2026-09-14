@@ -70,7 +70,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
             <SimulationBadge>transport and payment</SimulationBadge>
           </div>
           <p>{sampleCase.transport.scope}</p>
-          <p><strong>Destination:</strong> {sampleCase.transport.destination}</p>
+          <p>Destination: {sampleCase.transport.destination}</p>
           {sampleCase.transport.assessmentEarliestDate ? (
             <p className="blocked-reason">Private-parking exception: assessment cannot begin before {sampleCase.transport.assessmentEarliestDate}.</p>
           ) : null}

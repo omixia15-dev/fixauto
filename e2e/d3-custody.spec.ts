@@ -6,8 +6,9 @@ function nextMonday(): string {
 
 function nextWeekday(targetDay: number): string {
   const date = new Date();
-  const daysAhead = (targetDay - date.getDay() + 7) % 7 || 7;
-  date.setDate(date.getDate() + daysAhead);
+  date.setUTCHours(12, 0, 0, 0);
+  date.setUTCDate(date.getUTCDate() + 1);
+  while (date.getUTCDay() !== targetDay) date.setUTCDate(date.getUTCDate() + 1);
   return date.toISOString().slice(0, 10);
 }
 
@@ -26,6 +27,7 @@ async function createCollection(page: Page, suffix = "2", preferredDate = nextMo
   await page.getByRole("button", { name: "Create sample request" }).click();
   await expect(page.getByText("Sample request received")).toBeVisible();
   await page.getByRole("link", { name: "Open customer case" }).click();
+  await expect(page).toHaveURL(/\/cases\//);
 }
 
 async function prepareTransport(page: Page) {
