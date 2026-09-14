@@ -21,3 +21,11 @@ test("daily summaries are shared, simulated, and non-authorizing", async ({ page
   await page.getByRole("link", { name: "Customer case" }).click();
   await expect(page.locator("ol.history-list").getByText("Vehicle remains safely held on a non-working day.")).toHaveCount(0);
 });
+
+test("daily summary defaults use the Tehran service date at a UTC midnight boundary", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-09-13T21:00:00.000Z") });
+  await page.goto("/");
+  await page.getByRole("link", { name: "Staff workspace" }).click();
+
+  await expect(page.getByLabel("Summary date")).toHaveValue("2026-09-14");
+});

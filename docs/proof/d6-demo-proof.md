@@ -7,10 +7,10 @@ This document describes the checked-in, same-browser simulation. Observed local 
 1. Run `npm run dev` and open the service request screen.
 2. Create an expert-visit request, open the customer case, then switch to Staff workspace.
 3. Confirm the appointment; on Customer case authorize and successfully pay the assessment; on Staff workspace record an assessment with no deeper investigation.
-4. Publish estimate v1; on Customer case record a failed or canceled advance, verify the case remains blocked, then approve and successfully fund it.
-5. Publish estimate v2 from Staff workspace. Refresh both routes and verify v2 requires fresh approval; v1 approval/funding remains history only. Record a simulated unanswered reminder and verify it does not authorize work.
+4. Publish estimate v1; approve it first, then record a failed or canceled advance, verify the case remains blocked, and successfully fund it.
+5. Publish estimate v2 from Staff workspace. Approve v2 and explicitly apply any available prior credit before paying only the remaining amount. Refresh both routes and verify v2 requires fresh approval; v1 approval/funding remains history only. Record a simulated unanswered reminder and verify it does not authorize work.
 6. Record performed work, a failed quality check, corrective work, and a passing reassessment. Record settlement and the owner/authorized-recipient return. Issue the illustrative invoice and warranty; these remain sample records.
-7. Use a collection-request case to occupy the one-car capacity, then create a second collection case and verify dispatch is blocked until the first vehicle is returned.
+7. Use a collection-request case and keep it in custody from handover through assessment, estimate approval/funding, work, failed quality, corrective work, passing quality, settlement, and final return. Verify capacity remains occupied through repair and releases only on the recorded return. Also complete a separately authorized and paid deeper investigation before publishing its estimate.
 8. Use the Staff workspace daily-summary form on a non-working day while a vehicle is held. Verify the same simulated SMS entry appears on the Customer case. Refresh; the entry remains. Use Reset sample data; generated cases and summaries are removed.
 
 ## Automated evidence

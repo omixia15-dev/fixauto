@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CaseSummary } from "../components/case-summary";
 import { SimulationBadge } from "../components/simulation-badge";
-import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase, getCurrentEstimate, getAvailableAdvanceCredit } from "../domain/sample-case";
+import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase, getCurrentEstimate, getAvailableAdvanceCredit, serviceDateFromIso } from "../domain/sample-case";
 import { getCasePresentation } from "../presentation/case-status";
 import { useDemoCases } from "../store/demo-case-provider";
 
@@ -45,7 +45,7 @@ export function StaffWorkspaceScreen() {
   const [summarySituation, setSummarySituation] = useState("Vehicle remains safely held while the next approved step is reviewed.");
   const [summaryNextAction, setSummaryNextAction] = useState("Coordinator will update the customer after the next check.");
   const [summaryTiming, setSummaryTiming] = useState("Next staffed period");
-  const [summaryDate, setSummaryDate] = useState(new Date().toISOString().slice(0, 10));
+  const [summaryDate, setSummaryDate] = useState(serviceDateFromIso(new Date().toISOString()));
   const [summaryNonWorking, setSummaryNonWorking] = useState(false);
   const [actionError, setActionError] = useState("");
   const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
@@ -174,6 +174,7 @@ export function StaffWorkspaceScreen() {
             ) : null}
 
             {phase === "custody-return-required" ? <div className="nested-panel"><p>Return is a simulated custody release only; settlement and warranty remain D5.</p><button className="button" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
+            {phase === "estimate-required" && sampleCase.transport.kind !== "not-required" && !sampleCase.estimates.length ? <div className="nested-panel"><p>Assessment-only or canceled service may release custody here; this is optional and is not required to continue into repair.</p><button className="button button-secondary" type="button" onClick={() => run(() => actions.recordReturn(sampleCase.id))}>Record simulated vehicle return</button></div> : null}
 
             {phase === "assessment-ready" ? (
               <form className="assessment-form" onSubmit={handleAssessment}>
@@ -197,10 +198,20 @@ export function StaffWorkspaceScreen() {
                 <p>{sampleCase.assessment.findings}</p>
                 <p>Assessment fee: earned under the authorized scope.</p>
                 {sampleCase.assessment.needsInvestigation ? <p>Deeper investigation is separate; customer authorization/payment status: {phase.replaceAll("-", " ")}.</p> : null}
+                {sampleCase.assessment.investigation.completedAt ? <p><strong>Completed investigation:</strong> {sampleCase.assessment.investigation.findings} ({sampleCase.assessment.investigation.expertName})</p> : null}
               </div>
             ) : null}
 
-            {(phase === "estimate-required" || phase === "estimate-declined" || phase === "estimate-unanswered" || phase === "estimate-approval-required" || phase === "estimate-payment-required" || phase === "repair-ready") && sampleCase.assessment.needsInvestigation === false ? (
+            {phase === "investigation-funded" && !sampleCase.assessment.investigation.completedAt ? (
+              <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.completeInvestigation(sampleCase.id, { expertName, findings })); }}>
+                <h3>Record completed deeper investigation</h3>
+                <label htmlFor="investigationExpert">Investigation expert</label><input id="investigationExpert" value={expertName} onChange={(event) => setExpertName(event.target.value)} />
+                <label htmlFor="investigationFindings">Investigation findings</label><textarea id="investigationFindings" value={findings} onChange={(event) => setFindings(event.target.value)} />
+                <button className="button" type="submit">Complete paid investigation</button>
+              </form>
+            ) : null}
+
+            {(phase === "estimate-required" || phase === "estimate-declined" || phase === "estimate-unanswered" || phase === "estimate-approval-required" || phase === "estimate-payment-required" || phase === "repair-ready") && (sampleCase.assessment.needsInvestigation === false || Boolean(sampleCase.assessment.investigation.completedAt)) ? (
               <form className="assessment-form" onSubmit={(event) => { event.preventDefault(); run(() => actions.publishEstimate(sampleCase.id, {
                 expectedTiming: estimateTiming,
                 lines: [

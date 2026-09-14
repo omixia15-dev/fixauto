@@ -181,6 +181,9 @@ export type Assessment = {
     currency: CurrencyCode;
     authorizedAt: string | null;
     authorizer: string | null;
+    completedAt: string | null;
+    expertName: string | null;
+    findings: string | null;
   };
 };
 
@@ -304,7 +307,7 @@ function addDays(value: string, days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-function tehranDateFromIso(value: string): string {
+export function serviceDateFromIso(value: string): string {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Tehran",
     year: "numeric",
@@ -439,6 +442,9 @@ export function createPendingAssessment(): Assessment {
       currency: "USD",
       authorizedAt: null,
       authorizer: null,
+      completedAt: null,
+      expertName: null,
+      findings: null,
     },
   };
 }
@@ -528,6 +534,9 @@ export function getDisclosedCharge(sampleCase: SampleCase, purpose: PaymentPurpo
 }
 
 export function occupiesActiveSlot(sampleCase: SampleCase): boolean {
+  if (sampleCase.request.serviceMode === "expert-visit") {
+    return Boolean(sampleCase.request.confirmedAppointment && !sampleCase.transport.returnedAt && !sampleCase.assessment.furtherServiceDeclinedAt && sampleCase.returns.length === 0);
+  }
   return sampleCase.transport.activity !== "idle" && !sampleCase.transport.returnedAt;
 }
 
@@ -559,7 +568,8 @@ export function getAvailableAdvanceCredit(sampleCase: SampleCase): number {
     .reduce((total, payment) => total + payment.amountCents, 0);
   const allocated = sampleCase.advanceCreditAllocations.reduce((total, allocation) => total + allocation.amountCents, 0);
   const refunded = sampleCase.estimateRefunds.reduce((total, refund) => total + refund.unspentCents, 0);
-  return Math.max(0, funded - allocated - refunded);
+  const incurred = sampleCase.authorizedIncurredCosts.reduce((total, cost) => total + cost.amountCents, 0);
+  return Math.max(0, funded - allocated - refunded - incurred);
 }
 
 export function getOutstandingAdvance(sampleCase: SampleCase, estimateVersionId: string): number {
@@ -594,11 +604,8 @@ export function getCasePhase(sampleCase: SampleCase): CasePhase {
     if (assessment.needsInvestigation) {
       if (!assessment.investigation.authorizedAt) return "investigation-authorization-required";
       if (!hasSuccessfulPayment(sampleCase, "investigation")) return "investigation-payment-required";
-      return transport.kind !== "not-required" && !transport.returnedAt
-        ? "custody-return-required"
-        : "investigation-funded";
+      if (!assessment.investigation.completedAt) return "investigation-funded";
     }
-    if (transport.kind !== "not-required" && !transport.returnedAt) return "custody-return-required";
   }
   if (!sampleCase.request.confirmedAppointment) return "pending-staff-confirmation";
   if (!assessment.authorizedAt) return "assessment-authorization-required";
@@ -675,8 +682,8 @@ export function publishEstimate(
   now: string,
 ): DemoData {
   return updateCase(data, caseId, (item) => {
-    if (!item.assessment.performedAt || item.assessment.needsInvestigation !== false) throw new Error("A completed expert-first assessment without pending investigation is required before publishing an estimate.");
-    if (item.transport.kind !== "not-required" && !item.transport.returnedAt) throw new Error("The vehicle must be returned from custody before publishing an estimate.");
+    if (!item.assessment.performedAt || (item.assessment.needsInvestigation !== false && !item.assessment.investigation.completedAt)) throw new Error("A completed expert-first assessment and any paid deeper investigation are required before publishing an estimate.");
+    if (item.transport.kind !== "not-required" && !item.transport.handover) throw new Error("Collection custody handover is required before continuing the repair journey.");
     if (publisher.trim().length < 2 || input.expectedTiming.trim().length < 2) throw new Error("Enter an estimate publisher and expected timing.");
     const lines = normalizeEstimateLines(input.lines);
     return {
@@ -830,7 +837,7 @@ export function recordReturn(data: DemoData, caseId: string, input: Omit<ReturnR
     if (item.returns.some((record) => record.estimateVersionId === estimate.id)) throw new Error("This vehicle has already been returned for the current repair.");
     if (input.recipientName.trim().length < 2 || input.condition.trim().length < 5 || input.keys.trim().length < 2 || input.coordinator.trim().length < 2 || !Number.isFinite(input.mileage) || input.mileage < 0) throw new Error("Record recipient, authority, condition, mileage, keys, and coordinator.");
     if (input.recipientAuthority === "authorized-representative" && !input.authorizationEvidence?.trim()) throw new Error("Authorized representative return needs authority evidence.");
-    return { ...item, returns: [...item.returns, { ...input, id: `return-${crypto.randomUUID()}`, estimateVersionId: estimate.id, recipientName: input.recipientName.trim(), condition: input.condition.trim(), keys: input.keys.trim(), coordinator: input.coordinator.trim(), returnedAt: now }] };
+    return { ...item, transport: { ...item.transport, activity: "idle", returnedAt: now }, returns: [...item.returns, { ...input, id: `return-${crypto.randomUUID()}`, estimateVersionId: estimate.id, recipientName: input.recipientName.trim(), condition: input.condition.trim(), keys: input.keys.trim(), coordinator: input.coordinator.trim(), returnedAt: now }] };
   });
 }
 
@@ -869,6 +876,7 @@ export function confirmRequestedAppointment(
   return updateCase(data, caseId, (item) => {
     if (item.request.confirmedAppointment) throw new Error("The appointment is already confirmed.");
     if (coordinator.trim().length < 2) throw new Error("Assign a sample coordinator.");
+    if (item.request.serviceMode === "expert-visit" && getActiveCarCount(data) >= 1) throw new Error("The single active service slot is already reserved by another confirmed expert visit.");
     return {
       ...item,
       request: {
@@ -881,6 +889,16 @@ export function confirmRequestedAppointment(
         },
       },
     };
+  });
+}
+
+export function recordInvestigationCompletion(data: DemoData, caseId: string, input: { expertName: string; findings: string }, now: string): DemoData {
+  return updateCase(data, caseId, (item) => {
+    if (!item.assessment.performedAt || item.assessment.needsInvestigation !== true || !item.assessment.investigation.authorizedAt || !hasSuccessfulPayment(item, "investigation")) throw new Error("A separately authorized and paid investigation is required before recording findings.");
+    if (item.assessment.investigation.completedAt) throw new Error("The deeper investigation is already completed.");
+    if (item.transport.kind !== "not-required" && !item.transport.handover) throw new Error("Collection custody handover is required before recording workshop findings.");
+    if (input.expertName.trim().length < 2 || input.findings.trim().length < 10) throw new Error("Enter an investigation expert and at least 10 characters of findings.");
+    return { ...item, assessment: { ...item.assessment, investigation: { ...item.assessment.investigation, completedAt: now, expertName: input.expertName.trim(), findings: input.findings.trim() } } };
   });
 }
 
@@ -1023,7 +1041,7 @@ export function recordInitialAssessment(
     if (getCasePhase(item) !== "assessment-ready") {
       throw new Error("Assessment authorization and successful payment are required before the visit.");
     }
-    if (item.transport.assessmentEarliestDate && tehranDateFromIso(now) < item.transport.assessmentEarliestDate) {
+    if (item.transport.assessmentEarliestDate && serviceDateFromIso(now) < item.transport.assessmentEarliestDate) {
       throw new Error(`The private-parking assessment cannot begin before ${item.transport.assessmentEarliestDate}.`);
     }
     if (input.expertName.trim().length < 2) throw new Error("Enter the sample expert name.");
