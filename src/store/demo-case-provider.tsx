@@ -5,6 +5,7 @@ import { cloneInitialDemoData } from "../demo-data/sample-data";
 import {
   authorizeAssessment,
   authorizeDeeperInvestigation,
+  recordInvestigationCompletion,
   authorizeTransportStorage,
   assignCustodyReceiver,
   confirmRequestedAppointment,
@@ -37,6 +38,7 @@ import {
   recordVehicleReturned,
   submitServiceRequest,
   updateSharedNote,
+  serviceDateFromIso,
   type DemoData,
   type PaymentOutcome,
   type PaymentPurpose,
@@ -68,6 +70,7 @@ type DemoCaseContextValue = {
   recordReturn: (caseId: string) => void;
   completeInitialAssessment: (caseId: string, input: AssessmentInput) => void;
   authorizeInvestigation: (caseId: string) => void;
+  completeInvestigation: (caseId: string, input: { expertName: string; findings: string }) => void;
   declineService: (caseId: string) => void;
   publishEstimate: (caseId: string, input: { expectedTiming: string; lines: EstimateLineInput[] }) => void;
   approveEstimate: (caseId: string) => void;
@@ -90,17 +93,6 @@ type DemoCaseContextValue = {
 };
 
 const DemoCaseContext = createContext<DemoCaseContextValue | null>(null);
-
-function tehranDate(date: Date): string {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Tehran",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const value = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? "";
-  return `${value("year")}-${value("month")}-${value("day")}`;
-}
 
 export function DemoCaseProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<DemoData>(() => cloneInitialDemoData());
@@ -141,7 +133,7 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
           input,
           { caseId: `case-${crypto.randomUUID()}`, reference: `FXA-${nextNumber}` },
           now.toISOString(),
-          tehranDate(now),
+          serviceDateFromIso(now.toISOString()),
         );
         commit(result.data, `Sample request ${result.sampleCase.reference} created and awaiting staff confirmation.`);
         return { caseId: result.sampleCase.id, reference: result.sampleCase.reference };
@@ -219,6 +211,9 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
           authorizeDeeperInvestigation(data, caseId, "Simulated customer", new Date().toISOString()),
           "Separate deeper-investigation scope authorized.",
         );
+      },
+      completeInvestigation(caseId, input) {
+        commit(recordInvestigationCompletion(data, caseId, input, new Date().toISOString()), "Completed deeper-investigation findings recorded; the repair estimate path is now available.");
       },
       declineService(caseId) {
         commit(

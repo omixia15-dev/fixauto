@@ -172,6 +172,9 @@ function isSampleCase(value: unknown): value is SampleCase {
     value.assessment.investigation.currency === "USD" &&
     isNullableString(value.assessment.investigation.authorizedAt) &&
     isNullableString(value.assessment.investigation.authorizer) &&
+    (value.assessment.investigation.completedAt === undefined || isNullableString(value.assessment.investigation.completedAt)) &&
+    (value.assessment.investigation.expertName === undefined || isNullableString(value.assessment.investigation.expertName)) &&
+    (value.assessment.investigation.findings === undefined || isNullableString(value.assessment.investigation.findings)) &&
     typeof value.sharedNote === "string" &&
     Array.isArray(value.payments) &&
     value.payments.every((payment) => isPayment(payment)) &&
@@ -207,7 +210,8 @@ function isDemoData(value: unknown): value is DemoData {
 function migrateVersionOne(value: unknown): DemoData | null {
   if (!isRecord(value) || value.schemaVersion !== 1 || !Array.isArray(value.cases)) return null;
 
-  const migratedCases = value.cases.flatMap((legacy): SampleCase[] => {
+  const migratedCases: SampleCase[] = [];
+  value.cases.forEach((legacy) => {
     if (!isRecord(legacy) || !isRecord(legacy.customer) || !isRecord(legacy.vehicle)) return [];
     if (!isRecord(legacy.request)) return [];
     if (
@@ -221,7 +225,7 @@ function migrateVersionOne(value: unknown): DemoData | null {
       typeof legacy.request.symptoms !== "string"
     ) return [];
 
-    return [{
+    migratedCases.push({
       id: legacy.id,
       reference: legacy.reference,
       customer: { name: legacy.customer.name, mobile: legacy.customer.mobile },
@@ -248,7 +252,7 @@ function migrateVersionOne(value: unknown): DemoData | null {
       sharedNote: typeof legacy.sharedNote === "string" ? legacy.sharedNote : "Migrated D1 sample case.",
       payments: [],
       smsLog: Array.isArray(legacy.smsLog) ? legacy.smsLog as SampleCase["smsLog"] : [],
-    }];
+    });
   });
 
   return migratedCases.length > 0
@@ -258,19 +262,19 @@ function migrateVersionOne(value: unknown): DemoData | null {
 
 function migrateVersionTwo(value: unknown): DemoData | null {
   if (!isRecord(value) || value.schemaVersion !== 2 || !Array.isArray(value.cases)) return null;
-  const migratedCases = value.cases.flatMap((legacy): SampleCase[] => {
-    if (!isRecord(legacy) || !isRecord(legacy.request)) return [];
-    if (!isRecord(legacy.customer) || !isRecord(legacy.vehicle) || !isRecord(legacy.assessment)) return [];
-    if (!isRecord(legacy.assessment.investigation)) return [];
-    if (typeof legacy.id !== "string" || typeof legacy.reference !== "string" || typeof legacy.customer.name !== "string" || typeof legacy.customer.mobile !== "string" || typeof legacy.vehicle.make !== "string" || typeof legacy.vehicle.model !== "string" || typeof legacy.vehicle.year !== "number") return [];
-    if (!Array.isArray(legacy.payments) || !legacy.payments.every(isLegacyPayment) || !Array.isArray(legacy.smsLog) || !legacy.smsLog.every(isSms)) return [];
+  const migratedCases: SampleCase[] = [];
+  value.cases.forEach((legacy) => {
+    if (!isRecord(legacy) || !isRecord(legacy.request) || !isRecord(legacy.customer) || !isRecord(legacy.vehicle) || !isRecord(legacy.assessment) || !isRecord(legacy.assessment.investigation)) return;
+    if (typeof legacy.id !== "string" || typeof legacy.reference !== "string" || typeof legacy.customer.name !== "string" || typeof legacy.customer.mobile !== "string" || typeof legacy.vehicle.make !== "string" || typeof legacy.vehicle.model !== "string" || typeof legacy.vehicle.year !== "number") return;
+    if (!Array.isArray(legacy.payments) || !legacy.payments.every(isLegacyPayment) || !Array.isArray(legacy.smsLog) || !legacy.smsLog.every(isSms)) return;
     const mode = legacy.request.serviceMode === "collection-request" || legacy.request.serviceMode === "office-dropoff" ? legacy.request.serviceMode : "expert-visit";
     const input = {
       mobile: legacy.customer.mobile,
       preferredDate: typeof legacy.request.preferredDate === "string" ? legacy.request.preferredDate : "2027-01-10",
       serviceMode: mode,
     } as const;
-    return [{ ...legacy, request: { ...legacy.request, serviceMode: mode }, transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: [] }, input), ...createEmptyEstimateState(), payments: legacy.payments.map((payment) => ({ ...payment, estimateVersionId: null })) } as SampleCase];
+    const migrated = { ...legacy, request: { ...legacy.request, serviceMode: mode }, transport: createPendingTransport({ schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases }, input), ...createEmptyEstimateState(), payments: legacy.payments.map((payment) => ({ ...payment, estimateVersionId: null })), assessment: { ...legacy.assessment, investigation: { ...legacy.assessment.investigation, completedAt: legacy.assessment.investigation.completedAt ?? null, expertName: legacy.assessment.investigation.expertName ?? null, findings: legacy.assessment.investigation.findings ?? null } } } as SampleCase;
+    migratedCases.push(migrated);
   });
   return migratedCases.length > 0 ? { schemaVersion: DEMO_SCHEMA_VERSION, cases: migratedCases } : null;
 }

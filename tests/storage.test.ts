@@ -74,6 +74,54 @@ test("schema-two D2 data migrates while preserving payment history", () => {
   assert.equal(migrated.cases[0].transport.kind, "not-required");
 });
 
+test("schema-two migration preserves earlier-customer context for Thursday collections", () => {
+  const storage = new MemoryStorage();
+  const d2 = cloneInitialDemoData();
+  const firstCase = {
+    ...d2.cases[0],
+    id: "case-earlier-customer",
+    reference: "FXA-2001",
+    customer: { name: "Earlier Customer", mobile: "+98 900 000 0201" },
+    request: {
+      ...d2.cases[0].request,
+      serviceMode: "expert-visit" as const,
+      preferredDate: "2027-01-06",
+    },
+  };
+  const repeatCollection = {
+    ...d2.cases[0],
+    id: "case-repeat-customer",
+    reference: "FXA-2002",
+    customer: { name: "Repeat Customer", mobile: firstCase.customer.mobile },
+    request: {
+      ...d2.cases[0].request,
+      serviceMode: "collection-request" as const,
+      preferredDate: "2027-01-07",
+    },
+    payments: [{
+      id: "legacy-payment",
+      purpose: "assessment" as const,
+      label: "Assessment",
+      amountCents: 4500,
+      currency: "USD" as const,
+      outcome: "simulated-success" as const,
+      attemptedAt: "2027-01-05T08:00:00.000Z",
+    }],
+  };
+  storage.setItem(DEMO_STORAGE_KEY, JSON.stringify({
+    ...d2,
+    schemaVersion: 2,
+    cases: [firstCase, repeatCollection],
+  }));
+
+  const migrated = loadDemoData(storage);
+  const repeat = migrated.cases.find((item) => item.id === repeatCollection.id);
+
+  assert.equal(repeat?.transport.kind, "standard-collection");
+  assert.equal(repeat?.payments[0]?.id, "legacy-payment");
+  assert.equal(repeat?.reference, "FXA-2002");
+});
+
 test("schema-three D3 data migrates transport history into the D4 estimate schema", () => {
   const storage = new MemoryStorage();
   const d3 = cloneInitialDemoData();

@@ -38,8 +38,8 @@ const phasePresentation = {
   },
   "investigation-funded": {
     status: "Investigation authorized and funded",
-    nextAction: "Transport and workshop handling continue in D3.",
-    timing: "No dispatch occurs in this D2 demo",
+    nextAction: "Staff records the completed investigation findings before the repair estimate.",
+    timing: "After the separate investigation payment",
   },
   "further-service-declined": {
     status: "Further service declined",
