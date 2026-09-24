@@ -1,4 +1,65 @@
-# Product brief
+# Product
+
+<!-- impeccable:product-schema 1 -->
+
+## Platform
+
+web
+
+## Stack
+
+Next.js, React, and TypeScript existing demonstration application with responsive web layouts. The demonstration uses browser-persisted sample cases; production backend, identity, payment, and messaging providers are not implemented.
+
+## Users
+
+Fixauto is for busy car owners in Kerman who want to delegate the work of understanding and coordinating vehicle repair. Initial outreach focuses on women who are doctors, makeup artists, or lawyers and own expensive cars; demand and the broader audience remain unvalidated.
+
+## Product Purpose
+
+Fixauto coordinates a managed vehicle-repair journey through assessment, approved diagnosis and repair, specialist workshops, transport where needed, quality checks, return, and related records. The provisional pilot goal is to complete five paid jobs, record direct costs and time, avoid unauthorized spending, and learn whether customers would return.
+
+## Positioning
+
+Fixauto is a managed service with one accountable coordinator, not an open workshop marketplace. It combines expert-first assessment, explicit approval before additional work or spending, manual coordination with external specialists, documented handovers, and a final record of the case.
+
+## Operating Context
+
+Initial service operations are limited to Kerman municipal limits and use external specialist workshops, suppliers, transport helpers, and Fixauto coordination. Customers request help, authorize disclosed assessment or transport charges, approve versioned estimates, receive case updates, and receive the vehicle back from the owner or an expressly authorized recipient. The Thursday/Friday new-customer collection exception sends a vehicle to private parking for assessment on Saturday; custody, insurance, staffing, partner readiness, and exact charges remain open.
+
+## Capabilities and Constraints
+
+- The five capability groups are requesting service, authorizing and paying for assessment, approving and funding repairs, settling and accessing records, and manually managing cases.
+- Initial work is bounded and diagnosable; major rebuilds, collision restoration, and uncertain parts cases are deferred.
+- Every changed scope, substituted part, increased price, or added cost requires fresh approval. Silence never authorizes work.
+- The first demonstration is English/USD with simulated sign-in, payments, SMS, and same-browser persistence. Persian, verified local payments, production identity, server persistence, enforced permissions, and real providers are paid-launch gates.
+- Live tracking, automated workshop assignment, partner self-service accounts, subscriptions, a broad marketplace, and unrestricted repair coverage are out of scope.
+- Insurance, partner agreements, warranty backing, prices, margins, supported makes and repair categories, custody readiness, and demand are not verified.
+
+## Brand Commitments
+
+- Product name: Fixauto.
+- Product communication must distinguish confirmed decisions, implementation proposals, and unverified launch facts.
+- No established logo, palette, typography, or visual identity is recorded yet.
+
+## Evidence on Hand
+
+- Confirmed product, MVP, roadmap, decision, ownership, data-model, and knowledge-graph documents in `docs/`.
+- An existing Next.js demonstration with service-request, customer-case, and staff-workspace screens.
+- No verified testimonials, customer numbers, logos, partner proof, insurance proof, production integrations, or paid-job evidence.
+
+## Product Principles
+
+1. Keep one accountable coordinator responsible for the case and communication.
+2. Make scope, cost, timing, and authorization explicit before spending or added work.
+3. Record custody, approvals, quality checks, return, and warranty-related evidence.
+4. Use expert-first assessment and bounded work to reduce unnecessary movement and uncertainty.
+5. Label demonstrations and simulations honestly; never present launch gates as completed facts.
+
+## Accessibility & Inclusion
+
+The product is a responsive web experience. The first demonstration is English/USD and must remain localization-ready for Persian and future RTL layout. No product-specific accessibility standard beyond normal accessible web implementation has been established.
+
+## Detailed discovery record
 
 Status: current discovery snapshot; see [decisions](DECISIONS.md) for provenance and [resume checkpoint](GRILL-ME.md) for unresolved questions.
 
@@ -30,7 +91,7 @@ Safe transport and warranty are intended promises; their insurance and partner b
 - Start with bounded, diagnosable work; defer major engine/transmission rebuilds, collision restoration, and uncertain parts cases. Exact supported repair categories await workshop confirmation.
 - Provisional area: Kerman municipal limits. No verified distance or travel-time assumptions.
 - Workshop/diagnostic windows: 09:00–14:00 and 16:30–21:30, local time. Towing availability is reported as round the clock. Fixauto routine hours: Saturday–Wednesday 09:00–13:00 and 17:00–20:00, with urgent active-case support on call.
-- Thursday/Friday emergency towing serves new customers, to the user's own private parking, with service procedure starting Saturday. User, brother-in-law or father is assigned to receive car/keys and record condition/key handover. Approved transport/storage charges are paid before dispatch; diagnosis charged separately before it starts. Parked cars count toward the single active-car limit until returned. Readiness, coverage and actual prices remain unverified/undecided.
+- Thursday/Friday emergency towing serves new customers, to the user's own private parking, with assessment beginning Saturday. User, brother-in-law or father is assigned to receive car/keys and record condition/key handover. Approved transport/storage charges are paid before dispatch; diagnosis charged separately before it starts. Parked cars count toward the single active-car limit until returned. Readiness, coverage and actual prices remain unverified/undecided.
 - Customers receive a concise useful SMS summary every day the car is in custody, including nonworking days: current situation, next action and expected timing. Provider and exact message/link design remain open.
 - Unanswered estimates trigger a follow-up call after 24 hours; work remains paused without automatic approval or new charges.
 

@@ -5,8 +5,8 @@ import { AppShell } from "@/src/components/app-shell";
 import { DemoCaseProvider } from "@/src/store/demo-case-provider";
 
 export const metadata: Metadata = {
-  title: "Fixauto interactive demo",
-  description: "A browser-only sample of the Fixauto managed repair journey.",
+  title: "Fixauto — Managed vehicle repair coordination",
+  description: "Fixauto helps busy car owners in Kerman coordinate diagnosis, approvals, repair, and return.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
