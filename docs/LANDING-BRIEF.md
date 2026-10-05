@@ -1,76 +1,62 @@
 # Fixauto Landing Page Brief
 
-## Hero
+Status: approved by the user on 2026-10-05 for the session 13 restart.
+Surface: home page (/).
+Mode: Persuade.
+Workflow: visual mockups before page code; the user chooses the visual direction.
 
-**Headline:**  
-Your car repaired, without managing every step.
+## Audience and purpose
 
-**Supporting sentence:**  
-Fixauto helps busy car owners in Kerman coordinate diagnosis, approvals, repair, and return through one accountable coordinator.
+Busy car owners in Kerman who want help coordinating repairs. The page explains Fixauto's planned service and invites visitors to hear about its launch. Keep this first demonstration in English.
 
-**For whom:**  
-Busy Kerman car owners—initially professionals such as doctors, makeup artists, and lawyers—who lack the time or trusted contacts to manage vehicle repairs.
+## Navigation
 
-**Main action:**  
-Button: **Join the coming-soon list**  
-Behavior: Scroll to the final **Coming soon** section.
+Fixauto as plain text, plus a quiet "Coming soon" link.
 
-## Problem
+## 1. Hero
 
-Car repair often requires finding the right specialist, explaining symptoms, comparing estimates, sourcing parts, arranging transport, following up, and checking the completed work.
+**Headline:** Car repairs in Kerman. One coordinator, start to finish.
 
-For a busy owner, the difficulty is not only the repair itself—it is coordinating every decision and knowing what has been approved.
+**Supporting sentence:** Fixauto is being built to coordinate assessment, specialist repairs, and vehicle return, with your approval before repair work or extra spending.
 
-## How it works
+**Primary button:** Get launch updates, scrolling to Coming soon.
 
-1. **Request help**  
-   Share your contact details, vehicle information, symptoms, and preferred appointment. No account is required to begin.
+**Visual:** A clearly labeled service demo showing how assessment, an estimate awaiting approval, and vehicle return connect through one coordinator.
 
-2. **Understand and approve the next step**  
-   An expert assesses the vehicle and helps determine the appropriate destination. Assessment, transport, investigation, and repair costs are disclosed and approved separately.
+## 2. Problem
 
-3. **Let Fixauto coordinate the case**  
-   Fixauto coordinates the approved work, parts, updates, quality check, final records, and return of the vehicle. Changed costs or work require fresh approval.
+Finding a specialist is only part of the job. You still have to explain the problem, review costs, arrange handovers, and follow up.
 
-## Three benefits
+Fixauto brings those steps together through one contact.
 
-### One accountable coordinator
+## 3. How it works
 
-Have one named Fixauto contact responsible for communicating the case and coordinating the specialists involved.
+1. **Tell us what needs attention.** Share your vehicle details and symptoms. Requests require confirmation.
+2. **Start with an assessment.** The assessment fee is disclosed beforehand. Transport or further investigation requires separate approval.
+3. **Approve the work; follow the case.** Review an itemized estimate. Fixauto coordinates approved repairs, quality checks, and return. Changed work or costs require fresh approval.
 
-### Clear decisions before spending
+Show connected previews of the service request, customer case, and staff workspace. Label them **Demo**, with simulated sign-in, payments, and SMS identified.
 
-See itemized estimates, parts details, fees, and timing before approving repair work. Silence never authorizes additional work or charges.
+## 4. Three benefits
 
-### Less chasing and uncertainty
+- **One contact:** Know who is coordinating your case.
+- **Approval before spending:** Review the proposed work and costs before proceeding.
+- **Less coordination:** Delegate specialist follow-ups, handovers, and return arrangements.
 
-Reduce the work of arranging specialists, transport, handovers, updates, quality checks, and final records yourself.
+## 5. Coming soon
 
-## Product preview
+Coming soon in Kerman.
 
-Show the product through three calm, connected screens:
+Leave your contact details to hear when Fixauto is ready.
 
-- **Service request:** vehicle details, symptoms, and appointment request.
-- **Customer case page:** assessment status, estimate versions, approvals, simulated payments, updates, invoice, and warranty records.
-- **Staff workspace:** coordinator assignments, handovers, estimates, repair progress, quality checks, return, and complaints.
+**Button:** Get launch updates.
 
-Label the preview clearly as a demonstration. It should not imply that live bookings, real payments, SMS delivery, insurance, or production security are already available.
+The current form is a demonstration; visibly explain that details are not saved or sent until real collection is implemented.
 
-## Coming soon
+## 6. Footer
 
-**Fixauto is coming to Kerman.**
+Fixauto · Managed repair coordination · Coming soon in Kerman.
 
-Leave your contact details to hear when the service is ready for its first customers.
+## Exclusions
 
-Button: **Join the coming-soon list**
-
-Keep the form lightweight and avoid promising an immediate appointment or service availability.
-
-## Footer
-
-- Fixauto
-- Managed vehicle repair coordination
-- Coming soon in Kerman
-- Contact/privacy links when available
-
-No reviews, customer numbers, logos, ratings, or statistics.
+Exclude reviews, user numbers, logos, statistics, and unverified insurance or warranty claims.
