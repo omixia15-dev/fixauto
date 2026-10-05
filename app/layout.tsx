@@ -6,7 +6,7 @@ import { DemoCaseProvider } from "@/src/store/demo-case-provider";
 
 export const metadata: Metadata = {
   title: "Fixauto — Managed vehicle repair coordination",
-  description: "Fixauto helps busy car owners in Kerman coordinate diagnosis, approvals, repair, and return.",
+  description: "Fixauto is being built to coordinate vehicle assessment, repair approvals, specialist repairs, and return in Kerman. Coming soon; explore the demo.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
