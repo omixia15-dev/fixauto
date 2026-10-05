@@ -675,3 +675,6 @@ dd {
     scroll-behavior: auto;
   }
 }
+
+/* Full-width marketing route; application pages retain their existing shell. */
+.page-shell.marketing-shell { max-width:none; margin:0; padding:0; }
