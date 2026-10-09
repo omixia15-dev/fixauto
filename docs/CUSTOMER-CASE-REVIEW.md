@@ -34,3 +34,9 @@ User approved Option C on 2026-10-09. The implementation extends the existing ca
 ## Final results
 
 Finish verdict: ready for PR. The independent reviewer passed all four UI corrections; its test hold is resolved by the final workflow checks. Production build, strict typecheck, 39 unit tests, 19 distinct E2E tests and scoped source/test lint pass. The full repository lint reported no errors and nine unrelated helper/nested-worktree warnings. The test-only local config used a directly served production build at port 3137; it is not part of the PR. Automatic PR preview status is reported on the PR after creation.
+
+## PR #24 rejection follow-up — 2026-10-10
+
+The maintainer requested a Customer entry in the home-page navigation that opens the designed customer page. Added a visible Customer link directly to `/cases/case-kia-003`, the seeded approval-ready dossier. Existing My cases and Coming soon destinations remain available. This is a sample demo destination, not an authenticated customer account.
+
+The complete replacement branch passed all 22 Chromium E2E tests in one run, including keyboard activation of Customer at 320, 390 and 1440px, arrival at FXA-1003 with the exact estimate and sole approval control, and no overflow on either page. Production build, separate strict typecheck and application/E2E lint also passed. The domain was unchanged, so the prior 39-unit-test result remains the domain verification record rather than a newly run result. Replacement PR includes the full dossier redesign from #24 and this navigation correction; no merge or production release was performed.
