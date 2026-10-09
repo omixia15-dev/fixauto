@@ -104,7 +104,7 @@ const phasePresentation = {
   "repair-ready": {
     status: "Repair scope approved and funded",
     nextAction: "Staff may coordinate the approved repair scope.",
-    timing: "No repair execution occurs in D4",
+    timing: "Before specialist work is recorded",
   },
   "estimate-declined": {
     status: "Estimate declined — repair paused",

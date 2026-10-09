@@ -27,3 +27,21 @@ for (const width of [1440, 390]) {
     expect(submissions).toEqual([]);
   });
 }
+for (const width of [320, 390, 1440]) {
+  test(`home Customer navigation opens the dossier at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    const customer = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Customer", exact: true });
+    await expect(customer).toBeVisible();
+    await expect(customer).toHaveAttribute("href", "/cases/case-kia-003");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await customer.focus();
+    await expect(customer).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/cases\/case-kia-003$/);
+    await expect(page.getByRole("heading", { name: "FXA-1003", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Repair estimate", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Approve exact estimate", exact: true })).toHaveCount(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}

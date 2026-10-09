@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-05T21:43:09.3679395Z",
+  "generatedAt": "2026-10-09T14:31:20Z",
   "title": "Design System: Fixauto",
   "extensions": {
     "colorMeta": {
@@ -161,6 +161,10 @@
       "hero-support": {
         "displayName": "Hero support",
         "purpose": "Lighter supporting sentence"
+      },
+      "case-body": {
+        "displayName": "Case workspace body",
+        "purpose": "Alexandria body copy within the shared case shell; line height 1.5"
       }
     },
     "shadows": [],
@@ -175,8 +179,31 @@
       {
         "name": "single-column",
         "value": "900px"
+      },
+      {
+        "name": "case-dossier-single-column",
+        "value": "980px"
+      },
+      {
+        "name": "case-phone-layout",
+        "value": "700px"
+      },
+      {
+        "name": "case-compact-phone",
+        "value": "420px"
       }
-    ]
+    ],
+    "caseWorkspaceTokens": {
+      "ground": "#edf3f6",
+      "blue": "#1749b9",
+      "gold": "#e8b848",
+      "ink": "#11253f",
+      "muted": "#52647d",
+      "divider": "#d7e1e9",
+      "softBlue": "#edf3ff",
+      "panel": "#ffffff",
+      "actionBorder": "#d7a82f"
+    }
   },
   "components": [
     {
@@ -217,15 +244,40 @@
       "description": "Meaningful demonstration content on a quiet panel.",
       "html": "<article class=\"ds-panel\"><h3>Customer case</h3><p>Demo: review the work and costs before approval.</p></article>",
       "css": ".ds-panel{padding:28px;border:1px solid #c6d4d5;border-radius:8px;background:#f9fcfb;color:#11253f;font:400 16px Alexandria,sans-serif}.ds-panel h3{margin:0 0 12px;font-size:23px;font-weight:700;letter-spacing:-.7px}.ds-panel p{margin:0;line-height:1.4}"
+    },
+    {
+      "name": "Dossier section navigation",
+      "kind": "nav",
+      "refersTo": "case-section-nav",
+      "description": "Demo dossier links navigate to visible Overview, Estimate, Payments, and Records sections.",
+      "html": "<nav class=\"ds-case-nav\" aria-label=\"Case sections\"><a href=\"#overview\">Overview</a><a href=\"#estimate\">Estimate</a><a href=\"#payments\">Payments</a><a href=\"#records\">Records</a></nav>",
+      "css": ".ds-case-nav{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 18px;border-bottom:1px solid #d7e1e9;padding:0 18px}.ds-case-nav a{display:inline-flex;min-height:46px;align-items:center;border-bottom:3px solid transparent;padding:0 5px;color:#344f75;font-size:14px;font-weight:600;text-decoration:none}.ds-case-nav a:hover,.ds-case-nav a:focus-visible{border-bottom-color:#1749b9;color:#1749b9}.ds-case-nav a:focus-visible{outline:3px solid #1749b9;outline-offset:4px}@media(max-width:700px){.ds-case-nav{gap:0 12px;margin-right:-16px;margin-left:-16px;padding:0 16px}.ds-case-nav a{min-height:43px;font-size:12px}}@media(max-width:420px){.ds-case-nav{margin-right:-12px;margin-left:-12px;padding:0 12px}}"
+    },
+    {
+      "name": "Dossier document panel",
+      "kind": "card",
+      "refersTo": "case-document-panel",
+      "description": "Demo estimate document with illustrative values in a flat white panel; this visual reference does not authorize live case operations.",
+      "html": "<section id=\"estimate\" class=\"ds-case-panel\" aria-labelledby=\"estimate-title\"><h2 id=\"estimate-title\">Repair estimate</h2><p>All amounts are illustrative USD.</p></section>",
+      "css": ".ds-case-panel{min-width:0;border:1px solid #d7e1e9;border-radius:12px;padding:22px;background:#ffffff}.ds-case-panel h2{margin-bottom:12px;font-size:21px;line-height:1.25;letter-spacing:-.025em}@media(max-width:700px){.ds-case-panel{padding:17px}.ds-case-panel h2{font-size:19px}}@media(max-width:420px){.ds-case-panel{padding:14px}}"
+    },
+    {
+      "name": "Dossier action",
+      "kind": "button",
+      "refersTo": "case-action",
+      "description": "Demo-only estimate decision control. Its shared-shell Demo label and sample-data notice do not authorize real payments or operational use.",
+      "html": "<button class=\"ds-case-action\" type=\"button\">Approve exact estimate</button>",
+      "css": ".ds-case-action{display:inline-flex;width:fit-content;max-width:100%;min-height:46px;align-items:center;justify-content:center;border:1px solid #d7a82f;border-radius:8px;padding:11px 16px;background:#e8b848;color:#11253f;font:inherit;font-size:13px;font-weight:700;line-height:1.35;text-align:center;cursor:pointer;box-shadow:none;white-space:normal}.ds-case-action:hover{background:#f4cb64}.ds-case-action:focus-visible{outline:3px solid #1749b9;outline-offset:4px}"
     }
   ],
   "narrative": {
     "northStar": "Journey atlas",
-    "overview": "Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.\n\nThis documents the approved marketing surface. Existing service-application routes retain their incumbent green system. The new palette is not authorization to restyle those routes.",
+    "overview": "Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.\n\nThis documents the approved marketing surface and its scoped customer-case extension. The existing /case index and /cases/[caseId] customer dossier share the cobalt and cool-paper case shell. Other application routes retain their established system; this extension does not authorize a wider restyle. The approved Option C composition remains defined in docs/CUSTOMER-CASE-BRIEF.md.",
     "keyCharacteristics": [
       "Broad destination lettering.",
       "Cobalt, mineral ground, and a gold approval pause.",
-      "Illustrations paired with readable semantic text."
+      "Illustrations paired with readable semantic text.",
+      "The customer dossier reuses the case palette in a document-led layout."
     ],
     "rules": [
       {
@@ -242,17 +294,24 @@
         "name": "The Reading Order Rule",
         "body": "Responsive layout preserves the meaning and sequence of the content in the document.",
         "section": "layout"
+      },
+      {
+        "name": "The Scoped Case Rule",
+        "body": "Use the cobalt and cool-paper case system through the existing CaseLayout only for /case and /cases/[caseId].",
+        "section": "overview"
       }
     ],
     "dos": [
       "Do preserve a visible approval boundary.",
       "Do keep labels readable and semantic.",
-      "Do retain keyboard focus and reduced-motion support."
+      "Do retain keyboard focus and reduced-motion support.",
+      "Do preserve the case shell's Alexandria typography and phone reading order."
     ],
     "donts": [
       "Don't imply live vehicle tracking through decorative route notation.",
       "Don't use illustration text as a substitute for accessible content.",
-      "Don't apply this marketing restyle to existing application routes without a separate request."
+      "Don't extend the case route styling to other application routes without a separate request.",
+      "Don't treat the Demo label or this design reference as authorization for live payments, bookings, or operational actions."
     ]
   }
 }

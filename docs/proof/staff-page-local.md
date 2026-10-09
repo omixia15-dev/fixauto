@@ -30,3 +30,17 @@ The native selector and editable summary preserve staff behavior where the gener
 ## Limits
 
 No automated Impeccable comp-phase state or pixel-diff certificate was generated after the Windows launcher failure. Manual visual evidence and the successful Linux detector are available. Production deployment and merging are left to the user. Existing favicon/preload console warnings remain; no page errors occurred in the final capture.
+## Conflict resolution — 2026-10-10
+
+Merged main at `0dca1d3` into the staff branch after approval. Reconciled six conflict files: DESIGN.md, AppShell, and D1/D2/D3/D6 tests. AppShell recognizes both customer and staff workspaces. Documentation preserves both approved compositions. Tests use the current customer dossier and staff controls while retaining authorization, capacity, reset, persistence and non-working-day coverage; auto-merged D4/D5 and staff-specific tests were also reviewed.
+
+Production build, strict typecheck, 39 unit tests and all 29 E2E tests passed. Full lint had zero errors; review-helper warnings remain. Two D3 tests were rerun after adding explicit pre-transport capacity and pre-repair return assertions.
+
+Final browser captures waited for font and image loading. Both surfaces showed no horizontal overflow, old global navigation or page errors at 390px and 1440px. The E2E suite also checks 320px and 768px.
+
+- [Staff mobile](../../.impeccable/review/merge-staff-390.png)
+- [Staff desktop](../../.impeccable/review/merge-staff-1440.png)
+- [Customer mobile](../../.impeccable/review/merge-customer-390.png)
+- [Customer desktop](../../.impeccable/review/merge-customer-1440.png)
+
+Existing Vercel login protection and absent automated comp-diff evidence are unchanged. This resolution does not merge the PR into main.

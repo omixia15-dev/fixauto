@@ -15,17 +15,17 @@ test("staff can deep-link to a case, change selection, and open its customer vie
 
 test("appointment confirmation is shared and assessment stays blocked without successful consent and payment", async ({ page }) => {
   await page.goto("/cases/case-atlas-001");
-  await expect(page.getByText("Blocked: staff must confirm the appointment first.")).toBeVisible();
+  await expect(page.getByText("Staff must confirm the appointment first.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Authorize as simulated customer" })).toHaveCount(0);
 
   await page.goto("/staff?caseId=case-atlas-001");
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
   await page.getByRole("link", { name: "Open customer case" }).click();
   await expect(page).toHaveURL(/\/cases\/case-atlas-001$/);
-  await expect(page).toHaveURL(/\/cases\/case-atlas-001$/);
-  await expect(page.getByText("Appointment confirmed", { exact: true }).first()).toBeVisible();
+  const appointment = page.getByRole("heading", { name: "Appointment" }).locator("xpath=ancestor::section[1]");
+  await expect(appointment.getByText(/^Confirmed for \d{4}-\d{2}-\d{2} at /)).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Appointment confirmed", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Appointment" }).locator("xpath=ancestor::section[1]").getByText(/^Confirmed for \d{4}-\d{2}-\d{2} at /)).toBeVisible();
 
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
   await page.getByRole("button", { name: "Simulate failed payment" }).click();

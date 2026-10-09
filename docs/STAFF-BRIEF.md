@@ -18,7 +18,7 @@ FINISH: Preserve existing domain/store actions; prove shared data and safeguards
 - The daily summary remains a working append-only form, including date and non-working-day controls; the comp's read-only summary blocks do not remove existing functionality.
 - Reset, loading, missing-case, storage retry, action errors and simulation labels remain available.
 - Workflow forms vary with the existing phase. No staff repair approval, payment bypass, production authentication, tracking, or real SMS is added.
-- Existing customer-page work for issue #22 remains in its original checkout. This branch starts from main and does not include it.
+- Customer-page changes merged into main are incorporated during PR #25 conflict resolution. Uncommitted work in the original checkout remains untouched.
 - Impeccable Windows launcher failed with cache_directory_failed/UNC handling before phase tracking. The Linux detector later ran successfully with zero findings. No automated comp-phase state or pixel-diff certificate was generated; approval and visual review evidence are recorded directly.
 
 ## Acceptance
