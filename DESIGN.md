@@ -162,3 +162,6 @@ Numbered circles establish the broad stages. A gold label identifies awaiting ap
 - Don't imply live vehicle tracking through decorative route notation.
 - Don't use illustration text as a substitute for accessible content.
 - Don't apply this marketing restyle to existing application routes without a separate request.
+## Staff workspace extension — issue #23
+
+Approved 2026-10-09: the staff route extends the customer cases palette, Alexandria type and flat document panels using the selected C dossier composition. A case selector and identity band lead; section anchors navigate visible content; workflow/facts form the desktop sidebar and the required action leads on phones. All staff actions and customer authorization gates remain simulated. See docs/STAFF-BRIEF.md for the approved composition and translation decisions. This extension supersedes the earlier green-system restriction for /staff only.

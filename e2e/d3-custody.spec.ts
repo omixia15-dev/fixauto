@@ -13,9 +13,9 @@ function nextWeekday(targetDay: number): string {
 }
 
 async function createCollection(page: Page, suffix = "2", preferredDate = nextMonday()) {
-  await page.goto("/");
-  await page.getByLabel("Contact name").fill(`Niloofar Karimi ${suffix}`);
-  await page.getByLabel("Mobile number").fill(`+98 900 777 010${suffix}`);
+  await page.goto("/case/new");
+  await page.getByLabel("Contact name").fill("Niloofar Karimi " + suffix);
+  await page.getByLabel("Mobile number").fill("+98 900 777 010" + suffix);
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Model", { exact: true }).fill("Sportage");
   await page.getByLabel("Year").fill("2022");
@@ -25,15 +25,18 @@ async function createCollection(page: Page, suffix = "2", preferredDate = nextMo
   await page.getByLabel("Requested collection address").fill("Sample Boulevard, Kerman");
   await page.getByLabel("Describe the symptoms").fill("The steering wheel vibrates above 80 km/h.");
   await page.getByRole("button", { name: "Create sample request" }).click();
-  await expect(page.getByText("Sample request received")).toBeVisible();
-  await page.getByRole("link", { name: "Open customer case" }).click();
+  await expect(page.getByRole("heading", { name: /^Reference FXA-/ })).toBeVisible();
+  await page.getByRole("link", { name: "Follow your repair case" }).click();
+  await expect(page).toHaveURL(/\/case\?caseId=/);
+  await page.getByRole("link", { name: "Open full case & approvals" }).click();
   await expect(page).toHaveURL(/\/cases\//);
+  return new URL(page.url()).pathname.split("/").at(-1)!;
 }
 
 async function prepareTransport(page: Page) {
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Authorize transport and storage" }).click();
   await page.getByRole("button", { name: "Simulate failed payment" }).click();
   await page.getByRole("button", { name: "Simulate canceled payment" }).click();
@@ -51,17 +54,32 @@ async function prepareTransport(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/case");
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Reset sample data" }).click();
+  await page.evaluate(() => {
+    const key = "fixauto.demo.sample-cases";
+    const data = JSON.parse(window.localStorage.getItem(key) ?? "null");
+    if (!data?.cases) throw new Error("The sample case fixture was not saved.");
+    // Existing confirmed visits would occupy the one slot before this test starts.
+    for (const sampleCase of data.cases) {
+      if (["case-hyundai-002", "case-kia-003", "case-nissan-004"].includes(sampleCase.id)) {
+        sampleCase.request.confirmedAppointment = null;
+      }
+    }
+    window.localStorage.setItem(key, JSON.stringify(data));
+  });
+  await page.reload();
 });
 
 test("collection custody uses separate payment, records handover, blocks capacity, and releases it", async ({ page }) => {
-  await createCollection(page);
+  await page.goto("/staff?caseId=case-atlas-001");
+  await expect(page.getByText("0 / 1")).toBeVisible();
+  const firstCaseId = await createCollection(page);
   await expect(page.getByRole("heading", { name: "Transport and storage" })).toBeVisible();
   await prepareTransport(page);
 
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
@@ -73,7 +91,7 @@ test("collection custody uses separate payment, records handover, blocks capacit
   await createCollection(page, "3");
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Authorize transport and storage" }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
@@ -83,7 +101,7 @@ test("collection custody uses separate payment, records handover, blocks capacit
   await page.getByRole("button", { name: "Record simulated dispatch" }).click();
   await expect(page.getByText(/capacity is full/i)).toBeVisible();
 
-  await page.getByRole("button", { name: /FXA-1002/ }).click();
+  await page.getByLabel("Select a case").selectOption(firstCaseId);
   await expect(page.getByRole("button", { name: "Record simulated vehicle return" })).toBeVisible();
   await page.getByRole("button", { name: "Record simulated vehicle return" }).click();
   await expect(page.getByText("0 / 1")).toBeVisible();

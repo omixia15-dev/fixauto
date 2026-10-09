@@ -2,8 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 
 async function fillRequest(page: Page, suffix = "2") {
   const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  await page.getByLabel("Contact name").fill(`Sara Ahmadi ${suffix}`);
-  await page.getByLabel("Mobile number").fill(`+98 900 555 010${suffix}`);
+  await page.getByLabel("Contact name").fill("Sara Ahmadi " + suffix);
+  await page.getByLabel("Mobile number").fill("+98 900 555 010" + suffix);
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Model", { exact: true }).fill("Sportage");
   await page.getByLabel("Year").fill("2022");
@@ -14,17 +14,20 @@ async function fillRequest(page: Page, suffix = "2") {
 }
 
 async function createRequest(page: Page, suffix = "2") {
-  await page.goto("/");
+  await page.goto("/case/new");
   await fillRequest(page, suffix);
   await page.getByRole("button", { name: "Create sample request" }).click();
-  await expect(page.getByText("Sample request received")).toBeVisible();
-  await page.getByRole("link", { name: "Open customer case" }).click();
+  await expect(page.getByRole("heading", { name: /^Reference FXA-/ })).toBeVisible();
+  await page.getByRole("link", { name: "Follow your repair case" }).click();
+  await expect(page).toHaveURL(/\/case\?caseId=/);
+  await page.getByRole("link", { name: "Open full case & approvals" }).click();
+  await expect(page).toHaveURL(/\/cases\//);
 }
 
 async function confirmAuthorizeAndPay(page: Page) {
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await expect(page.getByText("Expert visit to review reported symptoms and recommend the next diagnostic step.")).toBeVisible();
   await expect(page.getByText("$45.00 USD").first()).toBeVisible();
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
@@ -32,12 +35,13 @@ async function confirmAuthorizeAndPay(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/case");
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Reset sample data" }).click();
 });
 
 test("invalid request keeps values and creates no case", async ({ page }) => {
+  await page.goto("/case/new");
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Visit type").selectOption("collection-request");
   await expect(page.getByLabel("Requested collection address")).toBeVisible();
@@ -46,18 +50,19 @@ test("invalid request keeps values and creates no case", async ({ page }) => {
   await expect(page.getByText("Enter the requested collection address.")).toBeVisible();
   await expect(page.getByLabel("Vehicle make")).toHaveValue("Kia");
   await expect(page.getByLabel("Visit type")).toHaveValue("collection-request");
-  await expect(page.getByText("FXA-1002")).toHaveCount(0);
+  await page.goto("/case");
+  await expect(page.getByRole("button", { name: /FXA-1006/ })).toHaveCount(0);
 });
 
 test("assessment requires confirmation, consent, and successful payment before decline", async ({ page }) => {
   await createRequest(page);
-  await expect(page.getByText("FXA-1002").first()).toBeVisible();
+  await expect(page.getByText("FXA-1006").first()).toBeVisible();
   await expect(page.getByText("Blocked: staff must confirm the appointment first.")).toBeVisible();
 
   await page.getByRole("link", { name: "Staff workspace" }).click();
-  await expect(page.getByText("FXA-1002").first()).toBeVisible();
+  await expect(page.getByText("FXA-1006").first()).toBeVisible();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
   await page.getByRole("button", { name: "Simulate failed payment" }).click();
   await expect(page.getByText("Simulated failed")).toBeVisible();
@@ -66,14 +71,14 @@ test("assessment requires confirmation, consent, and successful payment before d
 
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await expect(page.getByText("Blocked: assessment payment has not succeeded.")).toBeVisible();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByLabel("Deeper workshop investigation is needed").uncheck();
   await page.getByLabel("Assessment findings").fill("No deeper workshop investigation is required for this sample.");
   await page.getByRole("button", { name: "Record completed assessment" }).click();
 
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await expect(page.getByText("Fee earned")).toBeVisible();
   await page.getByRole("button", { name: "Decline further service" }).click();
   await expect(page.getByText(/Further service declined/).first()).toBeVisible();
@@ -90,7 +95,7 @@ test("deeper investigation has authorization and payment separate from assessmen
   await confirmAuthorizeAndPay(page);
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Record completed assessment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await expect(page.getByText("$85.00 USD illustrative fee")).toBeVisible();
   await page.getByRole("button", { name: "Authorize separate investigation" }).click();
   await expect(page.getByText("Initial assessment payment cannot fund this separate investigation.")).toBeVisible();

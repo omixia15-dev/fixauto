@@ -11,7 +11,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { data, notice, ready, storageError, retryStorage } = useDemoCases();
   const isMarketingHome = pathname === "/";
-  const isCaseWorkspace = pathname === "/case" || pathname.startsWith("/case/");
+  const isCaseWorkspace = pathname === "/case" || pathname.startsWith("/case/") || pathname === "/staff";
   const latestCaseId = data.cases.at(-1)?.id ?? "case-atlas-001";
   const links = [
     { href: "/case/new", label: en.nav.request, active: pathname === "/case/new" },
