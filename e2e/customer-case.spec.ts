@@ -77,6 +77,10 @@ test("a temporary browser storage failure can recover from the retry control", a
 
   await page.goto("/cases/case-kia-003");
   await expect(page.getByRole("alert", { name: "Saved cases are unavailable" })).toContainText("Browser storage is unavailable");
+  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(navigation).toBeVisible();
+  await expect(navigation.getByRole("link", { name: "Users", exact: true })).toHaveAttribute("href", "/cases/case-kia-003");
+  await expect(navigation.getByRole("link", { name: "Staffs", exact: true })).toHaveAttribute("href", "/staff?caseId=case-kia-003");
   await page.getByRole("button", { name: "Try again" }).click();
   await expect(page.getByText("FXA-1003").first()).toBeVisible();
 });

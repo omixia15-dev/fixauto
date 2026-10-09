@@ -100,7 +100,7 @@ components:
 
 Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.
 
-This documents the approved marketing surface and its scoped customer-case extension. The existing `/case` index and `/cases/[caseId]` customer dossier share the cobalt and cool-paper case shell. Other application routes retain their established system; this extension does not authorize a wider restyle. The approved Option C composition remains defined in `docs/CUSTOMER-CASE-BRIEF.md`.
+This documents the approved marketing surface and its scoped customer-case extension. The existing `/case` index and `/cases/[caseId]` customer dossier share the cobalt and cool-paper case shell. Issue #27 extends the same navigation and cobalt defaults across the existing app routes, including the request form. The approved Option C composition remains defined in `docs/CUSTOMER-CASE-BRIEF.md`.
 
 **Key Characteristics:**
 
@@ -137,7 +137,7 @@ The home and cases routes use the same cobalt and gold authority while keeping t
 
 Alexandria is self-hosted with its license in app/fonts. The coordinator headline is semibold (600), with the geographic line in regular (400). The benefits display is semibold (600). Hero support is regular (400) on desktop and light (300) on phones; controls and section headings use bold (700).
 
-The shared case shell loads the same local Alexandria files at weights 400, 600, and 700. Its base line height is 1.5; dossier headings, labels, and table text set their own sizes in the route stylesheet. Outside that shell, the global application stylesheet still declares Arial, Helvetica, sans-serif.
+The shared case shell loads the same local Alexandria files at weights 400, 600, and 700. Its base line height is 1.5; dossier headings, labels, and table text set their own sizes in the route stylesheet. The home and workspace shells use local Alexandria; the global fallback remains Arial, Helvetica, sans-serif.
 
 Desktop display type scales with the viewport. On smaller screens it uses clamp(42px, 7.5vw, 64px), a line height of 1.08, and tracking of -0.03em. Body copy remains readable at phone widths (15–18px).
 
@@ -183,7 +183,7 @@ Demo previews use near-white panels, one fine border, and comfortable padding. T
 
 ### Navigation
 
-A plain text wordmark and quiet Coming soon link keep navigation small. The primary action uses a native in-page anchor; reduced motion disables smooth scrolling.
+A plain text wordmark and shared navigation connect Home page, Cases, Users, Staffs, and Coming Soon. Users opens the sample customer dossier; it is not a user administration screen. Dossier navigation retains its case when opening the staff workspace. All routes reuse the same header grid, padding, type weight, and right-aligned desktop menu. Links wrap in the same position on phones, and the active section has a gold underline without changing link widths. Case-specific staff links sit below the shared header so they cannot move the menu. The primary action uses a native in-page anchor; reduced motion disables smooth scrolling.
 
 ### Journey markers and labels
 
@@ -191,7 +191,7 @@ Numbered circles establish the broad stages. A gold label identifies awaiting ap
 
 ### Customer case workspace
 
-The shared case header keeps the Fixauto wordmark, case/home links, Demo label, and staff demo link. The dossier uses a vehicle identity header, status pill, wrapping section links, white document panels, soft-blue next-step/fact groups, and gold action buttons. Its estimate, payment, and record sections use semantic tables and lists; links navigate to visible sections. Keep the illustrative vehicle caption and the shell's sample-data notice. The Demo label describes simulated behavior; this design reference does not authorize real payments, bookings, or operational use.
+The shared case header keeps the Fixauto wordmark, main navigation, Demo label, and contextual staff demo link. The dossier uses a vehicle identity header, status pill, wrapping section links, white document panels, soft-blue next-step/fact groups, and gold action buttons. Its estimate, payment, and record sections use semantic tables and lists; links navigate to visible sections. Keep the illustrative vehicle caption and the shell's sample-data notice. The Demo label describes simulated behavior; this design reference does not authorize real payments, bookings, or operational use.
 
 ## Do's and Don'ts
 
@@ -200,7 +200,7 @@ The shared case header keeps the Fixauto wordmark, case/home links, Demo label, 
 - Do preserve a visible approval boundary.
 - Do keep labels readable and semantic.
 - Do retain keyboard focus and reduced-motion support.
-- Do keep the cobalt case styling scoped to the approved `/case`, `/cases/[caseId]` and `/staff` workspaces.
+- Do keep the approved cobalt and gold identity consistent across Home and the existing demo workspaces.
 
 ### Don't:
 

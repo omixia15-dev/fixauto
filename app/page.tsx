@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { AppHeader } from "@/src/components/app-header";
 import Image from "next/image";
 import localFont from "next/font/local";
 import styles from "./page.module.css";
@@ -18,7 +19,7 @@ export default function HomePage() {
   return <div className={`${styles.marketingPage} ${alexandria.className}`}>
     <header className={styles.hero}>
       <div className={styles.heroArt}><Image src="/images/session-13-hero-art.png" alt="Silver car outside a specialist repair workshop" width={1536} height={1024} preload sizes="(max-width: 900px) 150vw, 52vw" /></div>
-      <nav className={styles.nav} aria-label="Main navigation"><Link href="/" className={styles.wordmark}>Fixauto</Link><div className={styles.navLinks}><Link href="/cases/case-kia-003">Customer</Link><Link href="/case">My cases <span className={styles.demoLabel}>Demo</span></Link><a href="#coming-soon">Coming soon <span aria-hidden="true">→</span></a></div></nav>
+      <AppHeader />
       <div className={styles.heroCopy}><h1><span>Car repairs in Kerman.</span><span>One coordinator,<br/>start to finish.</span></h1><p>Fixauto is being built to coordinate assessment, specialist repairs,<br className={styles.desktopBreak}/> and vehicle return, with your approval before repair work or extra spending.</p><a className={styles.primaryButton} href="#coming-soon">Get launch updates <span aria-hidden="true">→</span></a></div>
     </header>
     <section className={styles.journey} aria-labelledby="journey-title">

@@ -1,12 +1,12 @@
 :root {
-  --ink: #18231f;
-  --muted: #5d6a64;
-  --paper: #f5f7f3;
+  --ink: #11253f;
+  --muted: #52647d;
+  --paper: #edf3f6;
   --surface: #ffffff;
-  --line: #d8dfda;
-  --brand: #176b4d;
-  --brand-dark: #0d4b35;
-  --brand-soft: #dff3e9;
+  --line: #d7e1e9;
+  --brand: #1749b9;
+  --brand-dark: #123b99;
+  --brand-soft: #edf3ff;
   --accent: #f0a33b;
   --danger: #a13232;
   --shadow: 0 18px 50px rgba(31, 48, 40, 0.09);
@@ -26,9 +26,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background:
-    radial-gradient(circle at 85% 0%, rgba(240, 163, 59, 0.14), transparent 30rem),
-    var(--paper);
+  background: var(--paper);
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
 }
@@ -57,89 +55,6 @@ a {
 
 .skip-link:focus {
   top: 1rem;
-}
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  border-bottom: 1px solid rgba(216, 223, 218, 0.9);
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-}
-
-.header-inner {
-  display: flex;
-  max-width: 1180px;
-  margin: 0 auto;
-  min-height: 4.5rem;
-  padding: 0.75rem 1.25rem;
-  align-items: center;
-  gap: 1.25rem;
-}
-
-.brand {
-  color: var(--brand-dark);
-  font-size: 1.35rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-decoration: none;
-}
-
-.header-inner nav {
-  flex: 1;
-}
-
-.nav-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-  gap: 0.35rem;
-  list-style: none;
-}
-
-.nav-link {
-  display: inline-flex;
-  min-height: 2.75rem;
-  padding: 0.65rem 0.9rem;
-  align-items: center;
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.nav-link[aria-current="page"] {
-  background: var(--brand-soft);
-  color: var(--brand-dark);
-}
-
-.demo-banner {
-  display: flex;
-  padding: 0.8rem max(1.25rem, calc((100% - 1132px) / 2));
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: var(--ink);
-  color: white;
-  font-size: 0.88rem;
-}
-
-.demo-banner div {
-  display: flex;
-  align-items: baseline;
-  gap: 0.7rem;
-}
-
-.demo-banner span {
-  color: #d5ddd8;
-}
-
-.storage-state {
-  flex: none;
-  font-weight: 700;
 }
 
 .page-shell {
@@ -256,7 +171,7 @@ h2 {
 }
 
 .muted-card {
-  background: #edf1ee;
+  background: #edf3f6;
   box-shadow: none;
 }
 
@@ -528,7 +443,7 @@ dd {
 }
 
 .button-secondary:hover {
-  background: #edf1ee;
+  background: #edf3f6;
 }
 
 :focus-visible {
@@ -586,7 +501,7 @@ dd {
 .placeholder-grid span {
   padding: 0.45rem 0.65rem;
   border-radius: 0.55rem;
-  background: #edf1ee;
+  background: #edf3f6;
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 700;
@@ -616,27 +531,6 @@ dd {
 }
 
 @media (max-width: 760px) {
-  .header-inner {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .header-inner nav {
-    order: 3;
-    flex-basis: 100%;
-    overflow-x: auto;
-  }
-
-  .nav-list {
-    flex-wrap: nowrap;
-  }
-
-  .nav-link {
-    white-space: nowrap;
-  }
-
-  .demo-banner,
-  .demo-banner div,
   .hero,
   .page-intro,
   .section-heading {
@@ -644,9 +538,6 @@ dd {
     flex-direction: column;
   }
 
-  .demo-banner {
-    padding: 0.8rem 1.25rem;
-  }
 
   .page-shell {
     padding: 2rem 1rem 4rem;
@@ -676,5 +567,5 @@ dd {
   }
 }
 
-/* Full-width marketing route; application pages retain their existing shell. */
+/* Route layouts own their width and spacing. */
 .page-shell.marketing-shell { max-width:none; margin:0; padding:0; }
