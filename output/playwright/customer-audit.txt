@@ -1,0 +1,61 @@
+async (page) => {
+  const assert = (condition, message) => { if (!condition) throw new Error(message); };
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  const proof = [];
+  const base = "http://127.0.0.1:3133";
+  await page.goto(`${base}/cases/case-kia-003`);
+  await page.getByRole("heading", { name: "FXA-1003", exact: true }).waitFor();
+  await page.evaluate(() => document.fonts.ready);
+  assert(await page.getByRole("button", { name: "Approve exact estimate", exact: true }).count() === 1, "One estimate approval control");
+  assert(await page.getByRole("link", { name: "Staff workspace", exact: true }).getAttribute("href") === "/staff?caseId=case-kia-003", "Staff retains current case");
+  for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+    await page.setViewportSize({ width, height: width < 500 ? 844 : 1000 });
+    const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
+    assert(layout.scrollWidth <= layout.width, `Overflow at ${width}: ${layout.scrollWidth}`);
+    proof.push(`Customer estimate fits ${width}px`);
+    if (width === 390) await page.screenshot({ path: "output/playwright/customer-mobile.png", fullPage: true });
+    if (width === 1440) {
+      await page.screenshot({ path: "output/playwright/customer-desktop.png", fullPage: true });
+      await page.screenshot({ path: "output/playwright/customer-first-viewport.png" });
+    }
+    if (width === 1920) await page.screenshot({ path: "output/playwright/customer-1920.png" });
+  }
+  const sections = page.getByRole("navigation", { name: "Case sections" });
+  for (const name of ["Overview", "Estimate", "Payments", "Records"]) {
+    const link = sections.getByRole("link", { name, exact: true });
+    const href = await link.getAttribute("href");
+    assert(await page.locator(href).count() === 1, `${name} has a destination`);
+    await link.focus();
+    assert(await link.evaluate(el => el === document.activeElement), `${name} is keyboard focusable`);
+  }
+  proof.push("Four real keyboard-accessible section destinations");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(`${base}/cases/case-atlas-001`);
+  await page.getByRole("heading", { name: "FXA-1001", exact: true }).waitFor();
+  assert(await page.getByRole("button", { name: "Approve exact estimate", exact: true }).count() === 0, "No nonexistent estimate approval");
+  await page.screenshot({ path: "output/playwright/customer-pending.png", fullPage: true });
+  await page.goto(`${base}/cases/case-mazda-005`);
+  await page.getByRole("heading", { name: "FXA-1005", exact: true }).waitFor();
+  await page.getByText("Repair completed and returned", { exact: true }).first().waitFor();
+  await page.getByRole("heading", { name: "Work and completion records" }).waitFor();
+  await page.screenshot({ path: "output/playwright/customer-completed.png", fullPage: true });
+  await page.goto(`${base}/cases/missing-case`);
+  await page.getByRole("heading", { name: "Case not found", exact: true }).waitFor();
+  assert(await page.getByRole("link", { name: "Return to your cases" }).getAttribute("href") === "/case", "Missing case recovery");
+  await page.screenshot({ path: "output/playwright/customer-missing.png" });
+  proof.push("Pending/completed/missing states preserve actions and records");
+  for (const route of ["/", "/case", "/case/new", "/staff?caseId=case-kia-003"]) {
+    await page.goto(base + route);
+    await page.waitForLoadState("networkidle");
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route} fits ${width}px`);
+    }
+  }
+  assert(errors.length === 0, `Uncaught page errors: ${errors.join("; ")}`);
+  proof.push("Home/cases/request/staff fit desktop/mobile; no page errors");
+  await page.goto(`${base}/cases/case-kia-003`);
+  await page.getByRole("heading", { name: "FXA-1003", exact: true }).waitFor();
+  return { proof, pageErrors: errors };
+}

@@ -12,6 +12,12 @@ colors:
   route-label: "#d2e2e9"
   panel: "#f9fcfb"
   divider: "#c6d4d5"
+  case-ground: "#edf3f6"
+  case-muted: "#52647d"
+  case-divider: "#d7e1e9"
+  case-soft-blue: "#edf3ff"
+  case-panel: "#ffffff"
+  case-action-border: "#d7a82f"
 typography:
   display:
     fontFamily: "Alexandria, sans-serif"
@@ -35,9 +41,15 @@ typography:
     fontSize: "clamp(16px, 1.35vw, 20px)"
     fontWeight: 400
     lineHeight: 1.4
+  case-body:
+    fontFamily: "Alexandria, sans-serif"
+    fontWeight: 400
+    lineHeight: 1.5
 rounded:
   label: "6px"
   control: "8px"
+  panel: "12px"
+  status: "999px"
 spacing:
   small: "8px"
   medium: "16px"
@@ -67,6 +79,17 @@ components:
     backgroundColor: "{colors.approval-gold}"
     textColor: "{colors.navy-ink}"
     rounded: "{rounded.label}"
+  case-document-panel:
+    backgroundColor: "{colors.case-panel}"
+    textColor: "{colors.navy-ink}"
+    rounded: "{rounded.panel}"
+    padding: "22px"
+  case-action:
+    backgroundColor: "{colors.action-gold}"
+    textColor: "{colors.navy-ink}"
+    rounded: "{rounded.control}"
+    height: "46px"
+    padding: "11px 16px"
 ---
 
 # Design System: Fixauto
@@ -77,7 +100,7 @@ components:
 
 Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.
 
-This documents the approved marketing surface. Existing service-application routes retain their incumbent green system. The new palette is not authorization to restyle those routes.
+This documents the approved marketing surface and its scoped customer-case extension. The existing `/case` index and `/cases/[caseId]` customer dossier share the cobalt and cool-paper case shell. Other application routes retain their established system; this extension does not authorize a wider restyle. The approved Option C composition remains defined in `docs/CUSTOMER-CASE-BRIEF.md`.
 
 **Key Characteristics:**
 
@@ -97,13 +120,24 @@ Action gold highlights the primary action. Its lighter hover state makes the act
 
 ### Neutral
 
-Mineral and quiet grounds separate reading areas. Navy ink provides contrast. Route-label blue, near-white panels, and fine dividers support dense content.
+Mineral and quiet grounds separate marketing reading areas. Navy ink provides contrast. Route-label blue, near-white panels, and fine dividers support the journey surface.
+
+### Customer-case extension
+
+- **Cool paper** (#edf3f6): the `/case` shell and customer dossier ground.
+- **Muted slate** (#52647d) and **cool divider** (#d7e1e9): secondary text and document borders.
+- **Soft cobalt** (#edf3ff) and **white panels** (#ffffff): current-step surfaces and saved case records.
+- **Action border** (#d7a82f): the outline around dossier decision controls.
+
+The home and cases routes use the same cobalt and gold authority while keeping their route-specific surfaces distinct.
 
 **The Approval Rule.** Gold makes the approval boundary visible without implying that approval has occurred.
 
 ## Typography
 
 Alexandria is self-hosted with its license in app/fonts. The coordinator headline is semibold (600), with the geographic line in regular (400). The benefits display is semibold (600). Hero support is regular (400) on desktop and light (300) on phones; controls and section headings use bold (700).
+
+The shared case shell loads the same local Alexandria files at weights 400, 600, and 700. Its base line height is 1.5; dossier headings, labels, and table text set their own sizes in the route stylesheet. Outside that shell, the global application stylesheet still declares Arial, Helvetica, sans-serif.
 
 Desktop display type scales with the viewport. On smaller screens it uses clamp(42px, 7.5vw, 64px), a line height of 1.08, and tracking of -0.03em. Body copy remains readable at phone widths (15–18px).
 
@@ -117,15 +151,21 @@ The quieter home refinement on 2026-10-09 preserves the dominant coordinator mes
 
 The home polish keeps desktop journey labels at 14–16px, milestone headings at 16–22px, and problem copy at 17–20px. The journey reserves enough vertical space for wrapped labels, and the detailed steps form one column between 901px and 1100px.
 
+The `/case` index and `/cases/[caseId]` dossier share `CaseLayout` and its Alexandria, cobalt navigation, demo label, and footer. The dossier uses a 1720px maximum screen width. Above 980px, its overview and facts column sit side by side, with documents below the overview; at 980px the page becomes one column while the sidebar keeps two columns. At 700px the sidebar and overview details stack, section links wrap, and the screen uses 16px side padding. At 420px the screen uses 12px side padding and the vehicle illustration narrows. The reading order stays overview, next-step/facts, then documents. The selected page composition and interaction contract remain in `docs/CUSTOMER-CASE-BRIEF.md`.
+
 **The Reading Order Rule.** Responsive layout preserves the meaning and sequence of the content in the document.
 
 ## Elevation & Depth
 
 Surfaces are flat at rest. Tonal grounds and fine dividers establish hierarchy. Illustrations supply physical depth. There are no decorative card shadows; the primary button gains a white surround only for keyboard focus.
 
+Case documents use white panels with a 1px divider and 12px corners; inset summary groups and action groups use 8px corners. Depth remains tonal and border-led.
+
 ## Shapes
 
 Controls and panels have gentle corners (8px); route labels have smaller corners (6px). Circular numbered markers indicate sequence. Fine borders remain subordinate to the illustrated route.
+
+On the dossier, document panels use 12px corners, inset groups use 8px, and status pills are fully rounded. The shared case shell keeps the existing component shapes.
 
 ## Components
 
@@ -149,6 +189,10 @@ A plain text wordmark and quiet Coming soon link keep navigation small. The prim
 
 Numbered circles establish the broad stages. A gold label identifies awaiting approval. These are explanatory elements, not live tracking controls.
 
+### Customer case workspace
+
+The shared case header keeps the Fixauto wordmark, case/home links, Demo label, and staff demo link. The dossier uses a vehicle identity header, status pill, wrapping section links, white document panels, soft-blue next-step/fact groups, and gold action buttons. Its estimate, payment, and record sections use semantic tables and lists; links navigate to visible sections. Keep the illustrative vehicle caption and the shell's sample-data notice. The Demo label describes simulated behavior; this design reference does not authorize real payments, bookings, or operational use.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -156,9 +200,11 @@ Numbered circles establish the broad stages. A gold label identifies awaiting ap
 - Do preserve a visible approval boundary.
 - Do keep labels readable and semantic.
 - Do retain keyboard focus and reduced-motion support.
+- Do keep the cobalt case styling scoped to the existing `/case` shell and `/cases/[caseId]` dossier.
 
 ### Don't:
 
 - Don't imply live vehicle tracking through decorative route notation.
 - Don't use illustration text as a substitute for accessible content.
-- Don't apply this marketing restyle to existing application routes without a separate request.
+- Don't extend this route-specific styling to other application routes without a separate request.
+- Don't treat the Demo label or this design reference as authorization for live actions.
