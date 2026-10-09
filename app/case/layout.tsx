@@ -7,13 +7,13 @@ const alexandria = localFont({ src: [
   { path: "../fonts/alexandria-semibold.ttf", weight: "600" },
   { path: "../fonts/alexandria-bold.ttf", weight: "700" },
 ], display: "swap" });
-export default function CaseLayout({ children }: { children: ReactNode }) {
+export default function CaseLayout({ children, caseId }: { children: ReactNode; caseId?: string }) {
   return <div className={`${styles.workspace} ${alexandria.className}`}>
     <header className={styles.header}>
       <Link className={styles.wordmark} href="/">Fixauto</Link>
       <nav aria-label="Cases navigation"><Link href="/case">My cases</Link><Link href="/">Back to home</Link></nav>
       <span className={styles.demoLabel}>Demo</span>
-      <Link className={styles.staffLink} href="/staff">Staff demo <span aria-hidden="true">↗</span></Link>
+      <Link className={styles.staffLink} href={caseId ? `/staff?caseId=${encodeURIComponent(caseId)}` : "/staff"} aria-label={caseId ? "Staff workspace" : undefined}>Staff demo <span aria-hidden="true">↗</span></Link>
     </header>
     {children}
     <footer className={styles.footer}><span>Sample data · browser-local demo · no real booking or payment.</span><Link href="/">Fixauto</Link></footer>

@@ -13,7 +13,7 @@ function nextWeekday(targetDay: number): string {
 }
 
 async function createCollection(page: Page, suffix = "2", preferredDate = nextMonday()) {
-  await page.goto("/");
+  await page.goto("/case/new");
   await page.getByLabel("Contact name").fill(`Niloofar Karimi ${suffix}`);
   await page.getByLabel("Mobile number").fill(`+98 900 777 010${suffix}`);
   await page.getByLabel("Vehicle make").fill("Kia");
@@ -25,8 +25,9 @@ async function createCollection(page: Page, suffix = "2", preferredDate = nextMo
   await page.getByLabel("Requested collection address").fill("Sample Boulevard, Kerman");
   await page.getByLabel("Describe the symptoms").fill("The steering wheel vibrates above 80 km/h.");
   await page.getByRole("button", { name: "Create sample request" }).click();
-  await expect(page.getByText("Sample request received")).toBeVisible();
-  await page.getByRole("link", { name: "Open customer case" }).click();
+  await expect(page.getByRole("link", { name: "Follow your repair case" })).toBeVisible();
+  await page.getByRole("link", { name: "Follow your repair case" }).click();
+  await page.getByRole("link", { name: "Open full case & approvals" }).click();
   await expect(page).toHaveURL(/\/cases\//);
 }
 
@@ -51,14 +52,15 @@ async function prepareTransport(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/case");
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Reset sample data" }).click();
 });
 
 test("collection custody uses separate payment, records handover, blocks capacity, and releases it", async ({ page }) => {
   await createCollection(page);
-  await expect(page.getByRole("heading", { name: "Transport and storage" })).toBeVisible();
+  const firstCustomerUrl = page.url();
+  await expect(page.getByRole("heading", { name: "Transport and custody" })).toBeVisible();
   await prepareTransport(page);
 
   await page.getByRole("link", { name: "Customer case" }).click();
@@ -83,15 +85,24 @@ test("collection custody uses separate payment, records handover, blocks capacit
   await page.getByRole("button", { name: "Record simulated dispatch" }).click();
   await expect(page.getByText(/capacity is full/i)).toBeVisible();
 
-  await page.getByRole("button", { name: /FXA-1002/ }).click();
-  await expect(page.getByRole("button", { name: "Record simulated vehicle return" })).toBeVisible();
-  await page.getByRole("button", { name: "Record simulated vehicle return" }).click();
+  await page.getByRole("button", { name: /FXA-1006/ }).click();
+  await expect(page.getByRole("button", { name: "Record vehicle return" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Publish estimate v1" }).click();
+  await page.goto(firstCustomerUrl);
+  await page.getByRole("button", { name: "Approve exact estimate" }).click();
+  await page.getByRole("button", { name: "Simulate successful repair advance" }).click();
+  await page.getByRole("link", { name: "Staff workspace" }).click();
+  await page.getByRole("button", { name: "Record performed work" }).click();
+  await page.getByLabel("Result").selectOption("passed");
+  await page.getByRole("button", { name: "Record quality check" }).click();
+  await page.getByRole("button", { name: "Record illustrative settlement" }).click();
+  await page.getByRole("button", { name: "Record vehicle return" }).click();
   await expect(page.getByText("0 / 1")).toBeVisible();
 });
 
 test("new Thursday collection discloses private parking and Saturday assessment timing", async ({ page }) => {
   const thursday = nextWeekday(4);
   await createCollection(page, "4", thursday);
-  await expect(page.getByText("Destination: Designated Fixauto private parking", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Transport and custody" }).locator("xpath=ancestor::section[1]").getByText("Designated Fixauto private parking", { exact: true })).toBeVisible();
   await expect(page.getByText(/Private-parking exception: assessment cannot begin before/)).toBeVisible();
 });
