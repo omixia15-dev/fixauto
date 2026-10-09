@@ -20,7 +20,7 @@ export function CustomerCaseScreen({ caseId }: { caseId: string }) {
       <section className="empty-state">
         <h1>Sample case not found</h1>
         <p>This browser does not contain that fictional case.</p>
-        <Link className="button" href="/">Return to service request</Link>
+        <Link className="button" href="/case">Return to your cases</Link>
       </section>
     );
   }

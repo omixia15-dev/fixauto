@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
-import { CaseSummary } from "../components/case-summary";
+
 import { SimulationBadge } from "../components/simulation-badge";
 import {
   RequestValidationError,
@@ -25,7 +25,7 @@ const emptyRequest: ServiceRequestInput = {
 };
 
 export function RequestScreen() {
-  const { data, ready, submitRequest } = useDemoCases();
+  const { ready, storageError, retryStorage, submitRequest } = useDemoCases();
   const [values, setValues] = useState(emptyRequest);
   const [errors, setErrors] = useState<RequestErrors>({});
   const [formError, setFormError] = useState("");
@@ -65,8 +65,8 @@ export function RequestScreen() {
       <section className="hero">
         <div>
           <SimulationBadge>service request</SimulationBadge>
-          <p className="eyebrow">Managed car repair</p>
-          <h1>Let us manage your car repair</h1>
+
+          <h1>New repair request</h1>
           <p className="lede">Request an expert visit without creating an account or uploading documents.</p>
         </div>
         <ol className="journey" aria-label="Service journey">
@@ -74,16 +74,17 @@ export function RequestScreen() {
         </ol>
       </section>
 
+      {storageError ? <section className="error-banner" role="alert"><p>{storageError}</p><button className="button" type="button" onClick={retryStorage}>Try again</button></section> : !ready ? <p role="status">Loading saved cases…</p> : null}
       {receipt ? (
         <section className="card success-card" role="status" aria-labelledby="receipt-title">
           <p className="eyebrow">Sample request received</p>
           <h2 id="receipt-title">Reference {receipt.reference}</h2>
           <p>Your requested appointment is pending staff confirmation. No visit or charge has occurred.</p>
-          <Link className="button" href={`/cases/${receipt.caseId}`}>Open customer case</Link>
+          <Link className="button" href={`/case?caseId=${encodeURIComponent(receipt.caseId)}`}>Follow your repair case</Link>
         </section>
       ) : null}
 
-      <form ref={formRef} className="card request-form" onSubmit={handleSubmit} noValidate>
+      {!receipt && <form ref={formRef} className="card request-form" onSubmit={handleSubmit} noValidate>
         <div className="section-heading">
           <div><p className="eyebrow">Sample data only</p><h2>Request an expert visit</h2></div>
           <span className="status-pill">Staff confirmation required</span>
@@ -132,14 +133,10 @@ export function RequestScreen() {
             </div>
           ) : null}
         </div>
-        <button className="button" type="submit">Create sample request</button>
-      </form>
+        <button className="button" type="submit" disabled={!ready || Boolean(storageError)}>Create sample request</button>
+      </form>}
 
-      <section aria-labelledby="existing-sample-title">
-        <p className="eyebrow">Existing reset sample</p>
-        <h2 id="existing-sample-title">Shared case foundation</h2>
-        <CaseSummary sampleCase={data.cases[0]} />
-      </section>
+
     </div>
   );
 }

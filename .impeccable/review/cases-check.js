@@ -1,0 +1,104 @@
+async (page) => {
+  const assert = (condition, message) => { if (!condition) throw new Error(message); };
+  const proof = [];
+  page.on("pageerror", error => { throw error; });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("http://127.0.0.1:3000/case");
+  await page.getByRole("button", { name: /FXA-1001 Toyota Camry/ }).waitFor();
+  assert(await page.getByRole("complementary", { name: "Repair cases" }).getByRole("button").count() === 5, "Five sample cases expected");
+  await page.screenshot({ path: ".impeccable/review/desktop.png", fullPage: true });
+  for (const width of [320,390,768,1024,1440,1600]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "Cases overflow at " + width);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: ".impeccable/review/mobile.png", fullPage: true });
+  await page.goto("http://127.0.0.1:3000/case/new");
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "Request form overflow on mobile");
+  await page.screenshot({path:".impeccable/review/request-mobile.png",fullPage:true});
+  await page.goto("http://127.0.0.1:3000/case");
+  await page.getByRole("button", { name: /FXA-1001 Toyota Camry/ }).waitFor();
+  await page.getByLabel("Find a case").fill("no-match-vehicle");
+  await page.getByRole("heading", { name: "No cases match your search" }).waitFor();
+  await page.screenshot({ path: ".impeccable/review/empty.png", fullPage: true });
+  await page.getByRole("button", { name: "Show all cases" }).click();
+  await page.getByRole("button", { name: /FXA-1003 Kia Sportage/ }).click();
+  await page.getByRole("heading", { name: "FXA-1003", exact: true }).waitFor();
+  proof.push("Five cases, selection, empty-search recovery and six-width cases layout passed");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: /FXA-1001 Toyota Camry/ }).click();
+  await page.getByRole("link", { name: "Update in staff demo" }).click();
+  await page.getByRole("button", { name: "Confirm requested appointment" }).click();
+  await page.goto("http://127.0.0.1:3000/case?caseId=case-atlas-001");
+  await page.getByRole("heading", { name: "FXA-1001", exact: true }).waitFor();
+  assert(await page.getByRole("button", { name: /FXA-1001 Toyota Camry Appointment confirmed/ }).count() === 1, "Staff status must reach cases view");
+  await page.reload();
+  await page.getByRole("button", { name: /FXA-1001 Toyota Camry Appointment confirmed/ }).waitFor();
+  proof.push("Staff confirmation is selected correctly, reflected in customer view and survives reload");
+  await page.getByRole("link", { name: "New repair request", exact: true }).click();
+  await page.getByRole("button", { name: "Create sample request" }).click();
+  assert(await page.locator("[aria-invalid=true]").count() > 0, "Missing request fields must be flagged");
+  await page.getByLabel("Contact name", {exact:true}).fill("Sample tester");
+  await page.getByLabel("Mobile number", {exact:true}).fill("+98 900 000 0199");
+  await page.getByLabel("Vehicle make", {exact:true}).fill("Toyota");
+  await page.getByLabel("Model", {exact:true}).fill("Corolla");
+  await page.getByLabel("Year", {exact:true}).fill("2021");
+  await page.getByLabel("Preferred date", {exact:true}).fill("2027-01-16");
+  await page.getByLabel("Preferred time", {exact:true}).fill("10:30");
+  await page.getByLabel("Visit type", {exact:true}).selectOption("office-dropoff");
+  await page.getByLabel("Describe the symptoms", {exact:true}).fill("A fictional warning light appears.");
+  await page.getByRole("button", { name: "Create sample request" }).click();
+  await page.getByRole("heading", { name: "Reference FXA-1006" }).waitFor();
+  assert(await page.getByRole("button", { name: "Create sample request" }).count() === 0, "Receipt must prevent repeat submission");
+  assert(await page.getByRole("status").count() === 1, "Request success must be announced once");
+  await page.screenshot({ path: ".impeccable/review/request-success.png", fullPage: true });
+  await page.getByRole("link", { name: "Follow your repair case" }).click();
+  await page.getByRole("heading", { name: "FXA-1006", exact:true }).waitFor();
+  assert(await page.getByRole("status").count() === 1, "Cases success must be announced once");
+  await page.screenshot({ path: ".impeccable/review/success.png", fullPage:true });
+  await page.reload();
+  await page.getByRole("heading", { name: "FXA-1006", exact:true }).waitFor();
+  proof.push("Request validation, submission, selected receipt case, duplicate-submit prevention and persistence passed");
+  await page.goto("http://127.0.0.1:3000/");
+  await page.getByRole("link", { name: "Try the repair demo" }).last().waitFor();
+  for (const width of [390,1440]) {
+    await page.setViewportSize({width,height:900});
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "Home overflow at " + width);
+  }
+  await page.getByRole("link", { name: "Try the repair demo" }).last().click();
+  await page.getByRole("heading", {name:"Your repair cases"}).waitFor();
+  proof.push("Home demo entry works and home fits desktop/mobile");
+
+  const context = await page.context().browser().newContext({viewport:{width:1440,height:1000}});
+  const errorPage = await context.newPage();
+  await errorPage.addInitScript(() => {
+    window.__storageBlocked = true;
+    const original = Storage.prototype.getItem;
+    Storage.prototype.getItem = function(key) {
+      if (window.__storageBlocked) throw new Error("Test storage denied");
+      return original.call(this, key);
+    };
+  });
+  await errorPage.goto("http://127.0.0.1:3000/case");
+  await errorPage.getByRole("heading",{name:"We could not open your saved cases"}).waitFor();
+  await errorPage.screenshot({path:".impeccable/review/error.png",fullPage:true});
+  await errorPage.evaluate(() => { window.__storageBlocked = false; });
+  await errorPage.getByRole("button",{name:"Try again"}).click();
+  await errorPage.getByRole("button",{name:/FXA-1001 Toyota Camry Request received/}).waitFor();
+  await errorPage.goto("http://127.0.0.1:3000/staff");
+  await errorPage.evaluate(() => { window.__storageBlocked = true; });
+  await errorPage.reload();
+  await errorPage.getByRole("heading",{name:"Saved cases are unavailable"}).waitFor();
+  assert(await errorPage.getByText("Browser storage unavailable",{exact:true}).count() === 1, "Legacy storage label must report failure");
+  assert(await errorPage.getByText("Saved in this browser",{exact:true}).count() === 0, "Legacy storage label must not claim saved");
+  await errorPage.screenshot({path:".impeccable/review/legacy-error.png",fullPage:true});
+  proof.push("Blocked storage has visible error, working retry, accurate legacy storage label and no reset");
+  await context.close();
+  const loadingContext = await page.context().browser().newContext({javaScriptEnabled:false,viewport:{width:1440,height:1000}});
+  const loadingPage = await loadingContext.newPage();
+  await loadingPage.goto("http://127.0.0.1:3000/case");
+  await loadingPage.getByText("Loading your saved cases…").waitFor();
+  await loadingPage.screenshot({path:".impeccable/review/loading.png",fullPage:true});
+  await loadingContext.close();
+  return proof;
+}

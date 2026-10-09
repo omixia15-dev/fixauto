@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cloneInitialDemoData } from "../src/demo-data/sample-data.ts";
+import { cloneInitialDemoData as cloneAllSamples } from "../src/demo-data/sample-data.ts";
 import {
   approveEstimate,
   authorizeAssessment,
@@ -70,3 +70,5 @@ test("reminders do not imply consent and declined estimates can record a bounded
   data = refundUnspentAdvance(data, preparedCase.caseId, estimate.id, now);
   assert.equal(data.cases[1].estimateRefunds[0].unspentCents, estimate.totalCents - 5000);
 });
+
+function cloneInitialDemoData() { const data = cloneAllSamples(); return { ...data, cases: data.cases.slice(0, 1) }; }

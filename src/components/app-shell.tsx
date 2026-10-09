@@ -9,11 +9,12 @@ import { ResetSampleButton } from "./reset-sample-button";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { data, notice, ready } = useDemoCases();
+  const { data, notice, ready, storageError, retryStorage } = useDemoCases();
   const isMarketingHome = pathname === "/";
+  const isCaseWorkspace = pathname === "/case" || pathname.startsWith("/case/");
   const latestCaseId = data.cases.at(-1)?.id ?? "case-atlas-001";
   const links = [
-    { href: "/", label: en.nav.request, active: pathname === "/" },
+    { href: "/case/new", label: en.nav.request, active: pathname === "/case/new" },
     { href: `/cases/${latestCaseId}`, label: en.nav.customer, active: pathname.startsWith("/cases/") },
     { href: "/staff", label: en.nav.staff, active: pathname === "/staff" },
   ];
@@ -23,7 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      {!isMarketingHome ? (
+      {!isMarketingHome && !isCaseWorkspace ? (
         <>
           <header className="site-header">
             <div className="header-inner">
@@ -53,16 +54,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               <strong>{en.demoBannerTitle}</strong>
               <span>{en.demoBannerBody}</span>
             </div>
-            <span className="storage-state">{ready ? "Saved in this browser" : "Loading sample data…"}</span>
+            <span className="storage-state">{storageError ? "Browser storage unavailable" : ready ? "Saved in this browser" : "Loading sample data…"}</span>
           </div>
         </>
       ) : null}
-      <main id="main-content" className={"page-shell" + (isMarketingHome ? " marketing-shell" : "")}>
-        {children}
+      <main id="main-content" className={"page-shell" + (isMarketingHome || isCaseWorkspace ? " marketing-shell" : "")}>
+        {storageError && !isMarketingHome && !isCaseWorkspace ? <section className="error-banner" role="alert"><h1>Saved cases are unavailable</h1><p>{storageError}</p><button className="button" type="button" onClick={retryStorage}>Try again</button></section> : children}
       </main>
-      <div className="sr-live" role="status" aria-live="polite">
+      {!isCaseWorkspace && <div className="sr-live" role="status" aria-live="polite">
         {notice}
-      </div>
+      </div>}
     </>
   );
 }

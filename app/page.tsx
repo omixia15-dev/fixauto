@@ -18,7 +18,7 @@ export default function HomePage() {
   return <div className={`${styles.marketingPage} ${alexandria.className}`}>
     <header className={styles.hero}>
       <div className={styles.heroArt}><Image src="/images/session-13-hero-art.png" alt="Silver car outside a specialist repair workshop" width={1536} height={1024} preload sizes="(max-width: 900px) 150vw, 52vw" /></div>
-      <nav className={styles.nav} aria-label="Main navigation"><Link href="/" className={styles.wordmark}>Fixauto</Link><a href="#coming-soon">Coming soon <span aria-hidden="true">→</span></a></nav>
+      <nav className={styles.nav} aria-label="Main navigation"><Link href="/" className={styles.wordmark}>Fixauto</Link><div className={styles.navLinks}><Link href="/case">My cases <span className={styles.demoLabel}>Demo</span></Link><a href="#coming-soon">Coming soon <span aria-hidden="true">→</span></a></div></nav>
       <div className={styles.heroCopy}><h1><span>Car repairs in Kerman.</span><span>One coordinator,<br/>start to finish.</span></h1><p>Fixauto is being built to coordinate assessment, specialist repairs,<br className={styles.desktopBreak}/> and vehicle return, with your approval before repair work or extra spending.</p><a className={styles.primaryButton} href="#coming-soon">Get launch updates <span aria-hidden="true">→</span></a></div>
     </header>
     <section className={styles.journey} aria-labelledby="journey-title">
@@ -38,7 +38,7 @@ export default function HomePage() {
       </section>
     </div>
     <section className={styles.previews} aria-labelledby="previews-title">
-      <div className={styles.sectionHeading}><h2 id="previews-title">Three views. One coordinated case.</h2><p>Demo · simulated sign-in, payments, and SMS. No live bookings or operations.</p></div>
+      <div className={styles.sectionHeading}><h2 id="previews-title">Three views. One coordinated case.</h2><p>Demo · simulated sign-in, payments, and SMS. No live bookings or operations.</p><Link className={styles.primaryButton} href="/case">Try the repair demo <span aria-hidden="true">→</span></Link></div>
       <div className={styles.previewGrid}>
         <article><h3>Service request</h3><p className={styles.previewRole}>Demo / Request</p><dl><div><dt>Vehicle</dt><dd>Sample car</dd></div><div><dt>What needs attention?</dt><dd>Vibration under braking</dd></div><div><dt>Next step</dt><dd>Request an assessment</dd></div></dl><p className={styles.previewNote}>Sample only · not submitted</p></article>
         <article><h3>Review before repair.</h3><p className={styles.previewRole}>Demo / Customer case</p><p className={styles.approvalState}>Estimate awaiting approval</p><dl><div><dt>Estimate</dt><dd>Itemized work and costs</dd></div><div><dt>Owner&apos;s decision</dt><dd>Approval required</dd></div><div><dt>Changed scope or costs</dt><dd>Fresh approval required</dd></div></dl></article>

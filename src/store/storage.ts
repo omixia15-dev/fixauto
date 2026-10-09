@@ -329,8 +329,7 @@ export function saveDemoData(storage: StorageAdapter, data: DemoData): void {
 
 export function resetDemoData(storage: StorageAdapter): DemoData {
   const freshData = cloneInitialDemoData();
-  storage.removeItem(DEMO_STORAGE_KEY);
-  storage.removeItem(LEGACY_STORAGE_KEY);
   saveDemoData(storage, freshData);
+  storage.removeItem(LEGACY_STORAGE_KEY);
   return freshData;
 }

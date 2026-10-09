@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { cloneInitialDemoData } from "../demo-data/sample-data";
 import {
   authorizeAssessment,
@@ -58,6 +58,8 @@ type DemoCaseContextValue = {
   data: DemoData;
   ready: boolean;
   notice: string;
+  storageError: string;
+  retryStorage: () => void;
   submitRequest: (input: ServiceRequestInput) => { caseId: string; reference: string };
   confirmAppointment: (caseId: string) => void;
   authorizeInitialAssessment: (caseId: string) => void;
@@ -99,14 +101,28 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState("");
 
-  useEffect(() => {
-    const stored = loadDemoData(window.localStorage);
-    saveDemoData(window.localStorage, stored);
-    queueMicrotask(() => {
-      setData(stored);
+  const [storageError, setStorageError] = useState("");
+  const retryStorage = useCallback(() => {
+    setReady(false);
+    try {
+      const stored = loadDemoData(window.localStorage);
+      // Preserve saved work; add only sample identities and references not already present.
+      const missing = cloneInitialDemoData().cases.filter(sample =>
+        !stored.cases.some(item => item.id === sample.id || item.reference === sample.reference));
+      const next = { ...stored, cases: [...stored.cases, ...missing] };
+      saveDemoData(window.localStorage, next);
+      setData(next);
+      setStorageError("");
+    } catch {
+      setStorageError("Browser storage is unavailable. Allow site storage, then try again. Existing saved cases have not been reset.");
+    } finally {
       setReady(true);
-    });
+    }
   }, []);
+
+  useEffect(() => {
+    queueMicrotask(retryStorage);
+  }, [retryStorage]);
 
   const value = useMemo<DemoCaseContextValue>(() => {
     function commit(next: DemoData, message: string) {
@@ -125,6 +141,8 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
       data,
       ready,
       notice,
+      storageError,
+      retryStorage,
       submitRequest(input) {
         const now = new Date();
         const nextNumber = Math.max(1000, ...data.cases.map((item) => Number(item.reference.replace("FXA-", "")) || 1000)) + 1;
@@ -298,7 +316,7 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
         setNotice("Fixauto sample data was reset.");
       },
     };
-  }, [data, notice, ready]);
+  }, [data, notice, ready, storageError, retryStorage]);
 
   return <DemoCaseContext.Provider value={value}>{children}</DemoCaseContext.Provider>;
 }

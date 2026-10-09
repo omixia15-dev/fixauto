@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cloneInitialDemoData } from "../src/demo-data/sample-data.ts";
+import { cloneInitialDemoData as cloneAllSamples } from "../src/demo-data/sample-data.ts";
 import {
   assignCustodyReceiver,
   authorizeAssessment,
@@ -160,3 +160,5 @@ test("Friday is also eligible for the private-parking exception, while a repeat 
   const repeat = createCollection(first.data, { ...friday, contactName: "Another Customer" }, "case-collection-006", "FXA-1006");
   assert.equal(repeat.sampleCase.transport.kind, "standard-collection");
 });
+
+function cloneInitialDemoData() { const data = cloneAllSamples(); return { ...data, cases: data.cases.slice(0, 1) }; }

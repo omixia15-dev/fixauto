@@ -7,9 +7,9 @@ import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase, getCurren
 import { getCasePresentation } from "../presentation/case-status";
 import { useDemoCases } from "../store/demo-case-provider";
 
-export function StaffWorkspaceScreen() {
+export function StaffWorkspaceScreen({ initialCaseId }: { initialCaseId?: string }) {
   const actions = useDemoCases();
-  const [selectedId, setSelectedId] = useState(() => actions.data.cases.at(-1)?.id ?? "case-atlas-001");
+  const [selectedId, setSelectedId] = useState(() => initialCaseId ?? actions.data.cases.at(-1)?.id ?? "case-atlas-001");
   const [expertName, setExpertName] = useState("Arman Karimi");
   const [findings, setFindings] = useState("Initial expert visit indicates that workshop investigation is needed.");
   const [needsInvestigation, setNeedsInvestigation] = useState(true);

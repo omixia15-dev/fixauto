@@ -185,3 +185,12 @@ test("missing or unreadable data falls back to the sample seed", () => {
   storage.setItem(DEMO_STORAGE_KEY, JSON.stringify(malformedCurrent));
   assert.equal(loadDemoData(storage).cases[0].assessment.investigation.feeCents, 8500);
 });
+test("a failed reset write preserves current and legacy data", () => {
+  const storage = new MemoryStorage();
+  storage.setItem(DEMO_STORAGE_KEY, "existing current data");
+  storage.setItem(LEGACY_STORAGE_KEY, "existing legacy data");
+  storage.setItem = () => { throw new Error("Quota exceeded"); };
+  assert.throws(() => resetDemoData(storage), /Quota exceeded/);
+  assert.equal(storage.getItem(DEMO_STORAGE_KEY), "existing current data");
+  assert.equal(storage.getItem(LEGACY_STORAGE_KEY), "existing legacy data");
+});
