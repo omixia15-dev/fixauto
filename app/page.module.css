@@ -17,34 +17,29 @@
 .primaryButton:hover { background:#f4cb64; }
 .marketingPage :focus-visible { outline:3px solid #e8b848; outline-offset:5px; }
 .primaryButton:focus-visible { outline-color:#11253f; box-shadow:0 0 0 8px #fff; }
-.journey { position:relative; height:380px; padding:22px 4.43% 0; }
-.kicker { font-size:13px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:#1749b9; }
+.journey { position:relative; height:334px; padding:22px 4.43% 0; }
 .journey h2 { margin-top:4px; font-size:29px; letter-spacing:-1px; line-height:1.15; }
 .milestones { display:grid; grid-template-columns:40.4% 34.8% 24.8%; list-style:none; padding:0; margin:18px 0 0; }
-.milestones li { display:flex; align-items:flex-start; gap:24px; }
+.milestones li { display:flex; align-items:center; gap:24px; }
 .marker { flex:none; display:grid; place-items:center; width:45px; height:45px; border-radius:50%; background:#1749b9; color:white; font-size:24px; font-weight:700; }
 .milestones li:nth-child(2) .marker { background:#e8b848; color:#11253f; }
-.milestones h3 { margin-top:4px; font-size:19px; letter-spacing:-.65px; white-space:nowrap; }
-.milestones p { max-width:275px; margin-top:2px; font-size:15px; line-height:1.4; letter-spacing:-.25px; }
-.journeyArt { position:absolute; left:3.45%; right:3.13%; top:174px; height:133px; overflow:hidden; }
+.milestones h3 { font-size:19px; letter-spacing:-.65px; white-space:nowrap; }
+.journeyArt { position:absolute; left:3.45%; right:3.13%; top:128px; height:133px; overflow:hidden; }
 .journeyArt img { position:absolute; top:50%; transform:translateY(-50%); width:100%; height:auto; }
-.routeLabels { position:absolute; inset:311px 3.45% auto; display:grid; grid-template-columns:166fr 188fr 176fr 206fr 233fr 230fr; gap:24px; list-style:none; margin:0; padding:0; }
+.routeLabels { position:absolute; inset:265px 3.45% auto; display:grid; grid-template-columns:166fr 188fr 176fr 206fr 233fr 230fr; gap:24px; list-style:none; margin:0; padding:0; }
 .routeLabels li { display:grid; place-items:center; min-height:40px; background:#d2e2e9; border-radius:6px; font-size:14px; letter-spacing:-.25px; text-align:center; }
 .routeLabels li:nth-child(3) { margin-left:16px; }
 .routeLabels li:nth-child(4) { background:#ffdc82; font-weight:700; }
-.intro { display:grid; grid-template-columns:34.5% 65.5%; padding:24px 4.43% 32px; background:#edf3f1; }
+.intro { display:grid; grid-template-columns:34.5% 65.5%; padding:48px 4.43%; background:#edf3f1; }
 .problem { padding-right:48px; border-right:1px solid #c6d4d5; }
 .problem h2 { margin-top:4px; font-size:32px; line-height:1.12; letter-spacing:-1.2px; }
-.problem>p:not(.kicker):not(.problemClose) { margin-top:16px; font-size:18px; line-height:1.4; }
+.problem>p:not(.problemClose) { margin-top:16px; font-size:18px; line-height:1.4; }
 .how { padding-left:55px; }
-.steps { display:grid; grid-template-columns:repeat(3,1fr); padding:0; margin:18px 0 0; list-style:none; }
-.steps li { display:flex; align-items:center; gap:22px; padding-right:14px; margin-right:20px; border-right:1px solid #c6d4d5; }
-.steps li:last-child { border:0; margin-right:0; padding-right:0; }
-.icon { display:grid; flex:none; place-items:center; width:102px; height:102px; border-radius:50%; background:#d6e6f2; }
-.smallMarker { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:#c9dff5; font-size:20px; font-weight:700; }
-.steps h3 { margin-top:8px; font-size:17px; font-weight:400; line-height:1.3; letter-spacing:-.5px; }.details { display:grid; grid-template-columns:34.5% 65.5%; padding:0 4.43% 64px; background:#edf3f1; }
+.how h2 { font-size:clamp(24px,2vw,30px); line-height:1.15; letter-spacing:-.03em; }
 .problemClose { max-width:28ch; margin-top:20px!important; font-size:18px; }
-.stepDetails { grid-column:2; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; list-style:none; margin:0; padding:0 0 0 55px; }
+.stepDetails { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; list-style:decimal; margin:24px 0 0; padding:0 0 0 20px; }
+.stepDetails li { padding-left:4px; }
+.stepDetails li::marker { color:#1749b9; font-weight:700; }
 .stepDetails h3 { font-size:18px; line-height:1.25; }
 .stepDetails p { margin-top:12px; font-size:15px; line-height:1.6; }
 .previews { padding:64px 4.43%; }
@@ -53,7 +48,7 @@
 .sectionHeading>p { max-width:420px; font-size:15px; }
 .previewGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px; }
 .previewGrid article { padding:28px; background:#f9fcfb; border:1px solid #c6d4d5; border-radius:8px; }
-.previewGrid h3 { margin-top:10px; font-size:23px; letter-spacing:-.7px; }
+.previewGrid h3 { font-size:23px; letter-spacing:-.7px; }
 .previewGrid dl { margin:24px 0 0; }
 .previewGrid dl div { padding:12px 0; border-bottom:1px solid #d9e3e3; }
 .previewGrid dt { font-size:13px; color:#3e566b; font-weight:400; }
@@ -62,11 +57,12 @@
 .approvalState { margin-top:22px!important; padding:12px; border-radius:6px; background:#ffdc82; font-weight:700; }
 .staffList { padding-left:22px; margin:24px 0 0; }
 .staffList li { padding:12px 0; border-bottom:1px solid #d9e3e3; }
-.benefits { padding:64px 4.43%; background:#edf3f1; }
-.benefitGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:40px; margin-top:36px; }
+.benefits { padding:64px 4.43%; background:#edf3f1; color:#11253f; }
+.benefits h2 { max-width:30ch; font-size:clamp(30px,3vw,44px); font-weight:600; line-height:1.15; letter-spacing:-.03em; }
+.benefitGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:40px; margin-top:32px; }
 .benefitGrid article { padding-right:28px; border-right:1px solid #c6d4d5; }
 .benefitGrid article:last-child { border:0; }
-.benefitGrid h3 { font-size:22px; letter-spacing:-.6px; }
+.benefitGrid h3 { font-size:22px; font-weight:600; letter-spacing:-.03em; line-height:1.25; }
 .benefitGrid p { margin-top:10px; font-size:17px; }
 .comingSoon { display:grid; grid-template-columns:1fr 1.1fr; gap:64px; padding:72px 4.43%; background:#1749b9; color:white; scroll-margin-top:20px; }
 .comingSoon>div>p { margin-top:14px; }
@@ -89,11 +85,7 @@
   .desktopBreak { display:none; }
   .milestones li { gap:16px; }
   .milestones h3 { font-size:17px; }
-  .milestones p { font-size:14px; max-width:240px; }
   .how { padding-left:40px; }
-  .steps li { gap:14px; margin-right:14px; }
-  .icon { width:80px; height:80px; }
-  .steps h3 { font-size:15px; }
   .formRow { flex-wrap:wrap; }
   .formRow input { flex:1 1 240px; }
 }
@@ -114,25 +106,18 @@
   .milestones { grid-template-columns:1fr; gap:24px; margin-top:28px; }
   .milestones li { gap:18px; }
   .milestones h3 { white-space:normal; font-size:19px; }
-  .milestones p { max-width:55ch; font-size:16px; }
   .journeyArt { position:relative; inset:auto; height:clamp(80px,15vw,133px); margin:28px -12px 16px; }
   .routeLabels { position:static; grid-template-columns:1fr; gap:8px; counter-reset:route; }
   .routeLabels li { display:flex; justify-content:flex-start; gap:14px; padding:12px 16px; font-size:15px; }
   .routeLabels li::before { counter-increment:route; content:counter(route); font-size:13px; font-weight:700; }
   .routeLabels li:nth-child(3) { margin:0; }
-  .intro,.details { grid-template-columns:1fr; padding:32px 24px; gap:32px; }
-  .intro { padding-bottom:0; }
+  .intro { grid-template-columns:1fr; padding:32px 24px; gap:32px; }
   .problem { border:0; padding:0; }
   .problem h2 { max-width:25ch; font-size:30px; }
-  .problem>p:not(.kicker):not(.problemClose),.problemClose { font-size:17px; max-width:55ch; }
+  .problem>p:not(.problemClose),.problemClose { font-size:17px; max-width:55ch; }
   .how { padding:0; }
-  .steps { grid-template-columns:1fr; gap:20px; }
-  .steps li { border:0; margin:0; padding:0; }
-  .steps h3 { font-size:18px; }
-  .icon { width:76px; height:76px; }
-  .smallMarker { width:28px; height:28px; font-size:16px; }
-  .problemClose { padding:0; } .stepDetails { grid-column:auto; }
-  .stepDetails { grid-template-columns:1fr; padding:0; gap:24px; }
+  .problemClose { padding:0; }
+  .stepDetails { grid-template-columns:1fr; padding-left:20px; gap:24px; }
   .previews,.benefits { padding:48px 24px; }
   .sectionHeading { align-items:start; flex-direction:column; gap:16px; }
   .previewGrid,.benefitGrid { grid-template-columns:1fr; gap:24px; }
@@ -145,37 +130,47 @@
 @media (max-width:480px) { .heroArt { height:280px; } .heroArt img { top:-64px; } }
 @media (max-width:900px) { .hero { display:flex; flex-direction:column; } .nav { order:0; } .heroCopy { order:1; } .heroArt { order:2; } }
 @media (min-width:901px) {
- .hero { height:28.90625vw; }
- .nav { height:3.90625vw; padding-top:1.04167vw; }
- .wordmark { font-size:1.88802vw; }
- .nav>a:last-child { font-size:1.04167vw; }
- .heroArt { top:.97656vw; }
- .heroCopy { padding-top:1.5625vw; }
- .heroCopy h1 { font-size:5.2vw; letter-spacing:-.045em; }
- .heroCopy p { font-weight:300; margin-top:1.75781vw; font-size:1.4974vw; max-width:64%; }
- .desktopBreak { display:inline; }
- .primaryButton { height:3.97135vw; margin-top:1.171875vw; padding:0 1.953125vw; font-size:1.36719vw; gap:.91146vw; }
- .journey { height:24.73958vw; padding-top:1.43229vw; }
- .kicker { font-size:.84635vw; }
- .journey h2 { margin-top:.26042vw; font-size:1.88802vw; }
- .milestones { margin-top:1.171875vw; }
- .milestones li { gap:1.5625vw; }
- .marker { width:2.92969vw; height:2.92969vw; font-size:1.5625vw; }
- .milestones h3 { font-size:1.23698vw; margin-top:.26042vw; }
- .milestones p { font-size:.97656vw; max-width:17.90365vw; }
- .journeyArt { top:11.328125vw; height:8.65885vw; }
- .routeLabels { top:20.2474vw; gap:1.5625vw; }
- .routeLabels li { min-height:2.60417vw; font-size:.91146vw; }
- .intro { padding-top:1.5625vw; padding-bottom:2.08333vw; }
- .problem h2 { font-size:2.08333vw; }
- .problem>p:not(.kicker):not(.problemClose) { font-size:1.171875vw; margin-top:1.04167vw; }
- .steps { margin-top:1.171875vw; }
+ .hero { height:36vw; min-height:520px; }
+ .nav { height:64px; padding-top:20px; }
+ .wordmark { font-size:29px; }
+ .nav>a:last-child { font-size:16px; }
+ .heroArt { top:auto; bottom:-3vw; right:0; width:52%; }
+ .heroCopy { padding-top:38px; }
+ .heroCopy h1 { font-size:clamp(46px,5vw,76px); line-height:1.08; letter-spacing:-.03em; font-weight:600; }
+ .heroCopy h1 span:first-child { font-size:clamp(24px,2.5vw,40px); font-weight:400; letter-spacing:-.03em; margin-bottom:16px; }
+ .heroCopy h1 span:last-child { max-width:16ch; }
+ .heroCopy p { font-weight:400; margin-top:24px; font-size:clamp(16px,1.35vw,20px); max-width:47%; }
+ .desktopBreak { display:none; }
+ .primaryButton { height:61px; margin-top:24px; padding:0 30px; font-size:18px; gap:14px; }
+ .journey { height:max(316px,21.74479vw); padding-top:max(22px,1.43229vw); }
+ .journey h2 {  font-size:clamp(24px,1.88802vw,32px); }
+ .milestones { margin-top:max(18px,1.171875vw); }
+ .milestones li { gap:max(16px,1.5625vw); }
+ .marker { width:max(36px,2.92969vw); height:max(36px,2.92969vw); font-size:clamp(20px,1.5625vw,28px); }
+ .milestones h3 { font-size:clamp(16px,1.23698vw,22px);  }
+ .journeyArt { top:max(128px,8.33333vw); height:max(104px,8.65885vw); }
+ .routeLabels { top:max(240px,17.2526vw); gap:clamp(12px,1.5625vw,24px); }
+ .routeLabels li { min-height:max(40px,2.60417vw); padding:6px; font-size:clamp(14px,.91146vw,16px); }
+ .problem h2 { font-size:clamp(28px,2.08333vw,36px); }
+ .problem>p:not(.problemClose) { font-size:clamp(17px,1.171875vw,20px); margin-top:max(16px,1.04167vw); }
  .how { padding-left:3.58073vw; }
- .steps li { gap:1.43229vw; margin-right:1.30208vw; }
- .icon { width:6.640625vw; height:6.640625vw; }
- .steps h3 { font-size:1.10677vw; }
- .smallMarker { width:2.21354vw; height:2.21354vw; font-size:1.30208vw; }
  .formRow button { margin-top:0; font-size:17px; }
 }
-
 @media (min-width:901px) { .problem .problemClose { position:relative; margin-top:32px!important; } }
+.journeyHeading { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px; }
+.journeyHeading>span { color:#1749b9; font-size:14px; font-weight:600; }
+.previewRole { margin-top:8px!important; color:#1749b9; font-size:13px; }
+
+@media (max-width:900px) {
+ .heroCopy h1 { font-weight:600; line-height:1.08; letter-spacing:-.03em; }
+ .heroCopy h1 span:first-child { font-size:24px; font-weight:400; line-height:1.2; letter-spacing:-.03em; margin-bottom:16px; }
+ .heroCopy h1 span:last-child { max-width:16ch; }
+ .benefits { padding:56px 24px; }
+ .benefitGrid { margin-top:32px; }
+}
+
+@media (min-width:901px) and (max-width:1100px) {
+ .stepDetails { grid-template-columns:1fr; gap:24px; }
+ .previewGrid { gap:20px; }
+ .previewGrid article { padding:24px; }
+}
