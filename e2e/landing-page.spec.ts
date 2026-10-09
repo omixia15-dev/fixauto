@@ -37,6 +37,22 @@ const navigationLinks = [
 ];
 
 for (const width of [320, 390, 768, 1440]) {
+  test(`navigation stays in the same position between pages at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    const navigation = page.getByRole("navigation", { name: "Main navigation" });
+    const positions = await Promise.all(navigationLinks.map(link => navigation.getByRole("link", { name: link.name, exact: true }).boundingBox()));
+    for (const route of [...appRoutes.slice(1), "/cases/case-atlas-001", "/missing-application-route"]) {
+      await page.goto(route);
+      for (const [index, link] of navigationLinks.entries()) {
+        const position = await navigation.getByRole("link", { name: link.name, exact: true }).boundingBox();
+        expect(position).not.toBeNull();
+        expect(Math.abs(position!.x - positions[index]!.x), `${link.name} horizontal position on ${route}`).toBeLessThanOrEqual(1);
+        expect(Math.abs(position!.y - positions[index]!.y), `${link.name} vertical position on ${route}`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
   test(`shared navigation is available and keyboard-accessible across routes at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     for (const route of appRoutes) {

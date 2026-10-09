@@ -4,7 +4,6 @@
 .hero { position:relative; height:444px; background:linear-gradient(115deg,#134cbe 0%,#144cbd 70%,#205ebe 100%); color:white; overflow:hidden; }
 .heroArt { position:absolute; right:0; top:15px; width:50%; }
 .heroArt img { display:block; width:100%; height:auto; }
-.nav { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; padding:16px 4.17% 0; min-height:60px; flex-wrap:wrap; gap:8px 24px; }
 .wordmark { font-size:29px; font-weight:700; letter-spacing:-1.5px; }
 .heroCopy { position:relative; z-index:1; padding:24px 4.36% 0; }
 .heroCopy h1 { max-width:none; font-size:clamp(48px,5.4vw,83px); letter-spacing:-4.2px; line-height:.95; font-weight:600; }
@@ -89,7 +88,6 @@
 }
 @media (max-width:900px) {
   .hero { height:auto; }
-  .nav { height:auto; min-height:64px; padding:16px 24px 0; flex-wrap:wrap; gap:12px 24px; }
   .wordmark { font-size:27px; }
   .heroCopy { padding:32px 24px 0; }
   .heroCopy h1 { font-size:clamp(42px,7.5vw,64px); line-height:1.02; letter-spacing:-.04em; }
@@ -125,14 +123,12 @@
   .footer { align-items:start; flex-direction:column; padding:32px 24px; gap:16px; }
 }
 @media (max-width:480px) { .heroArt { height:280px; } .heroArt img { top:-64px; } }
-@media (max-width:900px) { .hero { display:flex; flex-direction:column; } .nav { order:0; } .heroCopy { order:1; } .heroArt { order:2; } }
+@media (max-width:900px) { .hero { display:flex; flex-direction:column; } .heroCopy { order:1; } .heroArt { order:2; } }
 @media (min-width:901px) {
  .hero { height:36vw; min-height:520px; }
- .nav { height:64px; padding-top:20px; }
  .wordmark { font-size:29px; }
- .nav>a:last-child { font-size:16px; }
  .heroArt { top:auto; bottom:-3vw; right:0; width:52%; }
- .heroCopy { padding-top:38px; }
+ .heroCopy { padding-top:22px; }
  .heroCopy h1 { font-size:clamp(46px,5vw,76px); line-height:1.08; letter-spacing:-.03em; font-weight:600; }
  .heroCopy h1 span:first-child { font-size:clamp(24px,2.5vw,40px); font-weight:400; letter-spacing:-.03em; margin-bottom:16px; }
  .heroCopy h1 span:last-child { max-width:16ch; }

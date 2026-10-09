@@ -183,7 +183,7 @@ Demo previews use near-white panels, one fine border, and comfortable padding. T
 
 ### Navigation
 
-A plain text wordmark and shared navigation connect Home page, Cases, Users, Staffs, and Coming Soon. Users opens the sample customer dossier; it is not a user administration screen. Dossier navigation retains its case when opening the staff workspace. Links wrap on phones and the active section has a gold underline. The primary action uses a native in-page anchor; reduced motion disables smooth scrolling.
+A plain text wordmark and shared navigation connect Home page, Cases, Users, Staffs, and Coming Soon. Users opens the sample customer dossier; it is not a user administration screen. Dossier navigation retains its case when opening the staff workspace. All routes reuse the same header grid, padding, type weight, and right-aligned desktop menu. Links wrap in the same position on phones, and the active section has a gold underline without changing link widths. Case-specific staff links sit below the shared header so they cannot move the menu. The primary action uses a native in-page anchor; reduced motion disables smooth scrolling.
 
 ### Journey markers and labels
 
