@@ -5,7 +5,7 @@ test("marketing home links to the case demo without showing sample records", asy
   await expect(page.getByRole("heading", { name: /Car repairs in Kerman/ })).toBeVisible();
   await expect(page.getByText(/FXA-\d+/)).toHaveCount(0);
 
-  await page.getByRole("link", { name: /My cases/ }).click();
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Cases", exact: true }).click();
   await expect(page).toHaveURL(/\/case$/);
   await expect(page.getByRole("button", { name: /FXA-100[1-5]/ })).toHaveCount(5);
 });
@@ -72,8 +72,8 @@ test("case routes fit phone through desktop widths and keep keyboard navigation 
   await expect(page).toHaveURL(/\/cases\/case-kia-003$/);
 
   await page.goto("/case?caseId=case-kia-003");
-  const myCases = page.getByRole("navigation", { name: "Cases navigation" }).getByRole("link", { name: "My cases" });
-  await myCases.focus();
+  const cases = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Cases", exact: true });
+  await cases.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/case$/);
 });

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppNavigation } from "@/src/components/app-navigation";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import styles from "./case.module.css";
@@ -11,9 +12,9 @@ export default function CaseLayout({ children, caseId }: { children: ReactNode; 
   return <div className={`${styles.workspace} ${alexandria.className}`}>
     <header className={styles.header}>
       <Link className={styles.wordmark} href="/">Fixauto</Link>
-      <nav aria-label="Cases navigation"><Link href="/case">My cases</Link><Link href="/">Back to home</Link></nav>
+      <AppNavigation caseId={caseId} />
       <span className={styles.demoLabel}>Demo</span>
-      <Link className={styles.staffLink} href={caseId ? `/staff?caseId=${encodeURIComponent(caseId)}` : "/staff"} aria-label={caseId ? "Staff workspace" : undefined}>Staff demo <span aria-hidden="true">↗</span></Link>
+      {caseId && <Link className={styles.staffLink} href={caseId ? `/staff?caseId=${encodeURIComponent(caseId)}` : "/staff"} aria-label={caseId ? "Staff workspace" : undefined}>Staff demo <span aria-hidden="true">↗</span></Link>}
     </header>
     {children}
     <footer className={styles.footer}><span>Sample data · browser-local demo · no real booking or payment.</span><Link href="/">Fixauto</Link></footer>

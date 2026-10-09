@@ -27,21 +27,99 @@ for (const width of [1440, 390]) {
     expect(submissions).toEqual([]);
   });
 }
-for (const width of [320, 390, 1440]) {
-  test(`home Customer navigation opens the dossier at ${width}px`, async ({ page }) => {
+const appRoutes = ["/", "/case", "/case/new", "/cases/case-kia-003", "/staff"];
+const navigationLinks = [
+  { name: "Home page", href: "/" },
+  { name: "Cases", href: "/case" },
+  { name: "Users", href: "/cases/case-kia-003", title: "Sample customer case demo" },
+  { name: "Staffs", href: "/staff" },
+  { name: "Coming Soon", href: "/#coming-soon" },
+];
+
+for (const width of [320, 390, 768, 1440]) {
+  test(`shared navigation is available and keyboard-accessible across routes at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/");
-    const customer = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Customer", exact: true });
-    await expect(customer).toBeVisible();
-    await expect(customer).toHaveAttribute("href", "/cases/case-kia-003");
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await customer.focus();
-    await expect(customer).toBeFocused();
+    for (const route of appRoutes) {
+      await page.goto(route);
+      const navigation = page.getByRole("navigation", { name: "Main navigation" });
+      await expect(navigation.getByRole("link")).toHaveText(navigationLinks.map(link => link.name));
+      for (const link of navigationLinks) {
+        const item = navigation.getByRole("link", { name: link.name, exact: true });
+        const caseId = route.startsWith("/cases/") ? route.slice("/cases/".length) : null;
+        const href = route === "/" && link.name === "Coming Soon" ? "#coming-soon"
+          : link.name === "Users" && caseId ? route
+          : link.name === "Staffs" && caseId ? `/staff?caseId=${caseId}`
+          : link.href;
+        await expect(item).toHaveAttribute("href", href);
+        if (link.title) await expect(item).toHaveAttribute("title", link.title);
+      }
+      const active = route === "/" ? "Home page" : route.startsWith("/cases/") ? "Users" : route === "/staff" ? "Staffs" : "Cases";
+      await expect(navigation.locator('[aria-current]')).toHaveText(active);
+      await expect(navigation.getByRole("link", { name: active, exact: true })).toHaveAttribute("aria-current", route === "/case/new" ? "location" : "page");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route} fits at ${width}px`).toBe(true);
+      const home = navigation.getByRole("link", { name: "Home page", exact: true });
+      await home.focus();
+      await expect(home).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(/\/$/);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+  });
+
+  test(`main navigation destinations work by keyboard at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    for (const link of navigationLinks.slice(1, 4)) {
+      await page.goto("/");
+      const item = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: link.name, exact: true });
+      await item.focus();
+      await expect(item).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(new RegExp(`${link.href}$`));
+    }
+    await page.goto("/case/new");
+    const comingSoon = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Coming Soon", exact: true });
+    await comingSoon.focus();
+    await expect(comingSoon).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/cases\/case-kia-003$/);
-    await expect(page.getByRole("heading", { name: "FXA-1003", exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Repair estimate", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Approve exact estimate", exact: true })).toHaveCount(1);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(page).toHaveURL(/\/#coming-soon$/);
+    await expect(page.getByRole("heading", { name: "Coming soon in Kerman." })).toBeVisible();
   });
 }
+
+test("navigation keeps the selected customer case in its customer and staff destinations", async ({ page }) => {
+  await page.goto("/cases/case-atlas-001");
+  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(navigation.getByRole("link", { name: "Users", exact: true })).toHaveAttribute("href", "/cases/case-atlas-001");
+  const staff = navigation.getByRole("link", { name: "Staffs", exact: true });
+  await expect(staff).toHaveAttribute("href", "/staff?caseId=case-atlas-001");
+  await staff.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/staff\?caseId=case-atlas-001$/);
+  await expect(page.getByRole("heading", { level: 2, name: /FXA-1001/ })).toBeVisible();
+});
+
+test("navigation remains available for empty searches and missing cases", async ({ page }) => {
+  await page.goto("/case");
+  await page.getByRole("searchbox", { name: "Find a case" }).fill("no matching case");
+  await expect(page.getByRole("heading", { name: "No cases match your search" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
+
+  await page.goto("/cases/missing-sample-case");
+  await expect(page.getByRole("heading", { name: "Case not found" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Users", exact: true }))
+    .toHaveAttribute("href", "/cases/missing-sample-case");
+});
+
+test("unknown routes do not show the legacy navigation or green shell", async ({ page }) => {
+  const response = await page.goto("/missing-application-route");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
+  await page.getByRole("link", { name: "Back to home", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("navigation", { name: "Demo screens" })).toHaveCount(0);
+  await expect(page.locator("header.site-header")).toHaveCount(0);
+  const brand = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--brand").trim().toLowerCase());
+  expect(brand).not.toBe("#176b4d");
+});
