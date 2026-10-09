@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { CaseSummary } from "../components/case-summary";
+import Link from "next/link";
+import Image from "next/image";
+import { ResetSampleButton } from "../components/reset-sample-button";
+import { formatMoney } from "../domain/currency";
+import styles from "./staff-workspace-screen.module.css";
 import { SimulationBadge } from "../components/simulation-badge";
 import { findCase, getActiveCarCount, getActiveOccupant, getCasePhase, getCurrentEstimate, getAvailableAdvanceCredit, serviceDateFromIso } from "../domain/sample-case";
 import { getCasePresentation } from "../presentation/case-status";
@@ -42,13 +46,16 @@ export function StaffWorkspaceScreen({ initialCaseId }: { initialCaseId?: string
   const [returnMileage, setReturnMileage] = useState("81234");
   const [returnKeys, setReturnKeys] = useState("One ignition key and one remote.");
   const [complaintSummary, setComplaintSummary] = useState("Customer reports a concern for coordinator review.");
-  const [summarySituation, setSummarySituation] = useState("Vehicle remains safely held while the next approved step is reviewed.");
+  const [summarySituation, setSummarySituation] = useState("The next step is awaiting staff review.");
   const [summaryNextAction, setSummaryNextAction] = useState("Coordinator will update the customer after the next check.");
   const [summaryTiming, setSummaryTiming] = useState("Next staffed period");
   const [summaryDate, setSummaryDate] = useState(serviceDateFromIso(new Date().toISOString()));
   const [summaryNonWorking, setSummaryNonWorking] = useState(false);
   const [actionError, setActionError] = useState("");
-  const sampleCase = findCase(actions.data, selectedId) ?? actions.data.cases.at(-1)!;
+  if (actions.storageError) return <div className={styles.screen}><section className={styles.state} role="alert"><h1>Saved cases are unavailable</h1><p>{actions.storageError}</p><button className="button" type="button" onClick={actions.retryStorage}>Try again</button></section></div>;
+  if (!actions.ready) return <div className={styles.screen}><section className={styles.state} aria-busy="true"><h1>Staff workspace</h1><p role="status">Loading saved sample cases…</p><div className={styles.skeleton} aria-hidden="true" /></section></div>;
+  const sampleCase = findCase(actions.data, selectedId);
+  if (!sampleCase) return <div className={styles.screen}><section className={styles.state}><h1>{actions.data.cases.length ? "Case not found" : "No saved cases"}</h1><p>This case is not present in this browser. Choose a saved case or create a sample request.</p>{actions.data.cases.length ? <button className="button" type="button" onClick={() => { setSelectedId(actions.data.cases[0].id); window.history.replaceState(null, "", "/staff?caseId=" + encodeURIComponent(actions.data.cases[0].id)); }}>Return to staff queue</button> : <Link className="button" href="/case/new">Create sample request</Link>}</section></div>;
   const phase = getCasePhase(sampleCase);
   const presentation = getCasePresentation(sampleCase);
   const currentEstimate = getCurrentEstimate(sampleCase);
@@ -69,46 +76,47 @@ export function StaffWorkspaceScreen({ initialCaseId }: { initialCaseId?: string
 
   function handleAssessment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    run(() => actions.completeInitialAssessment(sampleCase.id, { expertName, findings, needsInvestigation }));
+    run(() => actions.completeInitialAssessment(selectedId, { expertName, findings, needsInvestigation }));
   }
 
+  const activity = [
+    { at: sampleCase.request.createdAt, title: "Request received", detail: sampleCase.request.symptoms },
+    ...(sampleCase.request.confirmedAppointment ? [{ at: sampleCase.request.confirmedAppointment.confirmedAt, title: "Appointment confirmed", detail: sampleCase.request.confirmedAppointment.coordinator }] : []),
+    ...(sampleCase.assessment.performedAt ? [{ at: sampleCase.assessment.performedAt, title: "Initial assessment recorded", detail: sampleCase.assessment.findings ?? "" }] : []),
+    ...(sampleCase.assessment.investigation.completedAt ? [{ at: sampleCase.assessment.investigation.completedAt, title: "Investigation completed", detail: sampleCase.assessment.investigation.findings ?? "" }] : []),
+    ...(sampleCase.transport.dispatchedAt ? [{ at: sampleCase.transport.dispatchedAt, title: "Simulated dispatch recorded", detail: sampleCase.transport.destination }] : []),
+    ...(sampleCase.transport.handover ? [{ at: sampleCase.transport.handover.receivedAt, title: "Custody received", detail: sampleCase.transport.handover.receiverName }] : []),
+    ...sampleCase.estimates.map((item) => ({ at: item.publishedAt, title: `Estimate v${item.version} published`, detail: item.expectedTiming })),
+    ...sampleCase.performedWork.map((item) => ({ at: item.performedAt, title: "Performed work recorded", detail: item.summary })),
+    ...sampleCase.qualityChecks.map((item) => ({ at: item.checkedAt, title: `Quality check ${item.result}`, detail: item.findings })),
+    ...(sampleCase.transport.returnedAt ? [{ at: sampleCase.transport.returnedAt, title: "Simulated vehicle return", detail: "This case no longer occupies capacity." }] : []),
+    ...sampleCase.complaints.map((item) => ({ at: item.openedAt, title: "Complaint review opened", detail: item.summary })),
+  ].sort((a, b) => a.at.localeCompare(b.at));
   return (
-    <div className="page-stack" aria-busy={!actions.ready}>
-      <section className="page-intro">
-        <div>
-          <SimulationBadge>staff role</SimulationBadge>
-          <p className="eyebrow">Staff workspace</p>
-          <h1>Request and assessment queue</h1>
-          <p className="lede">Confirm requests and record an assessment only after separate consent and payment.</p>
+    <div className={styles.screen}>
+      {actions.notice ? <p className={styles.notice} role="status">{actions.notice}</p> : null}
+      {actionError ? <p className={styles.error} role="alert">{actionError}</p> : null}
+      <div className={styles.tools}>
+        <div><h1>Staff workspace</h1><label htmlFor="staff-case-selector">Select a case</label>
+          <select id="staff-case-selector" value={sampleCase.id} onChange={(event) => { setSelectedId(event.target.value); setActionError(""); window.history.replaceState(null, "", "/staff?caseId=" + encodeURIComponent(event.target.value)); }}>
+            {actions.data.cases.map((item) => <option key={item.id} value={item.id}>{item.reference} · {item.vehicle.make} {item.vehicle.model} · {item.customer.name}</option>)}
+          </select>
         </div>
-        <div className="capacity-card"><span>Active car capacity</span><strong>{getActiveCarCount(actions.data)} / 1</strong><small>{getActiveOccupant(actions.data)?.reference ? `Occupied by ${getActiveOccupant(actions.data)?.reference}.` : "Parked and dispatched sample vehicles count."}</small></div>
-      </section>
-      {actionError ? <p className="error-banner" role="alert">{actionError}</p> : null}
-      <div className="workspace-grid">
-        <aside className="card case-list" aria-labelledby="case-list-title">
-          <h2 id="case-list-title">Cases</h2>
-          <div className="case-list-stack">
-            {actions.data.cases.map((item) => (
-              <button
-                className="case-list-item"
-                type="button"
-                key={item.id}
-                aria-pressed={item.id === sampleCase.id}
-                onClick={() => setSelectedId(item.id)}
-              >
-                <span>{item.reference}</span><strong>{item.customer.name}</strong><small>{getCasePresentation(item).status}</small>
-              </button>
-            ))}
-          </div>
-        </aside>
-        <div className="page-stack">
-          <CaseSummary sampleCase={sampleCase} />
-          <section className="card" aria-labelledby="daily-summary-title"><div className="section-heading"><h2 id="daily-summary-title">Simulated daily summary</h2><SimulationBadge>SMS log</SimulationBadge></div><p className="helper-text">A summary is informational only; it never grants consent, approval, payment, custody, or repair authority.</p>{sampleCase.smsLog.length > 0 ? <ol className="history-list">{sampleCase.smsLog.map((sms) => <li key={sms.id}><strong>{sms.summaryDate ?? "Historical update"}</strong><span>{sms.situation}</span><span>Next: {sms.nextAction} · {sms.expectedTiming}</span></li>)}</ol> : null}<input aria-label="Summary date" value={summaryDate} onChange={(event) => setSummaryDate(event.target.value)} /><textarea aria-label="Summary situation" value={summarySituation} onChange={(event) => setSummarySituation(event.target.value)} /><input aria-label="Summary next action" value={summaryNextAction} onChange={(event) => setSummaryNextAction(event.target.value)} /><input aria-label="Summary timing" value={summaryTiming} onChange={(event) => setSummaryTiming(event.target.value)} /><label className="checkbox-row"><input type="checkbox" checked={summaryNonWorking} onChange={(event) => setSummaryNonWorking(event.target.checked)} /> Non-working day while vehicle is held</label><button className="button button-secondary" type="button" onClick={() => run(() => actions.addDailySummary(sampleCase.id, { situation: summarySituation, nextAction: summaryNextAction, expectedTiming: summaryTiming, summaryDate, nonWorkingDay: summaryNonWorking }))}>Add simulated summary</button></section>
-          <section className="card" aria-labelledby="staff-next-title">
-            <p className="eyebrow">Next required action</p>
-            <h2 id="staff-next-title">{presentation.nextAction}</h2>
-            <p>{presentation.timing}</p>
-
+        <ResetSampleButton />
+      </div>
+      <header className={styles.identity}>
+        <div><h2>{sampleCase.reference}</h2><p>{sampleCase.vehicle.year} {sampleCase.vehicle.make} {sampleCase.vehicle.model} · {sampleCase.customer.name}</p><span className={styles.status}>{presentation.status}</span></div>
+        <div className={styles.capacity}><span>Active car capacity</span><strong>{getActiveCarCount(actions.data)} / 1</strong><small>{getActiveOccupant(actions.data)?.reference ? `Occupied by ${getActiveOccupant(actions.data)?.reference}.` : "Parked and dispatched sample vehicles count."}</small></div>
+        <figure><Image src="/images/case-sample-sedan.png" alt="" width="320" height="160" sizes="(max-width: 500px) 104px, (max-width: 800px) 180px, 320px" /><figcaption>Illustrative vehicle</figcaption></figure>
+      </header>
+      <nav className={styles.anchorNav} aria-label="Staff case sections">
+        <a href="#staff-overview">Overview</a><a href="#staff-workflow">Workflow</a><a href="#staff-updates">Updates</a><a href="#staff-records">Records</a>
+      </nav>
+      <div className={styles.layout}>
+        <aside className={styles.sidebar}>
+          <section id="staff-workflow" className={styles.panel + " " + styles.workflow} aria-labelledby="staff-next-title">
+            <h2 id="staff-next-title">Next required action</h2>
+            <div className={styles.nextAction}><h3>{presentation.nextAction}</h3><p>{presentation.timing}</p></div>
             {phase === "pending-staff-confirmation" ? (
               <div className="nested-panel">
                 <p>Requested: {sampleCase.request.preferredDate} at {sampleCase.request.preferredTime}</p>
@@ -257,9 +265,38 @@ export function StaffWorkspaceScreen({ initialCaseId }: { initialCaseId?: string
             {phase === "completed" ? <div className="nested-panel"><button className="button" type="button" onClick={() => run(() => actions.issueRecords(sampleCase.id))}>Issue illustrative invoice and warranty</button><textarea aria-label="Complaint summary" value={complaintSummary} onChange={(event) => setComplaintSummary(event.target.value)} /><button className="button button-secondary" type="button" onClick={() => run(() => actions.openComplaint(sampleCase.id, complaintSummary))}>Open complaint review</button></div> : null}
             {phase === "complaint-review" ? <div className="nested-panel"><p>Complaint review is recorded under the coordinator; no charge or repair is authorized automatically.</p><button className="button" type="button" onClick={() => run(() => actions.authorizeSecondAssessment(sampleCase.id))}>Authorize separate no-charge second assessment review</button></div> : null}
 
-            <div className="placeholder-grid" aria-label="Future workflow sections">
-              <span>Transport · D3</span><span>Estimate · D4</span><span>Quality and return · D5</span>
-            </div>
+
+            <p className={styles.limit}>Actions are simulated. Customer consent and successful payment remain separate requirements.</p>
+          </section>
+          <section className={styles.panel + " " + styles.facts} aria-labelledby="staff-facts-title">
+            <h2 id="staff-facts-title">Case facts</h2>
+            <dl><div><dt>Customer</dt><dd>{sampleCase.customer.name}</dd></div><div><dt>Sample mobile</dt><dd>{sampleCase.customer.mobile}</dd></div><div><dt>Assessment fee</dt><dd>{formatMoney(sampleCase.assessment.feeCents, sampleCase.assessment.currency)} USD · illustrative</dd></div><div><dt>Coordinator</dt><dd>{sampleCase.request.confirmedAppointment?.coordinator ?? "Awaiting assignment"}</dd></div><div><dt>Custody receiver</dt><dd>{sampleCase.transport.receiver?.name ?? "Not assigned"}</dd></div></dl>
+            <p className={styles.sharedNote}>Shared sample note<strong data-testid="shared-note">{sampleCase.sharedNote}</strong></p>
+            <Link className={styles.customerLink} href={`/cases/${encodeURIComponent(sampleCase.id)}`}>Open customer case</Link>
+            <SimulationBadge>staff role and customer identity</SimulationBadge>
+          </section>
+        </aside>
+        <div className={styles.documents}>
+          <section id="staff-overview" className={styles.panel + " " + styles.overview} aria-labelledby="staff-overview-title">
+            <h2 id="staff-overview-title">Case overview</h2>
+            <div className={styles.overviewGrid}><div><h3>Reported symptoms</h3><p>{sampleCase.request.symptoms}</p></div><div><h3>{sampleCase.request.confirmedAppointment ? "Confirmed appointment" : "Requested appointment"}</h3><p>{sampleCase.request.preferredDate} at {sampleCase.request.preferredTime}</p><p>{sampleCase.request.serviceMode === "office-dropoff" ? "Office drop-off" : sampleCase.request.visitAddress}</p><small>{sampleCase.request.confirmedAppointment ? "Confirmed in the sample workflow" : "Pending staff confirmation"}</small></div></div>
+          </section>
+          <section className={styles.panel + " " + styles.activity} aria-labelledby="staff-activity-title">
+            <h2 id="staff-activity-title">Case activity</h2>
+            <ol className={styles.timeline}>{activity.map((item, index) => <li key={`${item.at}-${index}`}><div className={styles.timelinePoint} aria-hidden="true" /><div><strong>{item.title}</strong><time dateTime={item.at}>{new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date(item.at))}</time></div><p>{item.detail}</p></li>)}{!sampleCase.request.confirmedAppointment ? <li><div className={styles.pendingPoint} aria-hidden="true" /><div><strong>Appointment confirmation pending</strong></div><p>Staff must review and confirm the requested appointment.</p></li> : null}</ol>
+          </section>
+          <section id="staff-updates" className={styles.panel + " " + styles.updates} aria-labelledby="daily-summary-title"><div className="section-heading"><h2 id="daily-summary-title">Simulated daily summary</h2><SimulationBadge>SMS log</SimulationBadge></div><p className="helper-text">A summary is informational only; it never grants consent, approval, payment, custody, or repair authority.</p>{sampleCase.smsLog.length > 0 ? <ol className="history-list">{sampleCase.smsLog.map((sms) => <li key={sms.id}><strong>{sms.summaryDate ?? "Historical update"}</strong><span>{sms.situation}</span><span>Next: {sms.nextAction} · {sms.expectedTiming}</span></li>)}</ol> : null}<label htmlFor="summary-date">Summary date</label><input id="summary-date" aria-label="Summary date" value={summaryDate} onChange={(event) => setSummaryDate(event.target.value)} /><label htmlFor="summary-situation">Summary situation</label><textarea id="summary-situation" aria-label="Summary situation" value={summarySituation} onChange={(event) => setSummarySituation(event.target.value)} /><label htmlFor="summary-next">Summary next action</label><input id="summary-next" aria-label="Summary next action" value={summaryNextAction} onChange={(event) => setSummaryNextAction(event.target.value)} /><label htmlFor="summary-timing">Summary timing</label><input id="summary-timing" aria-label="Summary timing" value={summaryTiming} onChange={(event) => setSummaryTiming(event.target.value)} /><label className="checkbox-row"><input type="checkbox" checked={summaryNonWorking} onChange={(event) => setSummaryNonWorking(event.target.checked)} /> Non-working day while vehicle is held</label><button className="button button-secondary" type="button" onClick={() => run(() => actions.addDailySummary(sampleCase.id, { situation: summarySituation, nextAction: summaryNextAction, expectedTiming: summaryTiming, summaryDate, nonWorkingDay: summaryNonWorking }))}>Add simulated summary</button></section>
+
+          <section id="staff-records" className={styles.panel + " " + styles.records} aria-labelledby="staff-records-title">
+            <h2 id="staff-records-title">Supporting records</h2>
+            <h3>Estimate versions</h3>
+            {sampleCase.estimates.length ? sampleCase.estimates.map((estimate) => <div className={styles.record} key={estimate.id}><h4>Estimate v{estimate.version} · {formatMoney(estimate.totalCents, estimate.currency)} USD</h4><p>{estimate.expectedTiming}</p><ul>{estimate.lines.map((line) => <li key={line.id}>{line.description} · {formatMoney(line.totalCents, line.currency)} USD{line.part ? ` · ${line.part.brand}, ${line.part.condition}, ${line.part.warranty}` : ""}</li>)}</ul>{sampleCase.estimateDecisions.filter((decision) => decision.estimateVersionId === estimate.id).map((decision) => <p key={decision.id}>Decision: {decision.outcome} by {decision.authorizer}</p>)}</div>) : <p>No estimate has been published yet.</p>}
+            <h3>Simulated payments</h3>
+            {sampleCase.payments.length || sampleCase.finalPayments.length ? <ul>{sampleCase.payments.map((payment) => <li key={payment.id}>{payment.label} · {formatMoney(payment.amountCents, payment.currency)} USD · {payment.outcome.replace("simulated-", "Simulated ")}</li>)}{sampleCase.finalPayments.map((payment) => <li key={payment.id}>Final payment · {formatMoney(payment.amountCents, payment.currency)} USD · {payment.outcome.replace("simulated-", "Simulated ")}</li>)}</ul> : <p>No simulated payment attempts yet.</p>}
+            {sampleCase.transport.handover ? <div className={styles.record}><h3>Custody handover</h3><p>{sampleCase.transport.handover.receiverName} · {sampleCase.transport.handover.destination}</p><p>{sampleCase.transport.handover.condition} · {sampleCase.transport.handover.mileage} km · {sampleCase.transport.handover.keys}</p></div> : null}
+            {sampleCase.invoices.map((invoice) => <p key={invoice.id}><strong>Illustrative invoice:</strong> {invoice.summary} · {formatMoney(invoice.totalCents, invoice.currency)} USD</p>)}
+            {sampleCase.warranties.map((warranty) => <p key={warranty.id}><strong>Illustrative warranty:</strong> {warranty.terms}</p>)}
+            {sampleCase.returns.map((record) => <p key={record.id}><strong>Returned to {record.recipientName}:</strong> {record.condition} · {record.mileage} km · {record.keys}. Warranty and complaint rights remain open.</p>)}
           </section>
         </div>
       </div>

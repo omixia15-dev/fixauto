@@ -1,0 +1,12 @@
+{
+  "prompt": "Use case: ui-mockup. Create one high-fidelity comparison board titled 'C — Case dossier', wide desktop application viewport on left and portrait phone viewport on right. Use reference images for established Fixauto identity and UI density; this is STAFF case coordination, not customer approval. Cobalt nav Fixauto, My cases, Staff workspace active, Back to home; gold Demo badge; Alexandria-style readable sans, navy ink, pale ground, white flat panels with fine borders. Distinct structure: top-left compact case selector above full-width selected case header FXA-1001 Toyota Camry 2020 Mina Rahimi, blue Request received status; small Active car capacity 0 / 1. Below identity simple section anchor navigation Overview · Workflow · Updates · Records. Desktop dossier: wide left main column with Case overview (symptoms Warning light after engine warms up, requested expert visit 12 Sep 2026 09:00 at customer location), Case activity chronological entries, and Simulated daily summary labeled Situation / Next action / Expected timing, Add simulated summary. Narrow right column contains the single primary Next required action panel 'Confirm requested appointment' with gold button, explicit note 'Assessment requires separate customer consent and payment', then quiet Case facts and Open customer case text link. Section anchors navigate visible sections, never hide forms. No duplicated action elsewhere. Mobile important adaptation: identity and selector, required action BEFORE supporting overview/activity/summary, section anchor row then supporting sections. Footer Sample data · browser-local demo · no real booking or payment. Dates fictional. Do not add staff approval/charge authority, giant illustration, fake controls, stats, charts, appointment guarantees, decorative menu or shadow/gradient. Clear operational UI with complete lower page hierarchy. Do not show invented email, phone or non-Kerman address. Address if shown: 'Sample visit address · Kerman'. Do not add new-request CTA or decorative hamburger menu.",
+  "approved": true,
+  "tool": "image_gen.imagegen",
+  "referenceImages": [
+    ".impeccable/review/desktop.png",
+    ".impeccable/mocks/customer-option-c.png"
+  ],
+  "issue": 23,
+  "approvedAt": "2026-10-09",
+  "choice": "C — Case dossier"
+}

@@ -200,7 +200,7 @@ The shared case header keeps the Fixauto wordmark, case/home links, Demo label, 
 - Do preserve a visible approval boundary.
 - Do keep labels readable and semantic.
 - Do retain keyboard focus and reduced-motion support.
-- Do keep the cobalt case styling scoped to the existing `/case` shell and `/cases/[caseId]` dossier.
+- Do keep the cobalt case styling scoped to the approved `/case`, `/cases/[caseId]` and `/staff` workspaces.
 
 ### Don't:
 
@@ -208,3 +208,7 @@ The shared case header keeps the Fixauto wordmark, case/home links, Demo label, 
 - Don't use illustration text as a substitute for accessible content.
 - Don't extend this route-specific styling to other application routes without a separate request.
 - Don't treat the Demo label or this design reference as authorization for live actions.
+
+## Staff workspace extension — issue #23
+
+Approved 2026-10-09: the staff route extends the customer cases palette, Alexandria type and flat document panels using the selected C dossier composition. A case selector and identity band lead; section anchors navigate visible content; workflow/facts form the desktop sidebar and the required action leads on phones. All staff actions and customer authorization gates remain simulated. See docs/STAFF-BRIEF.md for the approved composition and translation decisions. This extension supersedes the earlier green-system restriction for /staff only.

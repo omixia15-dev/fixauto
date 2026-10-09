@@ -19,7 +19,7 @@ test("quality failure blocks return until reassessment passes", async ({ page })
   await page.getByRole("link", { name: "Open full case & approvals" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
   await page.getByRole("button", { name: "Confirm requested appointment" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Authorize as simulated customer" }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
@@ -27,7 +27,7 @@ test("quality failure blocks return until reassessment passes", async ({ page })
   await page.getByLabel("Assessment findings").fill("No deeper workshop investigation is required for this sample.");
   await page.getByRole("button", { name: "Record completed assessment" }).click();
   await page.getByRole("button", { name: "Publish estimate v1" }).click();
-  await page.getByRole("link", { name: "Customer case" }).click();
+  await page.getByRole("link", { name: "Open customer case" }).click();
   await page.getByRole("button", { name: "Approve exact estimate" }).click();
   await page.getByRole("button", { name: "Simulate successful repair advance" }).click();
   await page.getByRole("link", { name: "Staff workspace" }).click();
@@ -40,5 +40,5 @@ test("quality failure blocks return until reassessment passes", async ({ page })
   await page.getByRole("button", { name: "Record quality check" }).click();
   await page.getByRole("button", { name: "Record illustrative settlement" }).click();
   await page.getByRole("button", { name: "Record vehicle return" }).click();
-  await expect(page.locator("span.status-pill").filter({ hasText: "Repair completed and returned" })).toBeVisible();
+  await expect(page.getByText("Repair completed and returned", { exact: true })).toBeVisible();
 });
