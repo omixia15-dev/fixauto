@@ -15,10 +15,10 @@ colors:
 typography:
   display:
     fontFamily: "Alexandria, sans-serif"
-    fontSize: "5.2vw"
+    fontSize: "clamp(46px, 5vw, 76px)"
     fontWeight: 600
-    lineHeight: 0.95
-    letterSpacing: "-0.045em"
+    lineHeight: 1.08
+    letterSpacing: "-0.03em"
   headline:
     fontFamily: "Alexandria, sans-serif"
     fontSize: "clamp(30px, 3vw, 44px)"
@@ -32,8 +32,8 @@ typography:
     lineHeight: 1.4
   hero-support:
     fontFamily: "Alexandria, sans-serif"
-    fontSize: "1.4974vw"
-    fontWeight: 300
+    fontSize: "clamp(16px, 1.35vw, 20px)"
+    fontWeight: 400
     lineHeight: 1.4
 rounded:
   label: "6px"
@@ -103,15 +103,19 @@ Mineral and quiet grounds separate reading areas. Navy ink provides contrast. Ro
 
 ## Typography
 
-Alexandria is self-hosted with its license in app/fonts. Display lettering is semibold (600); hero support is light (300); regular reading copy uses regular (400); controls and section headings use bold (700).
+Alexandria is self-hosted with its license in app/fonts. The coordinator headline is semibold (600), with the geographic line in regular (400). The benefits display is semibold (600). Hero support is regular (400) on desktop and light (300) on phones; controls and section headings use bold (700).
 
-Desktop display type scales with the viewport. On smaller screens it uses clamp(42px, 7.5vw, 64px), a slightly looser line height (1.02), and tracking (-0.04em). Body copy remains readable at phone widths (15–18px).
+Desktop display type scales with the viewport. On smaller screens it uses clamp(42px, 7.5vw, 64px), a line height of 1.08, and tracking of -0.03em. Body copy remains readable at phone widths (15–18px).
 
 **The Live Text Rule.** Headlines, process labels, and controls remain semantic text rather than being baked into illustrations.
 
 ## Layout
 
 The marketing route is full width with generous side insets (about 4.4% on desktop; 24px on phones). Wide composition becomes a single reading column at 900px. The journey changes from a continuous horizontal band to readable sequential lists. Keep related text together when reflowing.
+
+The quieter home refinement on 2026-10-09 preserves the dominant coordinator message and intentional break before “start to finish”, with a smaller semibold display and restrained artwork anchored at the lower right. The benefits use a pale reading ground with navy headings. Gold distinguishes the launch action and approval checkpoint. The detailed three-step explanation stays consolidated beside the problem on desktop and follows it on phones.
+
+The home polish keeps desktop journey labels at 14–16px, milestone headings at 16–22px, and problem copy at 17–20px. The journey reserves enough vertical space for wrapped labels, and the detailed steps form one column between 901px and 1100px.
 
 **The Reading Order Rule.** Responsive layout preserves the meaning and sequence of the content in the document.
 
