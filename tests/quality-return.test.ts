@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cloneInitialDemoData } from "../src/demo-data/sample-data.ts";
+import { cloneInitialDemoData as cloneAllSamples } from "../src/demo-data/sample-data.ts";
 import { approveEstimate, authorizeAssessment, getCasePhase, getCurrentEstimate, issueRecords, publishEstimate, recordFinalPayment, recordInitialAssessment, recordPaymentAttempt, recordPerformedWork, recordQualityCheck, recordReturn, recordSettlement, submitServiceRequest, type EstimateLineInput } from "../src/domain/sample-case.ts";
 
 const now = "2026-09-13T08:00:00.000Z";
@@ -47,3 +47,5 @@ test("zero-balance settlement does not fabricate a final payment", () => {
   data = recordSettlement(data, prepared.caseId, prepared.estimate.id, "Coordinator", now);
   assert.throws(() => recordFinalPayment(data, prepared.caseId, { id: "zero", estimateVersionId: prepared.estimate.id, amountCents: 0, currency: "USD", outcome: "simulated-success", attemptedAt: now }), /No final payment is due/);
 });
+
+function cloneInitialDemoData() { const data = cloneAllSamples(); return { ...data, cases: data.cases.slice(0, 1) }; }

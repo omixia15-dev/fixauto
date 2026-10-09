@@ -1,0 +1,1 @@
+{"browser":{"browserName":"chromium","launchOptions":{"executablePath":"/home/omixia/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome","headless":true},"contextOptions":{"viewport":{"width":1440,"height":1000}}}}

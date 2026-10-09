@@ -1,0 +1,6 @@
+{
+  "prompt": "Produce one photorealistic but explicitly illustrative vehicle asset for the approved Fixauto UI. Reference is a UI comp; extract only the visual idea of its silver Toyota Camry-like sedan, do not retain ANY UI, lettering, timeline, icons, panels, dates or controls. A silver 2020 midsize sedan, front three-quarter view, facing left, centered, entire vehicle including wheels visible, natural studio lighting, subtle soft contact shadow, high detail. Transparent background alpha, no surroundings, no workshop, no text, no plate numbers, no watermarks. Keep generous transparent padding around the silhouette. This is a fictional sample vehicle illustration for a clearly labeled browser-local repair demo, not a photograph of a real customer vehicle.",
+  "reference": ".impeccable/mocks/case-option-a.png",
+  "illustrative": true,
+  "tool": "built-in imagegen"
+}

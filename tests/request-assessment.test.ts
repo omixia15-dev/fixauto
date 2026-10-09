@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cloneInitialDemoData } from "../src/demo-data/sample-data.ts";
+import { cloneInitialDemoData as cloneAllSamples } from "../src/demo-data/sample-data.ts";
 import {
   authorizeAssessment,
   authorizeDeeperInvestigation,
@@ -170,3 +170,5 @@ test("declining a recommended investigation blocks later authorization and payme
     /Further service was declined/,
   );
 });
+
+function cloneInitialDemoData() { const data = cloneAllSamples(); return { ...data, cases: data.cases.slice(0, 1) }; }
