@@ -17,6 +17,7 @@ test("estimate approval is exact-version bound and a revision resets approval", 
   await page.getByLabel("Preferred time").fill("10:30");
   await page.getByLabel("Expert-visit address").fill("Sample Boulevard, Kerman");
   await page.getByLabel("Describe the symptoms").fill("The steering wheel vibrates above 80 km/h.");
+  await page.getByRole("button", { name: "Review request" }).click();
   await page.getByRole("button", { name: "Create sample request" }).click();
   await page.getByRole("link", { name: "Follow your repair case" }).click();
   await page.getByRole("link", { name: "Open full case & approvals" }).click();

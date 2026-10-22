@@ -16,6 +16,7 @@ async function fillRequest(page: Page, suffix = "2") {
 async function createRequest(page: Page, suffix = "2") {
   await page.goto("/case/new");
   await fillRequest(page, suffix);
+  await page.getByRole("button", { name: "Review request" }).click();
   await page.getByRole("button", { name: "Create sample request" }).click();
   await expect(page.getByRole("heading", { name: /^Reference FXA-/ })).toBeVisible();
   const followLink = page.getByRole("link", { name: "Follow your repair case" });
@@ -47,9 +48,10 @@ test("invalid request keeps values and creates no case", async ({ page }) => {
   await page.getByLabel("Vehicle make").fill("Kia");
   await page.getByLabel("Visit type").selectOption("collection-request");
   await expect(page.getByLabel("Requested collection address")).toBeVisible();
-  await page.getByRole("button", { name: "Create sample request" }).click();
-  await expect(page.getByText("Enter the customer name.")).toBeVisible();
-  await expect(page.getByText("Enter the requested collection address.")).toBeVisible();
+  await page.getByRole("button", { name: "Review request" }).click();
+
+  await expect(page.getByText("Enter the customer name.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Enter the requested collection address.", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Vehicle make")).toHaveValue("Kia");
   await expect(page.getByLabel("Visit type")).toHaveValue("collection-request");
   await page.goto("/case");

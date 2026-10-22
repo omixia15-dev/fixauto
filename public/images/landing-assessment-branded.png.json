@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: precise-object-edit. Image1 is the edit target: Fixauto expert inspecting a silver car, crouching by its wheel. Image2 is a wardrobe reference only, of the same expert's approved branded cap and uniform. Edit Image1 ONLY: match the black cap with white 'Fixauto' embroidery and the black uniform chest embroidered white word 'Fixauto' from Image2. The man must wear this same black baseball cap in the crouching inspection scene. Preserve his face identity, exact crouching pose, handheld tool, car, environment, all lighting, crop, dark left negative space and photographic realism. Text must read exactly Fixauto, small physical embroidered stitching on cap front and visible upper chest. No added text elsewhere. No changes to car, architecture, or composition. Return just the edited inspection photograph.",
+  "sources": [
+    "public/images/landing-assessment.png",
+    "public/images/landing-hero-branded.png"
+  ],
+  "usage": "Matching Fixauto workwear in inspection and visit request concept scenes"
+}

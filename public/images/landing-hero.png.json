@@ -1,0 +1,7 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Create a production-ready photographic background plate extracted and faithfully reconstructed from the supplied approved Fixauto website mockup. Landscape 16:10. Reproduce the existing handover photograph, preserving the same fictional woman, neutral headscarf, charcoal outfit, coordinator, silver car, contemporary office entrance, camera angle, believable natural daylight and subdued near-black palette. Keep people toward the right two-thirds and left half dark/quiet for separately rendered HTML text. CRITICAL: remove ALL website interface and ALL text from the image, including wordmarks, headlines, labels, buttons, chapter numerals, arrows, badges, bottom annotations and watermarks. Reconstruct the natural photographic background behind all removed UI. Entire output is ONE photorealistic image, no typography or graphic overlays. Realistic human skin, hands, camera optics and materials. No illustration, comic, stylization, blue/gold accents or invented claims. These are fictional concept photos. Dark near-black editorial photographic composition with soft off-white daylight highlights; no red-tinted ambient lighting.",
+  "usage": "Photographic concept plate. Historical source/reference paths record local design-session artifacts, not runtime dependencies.",
+  "historicalSource": "docs/design/scrollytelling-v2/prototype/assets/hero.png",
+  "historicalApprovedReference": "docs/design/scrollytelling-v2/hero-desktop.png"
+}

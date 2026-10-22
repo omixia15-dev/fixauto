@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "useCase": "background-extraction",
+  "prompt": "Use case: background-extraction. Edit the attached engine dashboard warning icon. Remove ALL black background, dark square tile, gray rounded outer housing/frame, border and any backdrop. Keep ONLY the existing yellow engine warning pictogram, exact silhouette, shape, proportions, orientation, and yellow color. Preserve every stroke and gap: no redesign, no additions, no omitted symbol pieces. Clean antialiased boundaries. Center the isolated symbol with modest even transparent padding. Output a genuine alpha-transparent PNG: every area other than the yellow symbol must be transparent, including holes inside the pictogram. No checkerboard baked into pixels, no white/black fill, no shadows, no glow, no text.",
+  "source": "public/images/warnings/engine.webp"
+}
