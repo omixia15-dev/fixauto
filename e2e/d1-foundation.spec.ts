@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("marketing home links to the case demo without showing sample records", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Car repairs in Kerman/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Car repairs. Handled for you." })).toBeVisible();
   await expect(page.getByText(/FXA-\d+/)).toHaveCount(0);
 
-  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Cases", exact: true }).click();
+  await page.getByRole("link", { name: "Explore the demo", exact: true }).click();
   await expect(page).toHaveURL(/\/case$/);
   await expect(page.getByRole("button", { name: /FXA-100[1-5]/ })).toHaveCount(5);
 });

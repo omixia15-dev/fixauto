@@ -1,0 +1,50 @@
+{
+  "source": {
+    "filename": "jadeallencook-interior-toyota-rav4-start-electronics-and-modern-suv-ignition-sound-339217.mp3",
+    "fileBytes": 946944,
+    "decodedDurationSeconds": 29.592
+  },
+  "derivative": {
+    "workspacePath": "public/audio/ignition-first-10s.wav",
+    "publicUrl": "/audio/ignition-first-10s.wav",
+    "format": "WAV PCM 16-bit little-endian",
+    "durationSeconds": 10,
+    "sampleRateHz": 48000,
+    "channels": 2,
+    "fileBytes": 1920044
+  },
+  "analysis": {
+    "method": "WebAudio decodeAudioData in local Chrome; 2048-sample Hann FFT with 10 ms hop plus 5 ms RMS envelope",
+    "dominantRepeatedToneHz": 796.9,
+    "interpretation": "Five repeated rises in the same narrowband tone are visible. The tone remains detectable between rises, so the cues mark repeated tone attacks rather than silence-separated beeps.",
+    "directAudition": "not directly verified; signal-derived onset estimates",
+    "onsetToleranceSeconds": 0.04
+  },
+  "cues": [
+    {
+      "iconIndex": 1,
+      "onsetSeconds": 2.7,
+      "peakSeconds": 2.75
+    },
+    {
+      "iconIndex": 2,
+      "onsetSeconds": 3.91,
+      "peakSeconds": 3.96
+    },
+    {
+      "iconIndex": 3,
+      "onsetSeconds": 5.11,
+      "peakSeconds": 5.15
+    },
+    {
+      "iconIndex": 4,
+      "onsetSeconds": 6.31,
+      "peakSeconds": 6.36
+    },
+    {
+      "iconIndex": 5,
+      "onsetSeconds": 7.5,
+      "peakSeconds": 7.55
+    }
+  ]
+}

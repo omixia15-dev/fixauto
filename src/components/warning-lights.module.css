@@ -1,0 +1,36 @@
+/* Fixed slots keep earlier indicators still as the following beeps add lights. */
+.lights {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(.5rem, 1.4vw, 1.25rem);
+  width: max-content;
+  max-width: 100%;
+  height: 2.75rem;
+  pointer-events: none;
+}
+.light {
+  display: block;
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: #e51b23;
+  mask-image: var(--warning-mask);
+  -webkit-mask-image: var(--warning-mask);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 100ms ease-out;
+}
+.light[data-revealed="true"] { opacity: 1; }
+@media (max-width: 700px) {
+  .lights { height: 2.25rem; gap: .75rem; }
+  .light { width: 2rem; height: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .light { transition: none; }
+}

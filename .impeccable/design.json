@@ -1,317 +1,201 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-09T14:31:20Z",
+  "generatedAt": "2026-10-20T18:12:01.820401+00:00",
   "title": "Design System: Fixauto",
   "extensions": {
     "colorMeta": {
-      "cobalt": {
+      "action-red": {
         "role": "primary",
-        "displayName": "Cobalt",
-        "tonalRamp": [
-          "oklch(15% 0.19 260)",
-          "oklch(26% 0.19 260)",
-          "oklch(38% 0.19 260)",
-          "oklch(49% 0.19 260)",
-          "oklch(61% 0.19 260)",
-          "oklch(72% 0.19 260)",
-          "oklch(84% 0.19 260)",
-          "oklch(95% 0.19 260)"
-        ]
+        "displayName": "Action red"
       },
-      "action-gold": {
-        "role": "secondary",
-        "displayName": "Action gold",
-        "tonalRamp": [
-          "oklch(15% 0.13 85)",
-          "oklch(26% 0.13 85)",
-          "oklch(38% 0.13 85)",
-          "oklch(49% 0.13 85)",
-          "oklch(61% 0.13 85)",
-          "oklch(72% 0.13 85)",
-          "oklch(84% 0.13 85)",
-          "oklch(95% 0.13 85)"
-        ]
+      "action-red-hover": {
+        "role": "primary",
+        "displayName": "Deep action red"
       },
-      "action-hover": {
-        "role": "secondary",
-        "displayName": "Action hover",
-        "tonalRamp": [
-          "oklch(15% 0.12 85)",
-          "oklch(26% 0.12 85)",
-          "oklch(38% 0.12 85)",
-          "oklch(49% 0.12 85)",
-          "oklch(61% 0.12 85)",
-          "oklch(72% 0.12 85)",
-          "oklch(84% 0.12 85)",
-          "oklch(95% 0.12 85)"
-        ]
+      "focus-red": {
+        "role": "primary",
+        "displayName": "Bright focus red"
       },
-      "approval-gold": {
-        "role": "secondary",
-        "displayName": "Approval gold",
-        "tonalRamp": [
-          "oklch(15% 0.11 85)",
-          "oklch(26% 0.11 85)",
-          "oklch(38% 0.11 85)",
-          "oklch(49% 0.11 85)",
-          "oklch(61% 0.11 85)",
-          "oklch(72% 0.11 85)",
-          "oklch(84% 0.11 85)",
-          "oklch(95% 0.11 85)"
-        ]
-      },
-      "mineral-ground": {
+      "canvas": {
         "role": "neutral",
-        "displayName": "Mineral ground",
-        "tonalRamp": [
-          "oklch(15% 0.009 180)",
-          "oklch(26% 0.009 180)",
-          "oklch(38% 0.009 180)",
-          "oklch(49% 0.009 180)",
-          "oklch(61% 0.009 180)",
-          "oklch(72% 0.009 180)",
-          "oklch(84% 0.009 180)",
-          "oklch(95% 0.009 180)"
-        ]
+        "displayName": "Canvas black"
       },
-      "quiet-ground": {
+      "surface": {
         "role": "neutral",
-        "displayName": "Quiet ground",
-        "tonalRamp": [
-          "oklch(15% 0.009 165)",
-          "oklch(26% 0.009 165)",
-          "oklch(38% 0.009 165)",
-          "oklch(49% 0.009 165)",
-          "oklch(61% 0.009 165)",
-          "oklch(72% 0.009 165)",
-          "oklch(84% 0.009 165)",
-          "oklch(95% 0.009 165)"
-        ]
+        "displayName": "Surface black"
       },
-      "navy-ink": {
+      "paper": {
         "role": "neutral",
-        "displayName": "Navy ink",
-        "tonalRamp": [
-          "oklch(15% 0.05 255)",
-          "oklch(26% 0.05 255)",
-          "oklch(38% 0.05 255)",
-          "oklch(49% 0.05 255)",
-          "oklch(61% 0.05 255)",
-          "oklch(72% 0.05 255)",
-          "oklch(84% 0.05 255)",
-          "oklch(95% 0.05 255)"
-        ]
+        "displayName": "Warm paper"
       },
-      "route-label": {
+      "muted": {
         "role": "neutral",
-        "displayName": "Route label",
-        "tonalRamp": [
-          "oklch(15% 0.02 230)",
-          "oklch(26% 0.02 230)",
-          "oklch(38% 0.02 230)",
-          "oklch(49% 0.02 230)",
-          "oklch(61% 0.02 230)",
-          "oklch(72% 0.02 230)",
-          "oklch(84% 0.02 230)",
-          "oklch(95% 0.02 230)"
-        ]
-      },
-      "panel": {
-        "role": "neutral",
-        "displayName": "Panel",
-        "tonalRamp": [
-          "oklch(15% 0.003 165)",
-          "oklch(26% 0.003 165)",
-          "oklch(38% 0.003 165)",
-          "oklch(49% 0.003 165)",
-          "oklch(61% 0.003 165)",
-          "oklch(72% 0.003 165)",
-          "oklch(84% 0.003 165)",
-          "oklch(95% 0.003 165)"
-        ]
+        "displayName": "Muted stone"
       },
       "divider": {
         "role": "neutral",
-        "displayName": "Divider",
-        "tonalRamp": [
-          "oklch(15% 0.017 205)",
-          "oklch(26% 0.017 205)",
-          "oklch(38% 0.017 205)",
-          "oklch(49% 0.017 205)",
-          "oklch(61% 0.017 205)",
-          "oklch(72% 0.017 205)",
-          "oklch(84% 0.017 205)",
-          "oklch(95% 0.017 205)"
-        ]
+        "displayName": "Quiet divider"
+      },
+      "cobalt": {
+        "role": "primary",
+        "displayName": "Legacy app cobalt"
+      },
+      "action-gold": {
+        "role": "secondary",
+        "displayName": "Legacy app action gold"
       }
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Destination display",
-        "purpose": "Hero headline"
+        "displayName": "Scene display",
+        "purpose": "Live landing scene headings; responsive overrides are documented in DESIGN.md."
       },
       "headline": {
-        "displayName": "Section headline",
-        "purpose": "Section hierarchy"
+        "displayName": "Summary heading",
+        "purpose": "Full-journey summary title."
       },
       "body": {
-        "displayName": "Reading copy",
-        "purpose": "General content"
+        "displayName": "Scene support",
+        "purpose": "Short supporting copy in the photographic landing scenes."
       },
-      "hero-support": {
-        "displayName": "Hero support",
-        "purpose": "Lighter supporting sentence"
+      "detail": {
+        "displayName": "Disclosure copy",
+        "purpose": "Readable explanatory text inside native disclosures."
       },
-      "case-body": {
-        "displayName": "Case workspace body",
-        "purpose": "Alexandria body copy within the shared case shell; line height 1.5"
+      "label": {
+        "displayName": "Action label",
+        "purpose": "Compact semibold action text."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Quiet opening identity."
       }
     },
     "shadows": [],
     "motion": [
       {
-        "value": "0.18s ease-out",
-        "name": "control-color",
-        "purpose": "Primary hover color; disabled with reduced motion"
+        "name": "scene-opacity",
+        "value": "850ms",
+        "purpose": "Settle a visible image from opacity 0.88 to 1 as its scene becomes active."
+      },
+      {
+        "name": "scene-scale",
+        "value": "1100ms",
+        "purpose": "Settle image scale from 1.018 to 1."
+      },
+      {
+        "name": "scene-easing",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Shared scene transition easing."
+      },
+      {
+        "name": "control-transition",
+        "value": "180ms ease-out",
+        "purpose": "Filled-action hover and keyboard skip-link appearance."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "none",
+        "purpose": "Remove transitions, transforms, smooth scrolling and sticky media positioning."
       }
     ],
     "breakpoints": [
       {
-        "name": "single-column",
-        "value": "900px"
+        "name": "narrow-phone",
+        "value": "350px"
       },
       {
-        "name": "case-dossier-single-column",
-        "value": "980px"
-      },
-      {
-        "name": "case-phone-layout",
+        "name": "stacked-scenes",
         "value": "700px"
       },
       {
-        "name": "case-compact-phone",
-        "value": "420px"
+        "name": "intermediate-desktop",
+        "value": "1000px"
       }
-    ],
-    "caseWorkspaceTokens": {
-      "ground": "#edf3f6",
-      "blue": "#1749b9",
-      "gold": "#e8b848",
-      "ink": "#11253f",
-      "muted": "#52647d",
-      "divider": "#d7e1e9",
-      "softBlue": "#edf3ff",
-      "panel": "#ffffff",
-      "actionBorder": "#d7a82f"
-    }
+    ]
   },
   "components": [
     {
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Gold launch action with visible keyboard focus.",
-      "html": "<button class=\"ds-button\">Get launch updates <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M4 12h16m-7-7 7 7-7 7\"/></svg></button>",
-      "css": ".ds-button{display:inline-flex;align-items:center;gap:14px;height:61px;padding:0 30px;border:0;border-radius:8px;background:#e8b848;color:#11253f;font:700 21px Alexandria,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:hover{background:#f4cb64}.ds-button:focus-visible{outline:3px solid #11253f;outline-offset:5px;box-shadow:0 0 0 8px white}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
+      "description": "Compact red action with live text and an inline arrow.",
+      "html": "<a class=\"fa-action\" href=\"#expert\">See how it works <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\"><path d=\"M3.5 10h12m-5-5 5 5-5 5\"/></svg></a>",
+      "css": ".fa-action{display:inline-flex;align-items:center;gap:.8rem;min-height:3.5rem;padding:.9rem 1.2rem;border-radius:.35rem;background:var(--red,#d71922);color:#fff;font:600 .96rem Alexandria,Arial,sans-serif;text-decoration:none;transition:background-color 180ms ease-out,transform 180ms ease-out}.fa-action svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.fa-action:hover{background:var(--red-hover,#b8161f);transform:translateY(-2px)}.fa-action:focus-visible{outline:3px solid var(--red-accent,#ff5b62);outline-offset:5px}@media(prefers-reduced-motion:reduce){.fa-action{transition:none}.fa-action:hover{transform:none}}"
     },
     {
-      "name": "Contact field",
-      "kind": "input",
-      "refersTo": "input",
-      "description": "Visible label and native blank-input validation.",
-      "html": "<label class=\"ds-label\">Email or mobile number<input class=\"ds-input\" type=\"text\" required pattern=\".*\\S.*\" placeholder=\"Email or mobile number\"></label>",
-      "css": ".ds-label{display:grid;gap:10px;color:#11253f;font:700 16px Alexandria,sans-serif}.ds-input{height:61px;padding:0 16px;border:1px solid #9db6dc;border-radius:8px;background:white;color:#11253f;caret-color:#1749b9;font:400 16px Alexandria,sans-serif}.ds-input::placeholder{color:#3e566b}.ds-button:focus-visible,.ds-input:focus-visible,.ds-nav a:focus-visible {outline:3px solid #e8b848;outline-offset:5px}"
-    },
-    {
-      "name": "Quiet navigation",
-      "kind": "nav",
-      "description": "Text wordmark and one in-page link.",
-      "html": "<nav class=\"ds-nav\"><a class=\"ds-wordmark\" href=\"#\">Fixauto</a><a href=\"#coming-soon\">Coming soon</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 24px;background:#1749b9;color:white;font:400 16px Alexandria,sans-serif}.ds-nav a{color:inherit;text-decoration:none}.ds-wordmark{font-size:29px;font-weight:700;letter-spacing:-1.5px}.ds-button:focus-visible,.ds-input:focus-visible,.ds-nav a:focus-visible {outline:3px solid #e8b848;outline-offset:5px}"
-    },
-    {
-      "name": "Approval label",
-      "kind": "chip",
-      "refersTo": "approval-label",
-      "description": "Explanatory planned approval pause.",
-      "html": "<span class=\"ds-approval\">Awaiting approval</span>",
-      "css": ".ds-approval{display:inline-flex;align-items:center;padding:12px 24px;border-radius:6px;background:#ffdc82;color:#11253f;font:700 15px Alexandria,sans-serif}"
-    },
-    {
-      "name": "Demo preview",
-      "kind": "card",
-      "refersTo": "preview-panel",
-      "description": "Meaningful demonstration content on a quiet panel.",
-      "html": "<article class=\"ds-panel\"><h3>Customer case</h3><p>Demo: review the work and costs before approval.</p></article>",
-      "css": ".ds-panel{padding:28px;border:1px solid #c6d4d5;border-radius:8px;background:#f9fcfb;color:#11253f;font:400 16px Alexandria,sans-serif}.ds-panel h3{margin:0 0 12px;font-size:23px;font-weight:700;letter-spacing:-.7px}.ds-panel p{margin:0;line-height:1.4}"
-    },
-    {
-      "name": "Dossier section navigation",
-      "kind": "nav",
-      "refersTo": "case-section-nav",
-      "description": "Demo dossier links navigate to visible Overview, Estimate, Payments, and Records sections.",
-      "html": "<nav class=\"ds-case-nav\" aria-label=\"Case sections\"><a href=\"#overview\">Overview</a><a href=\"#estimate\">Estimate</a><a href=\"#payments\">Payments</a><a href=\"#records\">Records</a></nav>",
-      "css": ".ds-case-nav{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 18px;border-bottom:1px solid #d7e1e9;padding:0 18px}.ds-case-nav a{display:inline-flex;min-height:46px;align-items:center;border-bottom:3px solid transparent;padding:0 5px;color:#344f75;font-size:14px;font-weight:600;text-decoration:none}.ds-case-nav a:hover,.ds-case-nav a:focus-visible{border-bottom-color:#1749b9;color:#1749b9}.ds-case-nav a:focus-visible{outline:3px solid #1749b9;outline-offset:4px}@media(max-width:700px){.ds-case-nav{gap:0 12px;margin-right:-16px;margin-left:-16px;padding:0 16px}.ds-case-nav a{min-height:43px;font-size:12px}}@media(max-width:420px){.ds-case-nav{margin-right:-12px;margin-left:-12px;padding:0 12px}}"
-    },
-    {
-      "name": "Dossier document panel",
-      "kind": "card",
-      "refersTo": "case-document-panel",
-      "description": "Demo estimate document with illustrative values in a flat white panel; this visual reference does not authorize live case operations.",
-      "html": "<section id=\"estimate\" class=\"ds-case-panel\" aria-labelledby=\"estimate-title\"><h2 id=\"estimate-title\">Repair estimate</h2><p>All amounts are illustrative USD.</p></section>",
-      "css": ".ds-case-panel{min-width:0;border:1px solid #d7e1e9;border-radius:12px;padding:22px;background:#ffffff}.ds-case-panel h2{margin-bottom:12px;font-size:21px;line-height:1.25;letter-spacing:-.025em}@media(max-width:700px){.ds-case-panel{padding:17px}.ds-case-panel h2{font-size:19px}}@media(max-width:420px){.ds-case-panel{padding:14px}}"
-    },
-    {
-      "name": "Dossier action",
+      "name": "Text action",
       "kind": "button",
-      "refersTo": "case-action",
-      "description": "Demo-only estimate decision control. Its shared-shell Demo label and sample-data notice do not authorize real payments or operational use.",
-      "html": "<button class=\"ds-case-action\" type=\"button\">Approve exact estimate</button>",
-      "css": ".ds-case-action{display:inline-flex;width:fit-content;max-width:100%;min-height:46px;align-items:center;justify-content:center;border:1px solid #d7a82f;border-radius:8px;padding:11px 16px;background:#e8b848;color:#11253f;font:inherit;font-size:13px;font-weight:700;line-height:1.35;text-align:center;cursor:pointer;box-shadow:none;white-space:normal}.ds-case-action:hover{background:#f4cb64}.ds-case-action:focus-visible{outline:3px solid #1749b9;outline-offset:4px}"
+      "refersTo": "text-action",
+      "description": "A quiet underlined action that does not compete with the main scene.",
+      "html": "<a class=\"fa-text\" href=\"#summary\">View the journey <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\"><path d=\"M3.5 10h12m-5-5 5 5-5 5\"/></svg></a>",
+      "css": ".fa-text{display:inline-flex;align-items:center;gap:.55rem;min-height:3.5rem;font:600 .96rem Alexandria,Arial,sans-serif;color:var(--paper,#f5f3ef);text-decoration:underline;text-decoration-color:var(--red,#d71922);text-decoration-thickness:2px;text-underline-offset:.32em}.fa-text:hover{color:#fff;text-decoration-color:var(--red-accent,#ff5b62)}.fa-text:focus-visible{outline:3px solid var(--red-accent,#ff5b62);outline-offset:5px}.fa-text svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}"
+    },
+    {
+      "name": "Supporting details",
+      "kind": "custom",
+      "refersTo": "details",
+      "description": "Native disclosure for short assessment and approval explanations.",
+      "html": "<details class=\"fa-detail\"><summary>If the estimate changes</summary><p>Work pauses while the coordinator shares the updated scope and cost for your approval.</p></details>",
+      "css": ".fa-detail{max-width:30rem;color:var(--paper,#f5f3ef);border-top:1px solid var(--line,#383735);font-family:Alexandria,Arial,sans-serif}.fa-detail summary{padding:.85rem 0 .45rem;font-size:.92rem;line-height:1.5;cursor:pointer}.fa-detail summary:hover{text-decoration:underline;text-decoration-color:var(--red,#d71922);text-underline-offset:.2em}.fa-detail summary:focus-visible{outline:3px solid var(--red-accent,#ff5b62);outline-offset:5px}.fa-detail p{margin:.45rem 0 1.1rem;font-size:.92rem;line-height:1.65;color:var(--muted,#c8c6c1)}"
+    },
+    {
+      "name": "Public navigation",
+      "kind": "nav",
+      "description": "Shared public links with an optional centered five-light ignition sequence on the homepage. Desktop remains fixed; phones stack identity, indicator row and navigation.",
+      "html": "<header class=\"fa-nav\"><a href=\"/\">Fixauto</a><span>Coming soon · Kerman</span><nav aria-label=\"Main navigation\"><a href=\"/\" aria-current=\"page\">Home page</a><a href=\"/case/new\">Request a visit</a></nav></header>",
+      "css": ".fa-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;font-family:Alexandria,Arial,sans-serif;color:var(--paper,#f5f3ef)}.fa-nav a{font-size:1.35rem;font-weight:600;letter-spacing:-.035em;text-decoration:none}.fa-nav span{font-size:.78rem;color:var(--muted,#c8c6c1)}.fa-nav a:hover{color:#fff}.fa-nav a:focus-visible{outline:3px solid var(--red-accent,#ff5b62);outline-offset:5px}.fa-nav{flex-wrap:wrap}.fa-nav nav{display:flex;flex-wrap:wrap;gap:1.5rem}.fa-nav nav a{display:inline-flex;align-items:center;min-height:44px;font-size:.9rem;border-bottom:2px solid transparent}.fa-nav nav a[aria-current]{border-bottom-color:#d71922}@media(max-width:600px){.fa-nav nav{width:100%}}"
+    },
+    {
+      "name": "Visit request field",
+      "kind": "input",
+      "refersTo": "request-input",
+      "description": "Labeled dark input used by the visit request form, with visible focus and inline error state.",
+      "html": "<label class=\"fa-request-field\">Vehicle make<input type=\"text\" autocomplete=\"off\"></label>",
+      "css": ".fa-request-field{display:grid;gap:.45rem;color:var(--paper,#f5f3ef);font:600 .88rem/1.4 Alexandria,Arial,sans-serif}.fa-request-field input{width:100%;min-width:0;min-height:3.1rem;padding:.72rem .78rem;border:1px solid #696763;border-radius:.35rem;background:var(--surface,#111111);color:var(--paper,#f5f3ef);font:400 .95rem/1.45 Alexandria,Arial,sans-serif;caret-color:#ff5b62}.fa-request-field input:hover{border-color:#aaa7a1}.fa-request-field input:focus-visible{border-color:#ff5b62;outline:2px solid #ff5b62;outline-offset:3px}.fa-request-field input[aria-invalid=true]{border-color:#ff8b90}"
     }
   ],
   "narrative": {
-    "northStar": "Journey atlas",
-    "overview": "Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.\n\nThis documents the approved marketing surface and its scoped customer-case extension. The existing /case index and /cases/[caseId] customer dossier share the cobalt and cool-paper case shell. Other application routes retain their established system; this extension does not authorize a wider restyle. The approved Option C composition remains defined in docs/CUSTOMER-CASE-BRIEF.md.",
+    "northStar": "Back to your day",
+    "overview": "Fixauto's approved landing-page direction is minimal and photographic: near-black surfaces, warm off-white text and restrained red actions. One realistic scene and one short message lead each viewport; space and readable type carry the hierarchy.\n\nThis direction is implemented at / and /case/new. The public homepage and visit request share Home page and Request a visit navigation links. The case index, customer dossier and staff screens retain their Journey atlas system, archived in docs/design/journey-atlas-reference/. Keep that legacy system when maintaining those operational screens.",
     "keyCharacteristics": [
-      "Broad destination lettering.",
-      "Cobalt, mineral ground, and a gold approval pause.",
-      "Illustrations paired with readable semantic text.",
-      "The customer dossier reuses the case palette in a document-led layout."
+      "Minimal composition with generous empty space.",
+      "Photorealistic concept imagery and live HTML text.",
+      "Red reserved for actions and visible interaction states.",
+      "A distinct closing image showing confidence and a return to normal life."
     ],
     "rules": [
       {
-        "name": "The Approval Rule",
-        "body": "Gold makes the approval boundary visible without implying that approval has occurred.",
+        "name": "The Accent Rule",
+        "body": "In the new landing direction, red marks an action or interaction state; photographs carry the visual richness.",
         "section": "colors"
       },
       {
         "name": "The Live Text Rule",
-        "body": "Headlines, process labels, and controls remain semantic text rather than being baked into illustrations.",
+        "body": "Headlines, explanations and controls remain semantic HTML; image-generated lettering is never the interface.",
         "section": "typography"
       },
       {
         "name": "The Reading Order Rule",
-        "body": "Responsive layout preserves the meaning and sequence of the content in the document.",
+        "body": "Mobile and reduced-motion layouts preserve the same meaning and sequence as the desktop story.",
         "section": "layout"
-      },
-      {
-        "name": "The Scoped Case Rule",
-        "body": "Use the cobalt and cool-paper case system through the existing CaseLayout only for /case and /cases/[caseId].",
-        "section": "overview"
       }
     ],
     "dos": [
-      "Do preserve a visible approval boundary.",
-      "Do keep labels readable and semantic.",
-      "Do retain keyboard focus and reduced-motion support.",
-      "Do preserve the case shell's Alexandria typography and phone reading order."
+      "Do use the red-and-black direction for the approved landing redesign and visit request.",
+      "Do keep one main image and one short message in each landing scene.",
+      "Do keep interface text selectable and controls keyboard accessible.",
+      "Do crop photographs deliberately for mobile and support reduced motion.",
+      "Do identify generated scenes as concept imagery.",
+      "Do retain the existing app palette when maintaining its current screens."
     ],
     "donts": [
-      "Don't imply live vehicle tracking through decorative route notation.",
-      "Don't use illustration text as a substitute for accessible content.",
-      "Don't extend the case route styling to other application routes without a separate request.",
-      "Don't treat the Demo label or this design reference as authorization for live payments, bookings, or operational actions."
+      "Don't restore blue-and-gold styling to the new landing direction.",
+      "Don't use comic-style illustrations or crowded image collages for the new landing.",
+      "Don't repeat the opening handover image for the closing scene.",
+      "Don't hide essential content behind animation or require a fixed scroll speed.",
+      "Don't treat concept images as proof of staff, customers, premises or completed operations.",
+      "Don't imply that the local sample request confirms a real visit or that concept imagery proves operational availability."
     ]
   }
 }

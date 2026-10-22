@@ -1,7 +1,24 @@
 ---
-name: Fixauto Journey atlas
-description: Managed repair coordination through a clear visual journey
+name: Fixauto - Back to your day
+description: Minimal photographic landing direction with preserved application styling
 colors:
+  request-border: "#696763"
+  request-border-hover: "#aaa7a1"
+  request-error-border: "#ff8b90"
+  request-error-text: "#ff9ca0"
+  canvas: "#090909"
+  surface: "#111111"
+  paper: "#f5f3ef"
+  muted: "#c8c6c1"
+  action-red: "#d71922"
+  action-red-hover: "#b8161f"
+  focus-red: "#ff5b62"
+  divider: "#383735"
+  white: "#ffffff"
+  media-ground: "#171615"
+  footer-muted: "#a8a6a1"
+  selection-red: "#9e171c"
+  scrollbar-thumb: "#5a292b"
   cobalt: "#1749b9"
   action-gold: "#e8b848"
   action-hover: "#f4cb64"
@@ -11,7 +28,7 @@ colors:
   navy-ink: "#11253f"
   route-label: "#d2e2e9"
   panel: "#f9fcfb"
-  divider: "#c6d4d5"
+  legacy-divider: "#c6d4d5"
   case-ground: "#edf3f6"
   case-muted: "#52647d"
   case-divider: "#d7e1e9"
@@ -20,75 +37,67 @@ colors:
   case-action-border: "#d7a82f"
 typography:
   display:
-    fontFamily: "Alexandria, sans-serif"
-    fontSize: "clamp(46px, 5vw, 76px)"
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "clamp(2.6rem, 5.4vw, 6rem)"
     fontWeight: 600
-    lineHeight: 1.08
-    letterSpacing: "-0.03em"
+    lineHeight: 1.06
+    letterSpacing: "-0.035em"
   headline:
-    fontFamily: "Alexandria, sans-serif"
-    fontSize: "clamp(30px, 3vw, 44px)"
-    fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: "-1.4px"
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "clamp(2.35rem, 4vw, 3.4rem)"
+    fontWeight: 600
+    lineHeight: 1.02
+    letterSpacing: "-0.035em"
   body:
-    fontFamily: "Alexandria, sans-serif"
-    fontSize: "16px"
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "clamp(1.08rem, 1.45vw, 1.3rem)"
     fontWeight: 400
-    lineHeight: 1.4
-  hero-support:
-    fontFamily: "Alexandria, sans-serif"
-    fontSize: "clamp(16px, 1.35vw, 20px)"
+    lineHeight: 1.62
+  detail:
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "0.92rem"
     fontWeight: 400
-    lineHeight: 1.4
-  case-body:
-    fontFamily: "Alexandria, sans-serif"
-    fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.65
+  label:
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "0.96rem"
+    fontWeight: 600
+  wordmark:
+    fontFamily: "Alexandria, Arial, sans-serif"
+    fontSize: "1.35rem"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "-0.035em"
 rounded:
-  label: "6px"
-  control: "8px"
-  panel: "12px"
-  status: "999px"
+  control: "0.35rem"
+  focus: "2px"
 spacing:
-  small: "8px"
-  medium: "16px"
-  group: "24px"
-  section: "64px"
+  page-gutter: "clamp(1.25rem, 5.8vw, 5.5rem)"
+  mobile-gutter: "1.25rem"
+  narrow-gutter: "1rem"
+  action-gap: "2rem"
+  details-gap: "1.8rem"
 components:
   button-primary:
-    backgroundColor: "{colors.action-gold}"
-    textColor: "{colors.navy-ink}"
+    backgroundColor: "{colors.action-red}"
+    textColor: "{colors.white}"
     rounded: "{rounded.control}"
-    height: "61px"
-    padding: "0 30px"
+    padding: "0.9rem 1.2rem"
   button-primary-hover:
-    backgroundColor: "{colors.action-hover}"
-  input:
-    backgroundColor: "white"
-    textColor: "{colors.navy-ink}"
+    backgroundColor: "{colors.action-red-hover}"
+  text-action:
+    textColor: "{colors.paper}"
+  details:
+    textColor: "{colors.paper}"
+  request-input:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.paper}"
     rounded: "{rounded.control}"
-    height: "61px"
-    padding: "16px"
-  preview-panel:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.navy-ink}"
-    rounded: "{rounded.control}"
-    padding: "28px"
-  approval-label:
-    backgroundColor: "{colors.approval-gold}"
-    textColor: "{colors.navy-ink}"
-    rounded: "{rounded.label}"
-  case-document-panel:
-    backgroundColor: "{colors.case-panel}"
-    textColor: "{colors.navy-ink}"
-    rounded: "{rounded.panel}"
-    padding: "22px"
-  case-action:
+    padding: "0.72rem 0.78rem"
+  legacy-case-action:
     backgroundColor: "{colors.action-gold}"
     textColor: "{colors.navy-ink}"
-    rounded: "{rounded.control}"
-    height: "46px"
+    rounded: "8px"
     padding: "11px 16px"
 ---
 
@@ -96,119 +105,136 @@ components:
 
 ## Overview
 
-**Creative North Star: "Journey atlas"**
+**Creative North Star: "Back to your day"**
 
-Journey atlas connects a repair process through clear milestones, a visible approval pause, and a calm route ground. Broad destination lettering and silver-car illustrations give the system its character; live text carries the information.
+Fixauto's approved landing-page direction is minimal and photographic: near-black surfaces, warm off-white text and restrained red actions. One realistic scene and one short message lead each viewport; space and readable type carry the hierarchy.
 
-This documents the approved marketing surface and its scoped customer-case extension. The existing `/case` index and `/cases/[caseId]` customer dossier share the cobalt and cool-paper case shell. Issue #27 extends the same navigation and cobalt defaults across the existing app routes, including the request form. The approved Option C composition remains defined in `docs/CUSTOMER-CASE-BRIEF.md`.
+This direction is implemented at / and /case/new. The public homepage and visit request share Home page and Request a visit navigation links. The case index, customer dossier and staff screens retain their Journey atlas system, archived in docs/design/journey-atlas-reference/. Keep that legacy system when maintaining those operational screens.
+
+The user approved the visual direction and revised closing scene on 2026-10-20. The homepage implements four photographic scenes, an eight-step journey summary, and a closing request action. The small sentence Your car has a problem sits above the Request a visit button, which opens /case/new. The surface brief remains at docs/design/scrollytelling-v2/README.md.
 
 **Key Characteristics:**
 
-- Broad destination lettering.
-- Cobalt, mineral ground, and a gold approval pause.
-- Illustrations paired with readable semantic text.
+- Minimal composition with generous empty space.
+- Photorealistic concept imagery and live HTML text.
+- Red reserved for actions and visible interaction states.
+- A distinct closing image showing confidence and a return to normal life.
 
 ## Colors
 
 ### Primary
 
-Cobalt carries the main visual field, milestone markers, and quiet navigation. The hero field varies subtly through sampled cobalt shades (#134cbe, #144cbd, #205ebe); the flat cobalt token is used elsewhere.
-
-### Secondary
-
-Action gold highlights the primary action. Its lighter hover state makes the action respond without movement. Approval gold distinguishes the pause in a planned journey.
+Action red is the only primary accent. Use its darker hover shade for filled controls and the brighter focus red for focus outlines and small list markers. The brighter shade is not the filled primary-button background.
 
 ### Neutral
 
-Mineral and quiet grounds separate marketing reading areas. Navy ink provides contrast. Route-label blue, near-white panels, and fine dividers support the journey surface.
+Canvas black establishes the page; surface black separates the journey summary. Warm paper carries headings, muted stone carries support text, and the divider stays subordinate. White is reserved for filled-action text. The media ground is a loading fallback; muted footer text, selection red and the scrollbar thumb are observed supporting colors.
 
-### Customer-case extension
+### Existing application palette
 
-- **Cool paper** (#edf3f6): the `/case` shell and customer dossier ground.
-- **Muted slate** (#52647d) and **cool divider** (#d7e1e9): secondary text and document borders.
-- **Soft cobalt** (#edf3ff) and **white panels** (#ffffff): current-step surfaces and saved case records.
-- **Action border** (#d7a82f): the outline around dossier decision controls.
+The retained cobalt, gold, mineral, navy and case tokens apply to the retained operational application screens. Their presence in the frontmatter preserves those screen contracts; it does not make them alternate accents for the new landing page. Detailed legacy guidance remains in the archived reference.
 
-The home and cases routes use the same cobalt and gold authority while keeping their route-specific surfaces distinct.
-
-**The Approval Rule.** Gold makes the approval boundary visible without implying that approval has occurred.
+**The Accent Rule.** In the new landing direction, red marks an action or interaction state; photographs carry the visual richness.
 
 ## Typography
 
-Alexandria is self-hosted with its license in app/fonts. The coordinator headline is semibold (600), with the geographic line in regular (400). The benefits display is semibold (600). Hero support is regular (400) on desktop and light (300) on phones; controls and section headings use bold (700).
+Alexandria is self-hosted at regular (400) and semibold (600), with Arial and sans-serif fallbacks. The homepage uses next/font local files and disables synthesized weights; the standalone reference uses static files.
 
-The shared case shell loads the same local Alexandria files at weights 400, 600, and 700. Its base line height is 1.5; dossier headings, labels, and table text set their own sizes in the route stylesheet. The home and workspace shells use local Alexandria; the global fallback remains Arial, Helvetica, sans-serif.
+Desktop scene headings use the display token, with a narrower heading measure for supporting scenes. At intermediate desktop widths (701-1000px), headings use clamp(2.45rem, 5vw, 3.5rem). On phones, headings use clamp(1.85rem, 8.1vw, 3.05rem), with a line height of 1.08. These are observed responsive values, not a separate typeface.
 
-Desktop display type scales with the viewport. On smaller screens it uses clamp(42px, 7.5vw, 64px), a line height of 1.08, and tracking of -0.03em. Body copy remains readable at phone widths (15–18px).
+Supporting copy uses the body token on desktop and 1rem on phones. Disclosure copy is smaller, with a relaxed line height; labels and navigation remain concise. The full-journey summary has its own smaller heading scale. Interface text is never baked into the image plates. Physical Fixauto embroidery on the expert's uniform and cap is the deliberate branding exception. Both the hero and inspection photographs use the same black branded workwear; the request form reuses the branded inspection image.
 
-**The Live Text Rule.** Headlines, process labels, and controls remain semantic text rather than being baked into illustrations.
+**The Live Text Rule.** Headlines, explanations and controls remain semantic HTML; image-generated lettering is never the interface.
 
 ## Layout
 
-The marketing route is full width with generous side insets (about 4.4% on desktop; 24px on phones). Wide composition becomes a single reading column at 900px. The journey changes from a continuous horizontal band to readable sequential lists. Keep related text together when reflowing.
+The homepage uses full-width photographic scenes with live copy over the darker left area on desktop. A scene occupies at least max(125svh, 42rem); its photograph holds at 100svh during normal scrolling. Copy occupies up to 70% of the scene with a 65rem cap, reducing to 61% at intermediate desktop widths. Text can grow naturally; short landscape windows use smaller padding and type. The desktop gutter uses the documented fluid spacing token.
 
-The quieter home refinement on 2026-10-09 preserves the dominant coordinator message and intentional break before “start to finish”, with a smaller semibold display and restrained artwork anchored at the lower right. The benefits use a pale reading ground with navy headings. Gold distinguishes the launch action and approval checkpoint. The detailed three-step explanation stays consolidated beside the problem on desktop and follows it on phones.
+At widths of 700px and below, text precedes a full-width, square-cropped photograph in a single reading column. Photos have a maximum height of 30rem and scene-specific crop positions. The mobile gutter is 1.25rem; at 350px and below it becomes 1rem. There is no forced scroll speed or nested scroll region.
 
-The home polish keeps desktop journey labels at 14–16px, milestone headings at 16–22px, and problem copy at 17–20px. The journey reserves enough vertical space for wrapped labels, and the detailed steps form one column between 901px and 1100px.
+The journey summary uses two columns on desktop and one on phones. Scene order, final copy placement, crop positions and the approved image paths are surface-specific; consult app/page.module.css rather than applying those measurements to all app screens.
 
-The `/case` index and `/cases/[caseId]` dossier share `CaseLayout` and its Alexandria, cobalt navigation, demo label, and footer. The dossier uses a 1720px maximum screen width. Above 980px, its overview and facts column sit side by side, with documents below the overview; at 980px the page becomes one column while the sidebar keeps two columns. At 700px the sidebar and overview details stack, section links wrap, and the screen uses 16px side padding. At 420px the screen uses 12px side padding and the vehicle illustration narrows. The reading order stays overview, next-step/facts, then documents. The selected page composition and interaction contract remain in `docs/CUSTOMER-CASE-BRIEF.md`.
-
-**The Reading Order Rule.** Responsive layout preserves the meaning and sequence of the content in the document.
+**The Reading Order Rule.** Mobile and reduced-motion layouts preserve the same meaning and sequence as the desktop story.
 
 ## Elevation & Depth
 
-Surfaces are flat at rest. Tonal grounds and fine dividers establish hierarchy. Illustrations supply physical depth. There are no decorative card shadows; the primary button gains a white surround only for keyboard focus.
+The new landing system has no decorative card shadows or automotive doodle overlays. The user withdrew the doodle direction; do not restore automotive line drawings. The supplied dashboard warning symbols are a separate, later interaction request. Real photographic light supplies depth; typography, tonal grounds and fine dividers separate the interface. Photo transitions use a small scale and opacity change while keeping images visible by default.
 
-Case documents use white panels with a 1px divider and 12px corners; inset summary groups and action groups use 8px corners. Depth remains tonal and border-led.
+
+The existing application retains its flat document panels and legacy tonal surfaces. This document does not introduce photographic backgrounds into operational screens.
 
 ## Shapes
 
-Controls and panels have gentle corners (8px); route labels have smaller corners (6px). Circular numbered markers indicate sequence. Fine borders remain subordinate to the illustrated route.
-
-On the dossier, document panels use 12px corners, inset groups use 8px, and status pills are fully rounded. The shared case shell keeps the existing component shapes.
+Photographs are rectangular and extend to the scene edges. Filled actions have gently rounded corners using the control radius. Details and summary lists use fine horizontal dividers rather than enclosing cards. Focus outlines use a small corner radius. The visit request extends the same small-radius controls to dark inputs, selects and textareas. No new chips or modal shapes are implemented.
 
 ## Components
 
-### Buttons
+### Primary action
 
-The gold primary control has navy text, generous padding, and a lighter hover fill. Keyboard focus remains visible. Its brief color transition (0.18s ease-out) is removed under reduced motion.
+A compact red action with white text and a small inline SVG arrow. Desktop padding is defined in the frontmatter; minimum height is 3.5rem, reducing to 3.1rem on phones. Hover darkens the fill and lifts the control by 2px. Focus uses a 3px bright-red outline with a 5px offset.
 
-### Inputs / Fields
+### Text action
 
-A white field uses navy text, a cobalt caret, a visible label, and a contrastful placeholder. Native required and non-whitespace validation prevents blank submission. Demonstration feedback is announced through a status region.
+Warm-paper text with a red underline and an inline arrow. Hover brightens the text and underline. Use it when a second filled action would compete with the scene.
 
-### Cards / Containers
+### Navigation and skip link
 
-Demo previews use near-white panels, one fine border, and comfortable padding. They contain meaningful request, approval, and coordination content rather than decorative controls.
+The shared public header contains the Fixauto wordmark, a quiet launch-location note and two page links: Home page and Request a visit. The current link has a red underline and aria-current=page. Home and the wordmark return to /. The header overlays the photographs on desktop and is sticky on phones; the optional ignition row is present only on the homepage. Navigation wraps rather than overflowing. The keyboard skip link appears on focus and reaches the full-journey summary.
 
-### Navigation
+### Supporting details
 
-A plain text wordmark and shared navigation connect Home page, Cases, Users, Staffs, and Coming Soon. Users opens the sample customer dossier; it is not a user administration screen. Dossier navigation retains its case when opening the staff workspace. All routes reuse the same header grid, padding, type weight, and right-aligned desktop menu. Links wrap in the same position on phones, and the active section has a gold underline without changing link widths. Case-specific staff links sit below the shared header so they cannot move the menu. The primary action uses a native in-page anchor; reduced motion disables smooth scrolling.
+Native details/summary disclosures hold assessment and approval explanations behind a short descriptive label. Preserve keyboard toggling, visible focus and readable open-state copy.
 
-### Journey markers and labels
+### Photograph scenes
 
-Numbered circles establish the broad stages. A gold label identifies awaiting approval. These are explanatory elements, not live tracking controls.
+Text-free generated plates sit behind live desktop text and below mobile text. The current transition is opacity 0.88 to 1 and scale 1.018 to 1, using the sidecar's easing and durations. This is a chapter-entry transition, not a continuous crossfade between photographs. Without JavaScript, content and photographs remain visible. Reduced motion removes transitions, transforms, smooth anchor scrolling and sticky image positioning.
 
-### Customer case workspace
+The approved closing photograph shows the woman relaxed and confident at her desk, with her keys nearby and her car outside. It deliberately differs from the exterior key handover in the hero. The exact scene and asset selection belong to the landing brief. The final request action has its own photograph: a woman describing her car problem by phone beside her parked car. Desktop live copy sits over its dark left side; mobile places the copy before a square crop of the photograph.
 
-The shared case header keeps the Fixauto wordmark, main navigation, Demo label, and contextual staff demo link. The dossier uses a vehicle identity header, status pill, wrapping section links, white document panels, soft-blue next-step/fact groups, and gold action buttons. Its estimate, payment, and record sections use semantic tables and lists; links navigate to visible sections. Keep the illustrative vehicle caption and the shell's sample-data notice. The Demo label describes simulated behavior; this design reference does not authorize real payments, bookings, or operational use.
+### Journey summary
+
+A plain numbered list with dividers and a restrained red marker. It gives visitors a direct reading path through the service without playing through the motion.
+
+### Visit request form
+
+The user extended the photographic red-and-black language to /case/new on 2026-10-20. This is an Operate surface: a readable two-column desktop layout with a short photographic introduction and a standard form, followed by editable check answers and a pending-request receipt. The page reuses the same public header as the homepage, with a dark palette and red active state.
+
+Fields use the request-input component token with a muted border, a brighter hover border, a 2px focus outline and a separate pale-red error state. Labels remain visible; required fields and inline messages are exposed semantically. Fields are grouped using native fieldsets. Review does not create a case; final submission reuses the existing browser-local case store.
+
+The layout becomes one column at 56rem and the fields become one column at 36rem. Mobile omits the decorative photograph and the secondary timing explanation so visitors reach the form sooner. The visit headline is 3rem on desktop and 2rem at the single-column breakpoint. Other operational screens retain their existing palette.
+
+### Header ignition sequence and cursor
+
+The latest user direction places all five supplied dashboard warning symbols in a centered header row between the identity and navigation. The engine symbol is red like the other four. Use the transparent PNGs at public/images/warnings/*-clear.png as alpha masks with the single indicator color #e51b23. Black tiles and gray housings stay removed.
+
+All five slots are reserved from the beginning. The icons start hidden, then appear left to right at 2.70, 3.91, 5.11, 6.31 and 7.50 seconds. Each revealed icon stays visible as the next appears; all five remain after the ten-second sequence. There are no chapter-body icons or blinking loops.
+
+The soundtrack is the first 10.000 seconds of the user's supplied Toyota RAV4 ignition/electronics recording, saved as public/audio/ignition-first-10s.wav. The actual media currentTime drives reveal progress while audio plays. The cue points were measured from recurring tone-envelope attacks; output/audio/ignition-cues.json preserves the analysis and provenance. Pointer movement or touch begins an equivalent silent sequence. Enabling the speaker restarts the real recording and the visual sequence together; muting during playback keeps the same clock. No synthetic engine sound remains.
+
+The desktop header is fixed and the phone header is sticky, keeping the indicator row visible during scrolling. On narrow screens the row sits between the identity and navigation rows. Other public pages keep their simpler header. Entering Back to your day stops audible playback under the earlier quiet-ending requirement, while the visual sequence can finish silently and remain visible. Leaving the page releases the media. Reduced motion uses immediate reveals without transition.
+
+Desktop fine-pointer devices retain public/images/wrench-cursor.svg with its adjustable head upper-left, red handle lower-right, and 2,2 head hotspot.
+
+### Existing app components
+
+Case documents, forms, estimate controls, status pills, customer navigation and staff actions retain the archived Journey atlas specifications and their existing source styles. The visit request is the scoped exception; other app forms, documents and approval controls have not been restyled.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- Do preserve a visible approval boundary.
-- Do keep labels readable and semantic.
-- Do retain keyboard focus and reduced-motion support.
-- Do keep the approved cobalt and gold identity consistent across Home and the existing demo workspaces.
+- Do use the red-and-black direction for the approved landing redesign and visit request.
+- Do keep one main image and one short message in each landing scene.
+- Do keep interface text selectable and controls keyboard accessible.
+- Do crop photographs deliberately for mobile and support reduced motion.
+- Do identify generated scenes as concept imagery.
+- Do retain the existing app palette when maintaining its current screens.
 
 ### Don't:
 
-- Don't imply live vehicle tracking through decorative route notation.
-- Don't use illustration text as a substitute for accessible content.
-- Don't extend this route-specific styling to other application routes without a separate request.
-- Don't treat the Demo label or this design reference as authorization for live actions.
-
-## Staff workspace extension — issue #23
-
-Approved 2026-10-09: the staff route extends the customer cases palette, Alexandria type and flat document panels using the selected C dossier composition. A case selector and identity band lead; section anchors navigate visible content; workflow/facts form the desktop sidebar and the required action leads on phones. All staff actions and customer authorization gates remain simulated. See docs/STAFF-BRIEF.md for the approved composition and translation decisions. This extension supersedes the earlier green-system restriction for /staff only.
+- Don't restore blue-and-gold styling to the new landing direction.
+- Don't use comic-style illustrations or crowded image collages for the new landing.
+- Don't repeat the opening handover image for the closing scene.
+- Don't hide essential content behind animation or require a fixed scroll speed.
+- Don't treat concept images as proof of staff, customers, premises or completed operations.
+- Don't imply that the local sample request confirms a real visit or that concept imagery proves operational availability.

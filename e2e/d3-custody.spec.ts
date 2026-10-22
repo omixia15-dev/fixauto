@@ -24,6 +24,7 @@ async function createCollection(page: Page, suffix = "2", preferredDate = nextMo
   await page.getByLabel("Visit type").selectOption("collection-request");
   await page.getByLabel("Requested collection address").fill("Sample Boulevard, Kerman");
   await page.getByLabel("Describe the symptoms").fill("The steering wheel vibrates above 80 km/h.");
+  await page.getByRole("button", { name: "Review request" }).click();
   await page.getByRole("button", { name: "Create sample request" }).click();
   await expect(page.getByRole("heading", { name: /^Reference FXA-/ })).toBeVisible();
   const followLink = page.getByRole("link", { name: "Follow your repair case" });

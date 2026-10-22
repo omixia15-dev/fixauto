@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import CaseLayout from "../../case/layout";
+import { CaseShell } from "@/src/components/case-shell";
 
 export default async function CustomerCaseLayout({ children, params }: {
   children: ReactNode;
   params: Promise<{ caseId: string }>;
 }) {
   const { caseId } = await params;
-  return <CaseLayout caseId={caseId}>{children}</CaseLayout>;
+  return <CaseShell caseId={caseId}>{children}</CaseShell>;
 }

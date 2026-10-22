@@ -1,6 +1,4 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { RequestScreen } from "@/src/screens/request-screen";
-import styles from "../case.module.css";
-export default function NewCasePage() {
-  return <div className={styles.requestPage}><Link className={styles.backLink} href="/case">Back to your cases</Link><RequestScreen /></div>;
-}
+export const metadata: Metadata = { title: "Request an expert visit | Fixauto", description: "Describe your car symptoms and request an expert assessment. Browser-local demo; appointment subject to confirmation." };
+export default function NewCasePage() { return <RequestScreen />; }
